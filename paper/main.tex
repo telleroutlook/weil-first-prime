@@ -1,0 +1,535 @@
+\documentclass[12pt,a4paper]{amsart}
+
+%% ── Packages ─────────────────────────────────────────────────────────────────
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage[margin=2.5cm]{geometry}
+
+%% ── Theorem environments ──────────────────────────────────────────────────────
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+%% ── Macros ────────────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+
+% Weil form and spaces
+\newcommand{\HL}{L^2(I_L)}
+\newcommand{\IL}{I_L}
+\newcommand{\QW}{Q_W}
+\newcommand{\qbar}{\bar{q}}
+\newcommand{\qtilde}{\tilde{q}}
+
+% Operators
+\newcommand{\SbL}{S_{b,L}}
+\newcommand{\CbL}{C_{b,L}}
+\newcommand{\Ctau}{C_{\tau,1}}
+
+% Constants
+\newcommand{\ctwo}{c_2}              % = log2/sqrt(2)
+\newcommand{\kappae}{\kappa_{\mathrm{edge}}}
+\newcommand{\Lzero}{L_0}             % = 2^{-30}
+
+% Intervals
+\newcommand{\Iminus}{I_-}
+\newcommand{\Izero}{I_0}
+\newcommand{\Iplus}{I_+}
+\newcommand{\Eminus}{E_-}
+\newcommand{\Eplus}{E_+}
+
+% Norms
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\ip}[2]{\left\langle #1,\, #2\right\rangle}
+
+% Legendre
+\newcommand{\Pn}{P_n}
+\newcommand{\Jij}{J_{ij}(\tau)}
+\newcommand{\Eij}{E_{ij}(\tau)}
+
+%% ── Title ─────────────────────────────────────────────────────────────────────
+\title{Structural Lemmas for the First-Prime Window\\
+       of the Weil Quadratic Form}
+
+\author{}   % anonymised for review; fill before submission
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We establish six structural results for the local Weil quadratic form
+$Q_W^L$ on $L^2(-L,L)$ in the interval
+$\tfrac{1}{2}\log 2 < L < \tfrac{1}{2}\log 3$,
+the \emph{first-prime window} where only the prime $n = 2$ contributes
+to the explicit formula.
+Our main contribution is a pure-rational certificate
+(\cref{thm:rational-cert})
+showing that at $L = \tfrac{7}{20}$ the endpoint potential $V$ absorbs
+the full first-prime layer: $V + P_{2,7/20} \ge \tfrac{69}{100}V \ge 0$.
+We also give an exact spectral description of the truncated shift operator
+$C_{b,L}$ (\cref{thm:overlap}),
+prove that Path~A (potential redistribution) is strictly falsified
+(\cref{thm:path-a-neg}),
+and provide the algebraic and analytic framework for the Path~B
+Schur criterion (\cref{thm:prime-legendre,thm:schur}).
+These results are independent of the main conjecture FP-0.35
+($\lambda(7/20) > 0$) and do not imply the Riemann Hypothesis.
+\end{abstract}
+
+\tableofcontents
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Introduction}
+\label{sec:intro}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Background}
+
+The Weil explicit formula associates to any even Schwartz function $f$ a
+functional
+\[
+  W(f) = \hat f(0)\log\pi - \sum_\rho f(\gamma_\rho)
+         - \sum_{n \ge 2} \frac{\Lambda(n)}{\sqrt n}
+           \bigl(f(\log n) + f(-\log n)\bigr),
+\]
+where the sum over $\rho$ runs over the non-trivial zeros $\rho = \tfrac12 +
+i\gamma_\rho$ of the Riemann zeta function.
+A classical result due to Weil~\cite{Weil1952} states that the
+\emph{Riemann Hypothesis} (RH) is equivalent to $W(f * \widetilde f) \ge 0$
+for all admissible $f$, where $\widetilde f(x) = \overline{f(-x)}$.
+
+The \emph{local Weil quadratic form} restricts attention to test functions
+supported in $(-L,L)$:
+\[
+  Q_W^L(v) = W(v * \widetilde v), \qquad v \in L^2(-L,L).
+\]
+Yoshida~\cite{Yoshida1992} and Bombieri~\cite{Bombieri2001} proved that
+$Q_W^L \ge 0$ for all $L$ in a certain small-support regime.
+Suzuki~\cite{Suzuki2026} gave a concrete Galerkin realization,
+and subsequent numerical work~\cite{Kim2026} established positivity up to
+$L \approx 0.35$ by machine computation.
+
+\subsection{Scope of this paper}
+
+We work entirely in the \emph{first-prime window}
+\[
+  \tfrac{1}{2}\log 2 < L < \tfrac{1}{2}\log 3,
+\]
+where the prime-side contribution to $Q_W^L$ consists of the single term
+$n = 2$.
+Using Suzuki's conventions~\cite{Suzuki2026}, the $n$-th prime term is the
+quadratic form of the truncated shift operator
+\[
+  Q_{n,L}(v) = -\frac{\Lambda(n)}{\sqrt n}\ip{C_{\log n,L}\,v}{v},
+\]
+where $C_{b,L} = S_{b,L} + S_{b,L}^*$ and
+$(S_{b,L}v)(x) = \mathbf{1}_{I_L}(x)\,v(x-b)$.
+
+\medskip
+\textbf{Scope boundary.}
+\emph{The results of this paper do not imply the Riemann Hypothesis.}
+Even if the main conjecture FP-0.35 ($\lambda(7/20) > 0$) is established,
+the passage from finite-scale positivity to global positivity (which would
+imply RH) requires techniques not developed here.
+
+\subsection{Organisation}
+
+\Cref{sec:prelim} fixes notation.
+\Cref{sec:overlap} establishes the exact spectral decomposition of $C_{b,L}$
+(Theorems~\ref{thm:overlap}--\ref{thm:no-small-pert}).
+\Cref{sec:absorption} gives the endpoint potential absorption estimate
+(Theorem~\ref{thm:absorption}) and its pure-rational certificate
+(Theorem~\ref{thm:rational-cert}).
+\Cref{sec:path-b} develops the Path~B algebraic machinery
+(Theorems~\ref{thm:prime-legendre}--\ref{thm:schur}).
+\Cref{sec:falsification} proves that Path~A is strictly falsified
+(Theorem~\ref{thm:path-a-neg}).
+\Cref{sec:conjecture} states the main conjecture FP-0.35 and the remaining
+obligations.
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Preliminaries}
+\label{sec:prelim}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+We write $I_L = (-L,L)$ and $H_L = L^2(I_L)$ with the standard inner product
+$\ip{f}{g} = \int_{-L}^L f(x)\overline{g(x)}\,dx$.
+Functions $v \in H_L$ are zero-extended to $\R$.
+
+The \emph{log-endpoint potential} is
+$V(x) = -\tfrac{1}{2}\log(1-x^2)$ on $(-1,1)$ (in the scaled model).
+After the scaling $w(t) = v(Lt)$ and $\tau = \log 2/L$, the first-prime
+operator becomes $\mathcal P_{2,L} = -\ctwo C_{\tau,1}$ where
+$\ctwo = \log 2/\sqrt 2$ and $\Ctau$ is the truncated shift on $L^2(-1,1)$.
+
+The \emph{Archimedean kernel} $K_L$ is the integral operator with kernel
+$k_L(x,y) = -L\,r''(L(x-y))$, where $r''$ is the second derivative of
+Riemann's $r$-function.
+The \emph{closed quadratic form} is
+\[
+  \qbar_L(v) = \ip{Tv}{v} + \ip{Vv}{v} + \ip{K_Lv}{v}
+               + \ip{\mathcal P_{2,L}v}{v} - c_L\norm{v}^2,
+\]
+where $T$ is the kinetic term (harmonic-number diagonal in Legendre basis)
+and $c_L$ is the Weil constant at radius $L$.
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Spectral Decomposition of the Truncated Shift}
+\label{sec:overlap}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[Single-step overlap decomposition]
+\label{thm:overlap}
+Let $b > 0$ and $b/2 < L < b$.
+Define
+\[
+  \Iminus = (-L,\, L-b),\quad
+  \Izero  = (L-b,\, -L+b),\quad
+  \Iplus  = (-L+b,\, L).
+\]
+Then $H_L = L^2(\Iminus) \oplus L^2(\Izero) \oplus L^2(\Iplus)$,
+the map $T_b\colon L^2(\Iminus) \to L^2(\Iplus)$, $(T_bh)(x) = h(x-b)$,
+is unitary, and in this decomposition with the identification $T_b$,
+\[
+  \CbL \simeq
+  \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}
+  \otimes I_{L^2(\Iminus)}
+  \;\oplus\; 0_{L^2(\Izero)}.
+\]
+In particular $\sigma(\CbL) = \{-1,0,1\}$, $\norm{\CbL} = 1$,
+all eigenvalues have infinite multiplicity, and $\CbL$ is neither compact
+nor of finite rank.
+\end{theorem}
+
+\begin{proof}
+Since $b/2 < L < b$, all three intervals have positive length and no three
+points $x, x+b, x+2b$ lie simultaneously in $I_L$.
+For $h \in L^2(\Iminus)$ set $h_+ = T_bh \in L^2(\Iplus)$; then
+$\CbL(h \pm h_+) = \pm(h \pm h_+)$, giving eigenvectors for $\pm 1$.
+Functions supported in $\Izero$ satisfy $S_{b,L}f = S_{b,L}^*f = 0$.
+The spectral, norm, multiplicity, and non-compactness conclusions follow.
+\end{proof}
+
+\begin{corollary}[Exact sign structure of the first-prime layer]
+\label{cor:first-prime}
+Let $b = \log 2$.
+In the first-prime window $\tfrac{1}{2}\log 2 < L < \tfrac{1}{2}\log 3$,
+\[
+  \sigma\!\left(-\ctwo C_{\log 2,L}\right)
+  = \left\{-\ctwo,\; 0,\; +\ctwo\right\},
+  \qquad \ctwo = \frac{\log 2}{\sqrt 2}.
+\]
+Both the negative and positive spectral subspaces are infinite-dimensional.
+\end{corollary}
+
+\begin{corollary}[No $L^2$ operator-norm small perturbation at threshold]
+\label{thm:no-small-pert}
+For any $L \in (\tfrac{1}{2}\log 2,\, \log 2)$,
+$\norm{C_{\log 2,L}} = 1$
+regardless of the support length $2L - \log 2 \to 0^+$.
+The operator norm jumps from $0$ to $1$ at the threshold
+$L = \tfrac{1}{2}\log 2$.
+\end{corollary}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Endpoint Potential Absorption}
+\label{sec:absorption}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[Endpoint potential absorption]
+\label{thm:absorption}
+Scale to $(-1,1)$: let $w(t) = v(Lt)$, $\tau = \log 2/L$,
+$\varepsilon = 2 - \tau$.
+For $\tfrac{1}{2}\log 2 < L < \log 2$ one has $\tau \in (1,2)$ and
+$\Ctau$ couples only the boundary strips
+$\Eminus = (-1,-1+\varepsilon)$ and $\Eplus = (1-\varepsilon,1)$.
+Define $\kappae(L) = \tfrac{1}{2}\log\!\tfrac{1}{2\varepsilon} > 0$.
+Then for every $w$ in the closed-form domain,
+\begin{equation}\label{eq:absorption}
+  \bigl|\ip{\Ctau w}{w}\bigr|
+  \;\le\; \norm{w}_{L^2(\Eminus \cup \Eplus)}^2
+  \;\le\; \kappae(L)^{-1}\ip{Vw}{w}.
+\end{equation}
+Consequently, if $\ctwo < \kappae(L)$,
+\[
+  V + \mathcal{P}_{2,L}
+  \;\ge\; \left(1 - \frac{\ctwo}{\kappae(L)}\right) V \;\ge\; 0.
+\]
+\end{theorem}
+
+\begin{proof}
+The first inequality in~\eqref{eq:absorption} follows from the exchange
+structure in \cref{thm:overlap} together with $2|ab| \le |a|^2 + |b|^2$.
+For $x \in \Eminus \cup \Eplus$ one has $1 - x^2 \le 2\varepsilon$, so
+$V(x) \ge \kappae(L)$.
+Integrating yields the second inequality; multiplying by $\ctwo$ gives the
+stated form bound.
+\end{proof}
+
+\begin{theorem}[Pure-rational absorption certificate]
+\label{thm:rational-cert}
+At $L = \tfrac{7}{20}$,
+\[
+  \frac{\ctwo}{\kappae(7/20)} < \frac{31}{100},
+\]
+and therefore
+\[
+  \boxed{V + P_{2,7/20} \;\ge\; \frac{69}{100}\,V \;\ge\; 0.}
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1.} Using $\log 2 = 2\operatorname{arctanh}(\tfrac{1}{3})$
+and the positive-term tail bound,
+\begin{equation}\label{eq:log2-bounds}
+  \frac{842}{1215} < \log 2 < \frac{23581}{34020} < \frac{7}{10}.
+\end{equation}
+Hence $\varepsilon = 2 - \tfrac{20\log 2}{7} < 2 - \tfrac{20}{7}\cdot\tfrac{842}{1215}
+= \tfrac{34}{1701} < \tfrac{1}{41}$.
+
+\textbf{Step 2.}
+One verifies the integer inequality
+\[
+  87^{16} \cdot 68^5
+  = \underbrace{15662194229696887109605438749172023641088}_{39\text{ digits}}
+  \;<\;
+  \underbrace{17215562650769453014744867057217543602176}_{39\text{ digits}}
+  = 1701^5 \cdot 32^{16},
+\]
+from which $e^{16} < (87/32)^{16} < (1701/68)^5 < (1/(2\varepsilon))^5$,
+giving $\kappae(7/20) > \tfrac{8}{5}$.
+
+\textbf{Step 3.}
+From~\eqref{eq:log2-bounds} and $\sqrt{2} > \tfrac{7}{5}$,
+$\ctwo < \tfrac{62}{125}$.
+
+\textbf{Step 4.}
+$\ctwo/\kappae < (62/125)/(8/5) = 31/100$.
+Applying \cref{thm:absorption} completes the proof.
+\end{proof}
+
+\begin{corollary}[Potential redistribution]
+\label{cor:redistribution}
+The full scaled form satisfies
+\[
+  \qbar_{7/20}
+  \;\ge\;
+  \qtilde_{7/20}
+  \;:=\;
+  T + \tfrac{69}{100}V + K_{7/20} - c_{7/20}I
+\]
+in the closed-form ordering.
+Proving $\qtilde_{7/20} \ge \Lzero I$ with $\Lzero > 0$ is sufficient for
+FP-0.35.
+\end{corollary}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Path B: Prime-Layer Algebraisation and Schur Criterion}
+\label{sec:path-b}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[First-prime Legendre matrix algebraisation]
+\label{thm:prime-legendre}
+Let $P_n$ denote the $n$-th Legendre polynomial, $\tau = \log 2/L \in (1,2)$,
+and define on $L^2(-1,1)$
+\[
+  \Jij = \ip{\Ctau P_j}{P_i},
+  \qquad
+  \Eij = \ip{\Ctau P_j}{\Ctau P_i}.
+\]
+Then $\Jij = \Eij = 0$ when $i+j$ is odd.
+When $i+j$ is even,
+\begin{align}
+  \Jij &= 2\int_{-1}^{1-\tau} P_i(x)\,P_j(x+\tau)\,dx, \label{eq:J}\\
+  \Eij &= 2\int_{-1}^{1-\tau} P_i(x)\,P_j(x)\,dx. \label{eq:E}
+\end{align}
+In particular $\Jij, \Eij \in \Q[\tau]$, computable by Legendre recurrence
+and exact polynomial arithmetic without any quadrature.
+
+Sample values: $J_{00} = 4-2\tau$;
+$J_{11} = \tfrac{\tau^3}{3} - 2\tau + \tfrac{4}{3}$;
+$J_{02} = -\tau^3 + 3\tau^2 - 2\tau$.
+\end{theorem}
+
+\begin{proof}
+The parity vanishing follows from the reflection $x \mapsto -x$ applied to
+the second shift integral.
+When $1 < \tau < 2$, \cref{thm:overlap} gives $\Ctau^2 = \mathbf{1}_{\Eminus\cup\Eplus}$,
+so $\Eij$ is a Legendre Gram integral on two boundary strips,
+yielding~\eqref{eq:E}.
+Equation~\eqref{eq:J} follows by moving both shift integrals to the left
+boundary strip.
+The $\Q[\tau]$ membership and sample values are verified by explicit Legendre
+recursion and polynomial antiderivatives.
+\end{proof}
+
+\begin{theorem}[Split-residual Schur criterion]
+\label{thm:schur}
+Write $\qbar_L = T + V + K_L + \mathcal{P}_{2,L} - c_L I$.
+Let $\Pi_N$ be the Legendre projection onto $N$ basis functions of a fixed
+parity, $\mathsf{Q}_N = I - \Pi_N$, and $d$ the first complement degree.
+By \cref{thm:rational-cert}, $V + \mathcal{P}_{2,L} \ge 0$ at $L = 7/20$.
+Define
+\begin{gather*}
+  G_{ij} = \ip{P_j}{P_i},\quad
+  (T_N)_{ij} = H_{n_j}G_{ij},\\
+  M^{(0)}_{ij} = \ip{(V+K_L)P_j}{P_i},\quad
+  S^{(0)}_{ij} = \ip{(V+K_L)P_j}{(V+K_L)P_i},\\
+  M^{(2)}_{ij} = -\ctwo J_{ij}(\tau),\quad
+  S^{(2)}_{ij} = \ctwo^2 E_{ij}(\tau),\\
+  R_0 = S^{(0)} - (M^{(0)})^* G^{-1} M^{(0)},\quad
+  R_2 = S^{(2)} - (M^{(2)})^* G^{-1} M^{(2)},\\
+  R_\eta = (1+\eta)R_0 + (1+\eta^{-1})R_2,\quad \eta \in \Q_{>0},\\
+  F = T_N + M^{(0)} + M^{(2)} - (c_L + \Lzero)G,\quad
+  b_L = H_d - c_L - \Lzero - \kappa_L.
+\end{gather*}
+If $b_L > 0$ and $b_L F - R_\eta \succ 0$, then
+$\qbar_L[w] \ge \Lzero\norm{w}^2$ on the full closed-form domain
+of the parity sector.
+\end{theorem}
+
+\begin{proof}
+For $p \in \operatorname{Ran}\Pi_N$ and $q \in \operatorname{Ran}\mathsf{Q}_N$,
+the cross-term satisfies
+$\norm{\mathsf{Q}_N(V+K_L+\mathcal{P}_{2,L})p}^2 \le
+ (1+\eta)\norm{\mathsf{Q}_N(V+K_L)p}^2 +
+ (1+\eta^{-1})\norm{\mathsf{Q}_N\mathcal{P}_{2,L}p}^2$
+by weighted Young.
+The two norms have Gram matrices $R_0$ and $R_2$ respectively.
+The complement lower bound $b_L > 0$ gives $\mathsf{Q}_N(\qbar_L - \Lzero)\mathsf{Q}_N \ge b_L\mathsf{Q}_N$.
+Completing the square yields $(\qbar_L - \Lzero)[p+q] \ge z^*(F - b_L^{-1}R_\eta)z$,
+whence $b_L F - R_\eta \succ 0$ implies the stated lower bound.
+\end{proof}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{Strict Falsification of Path A}
+\label{sec:falsification}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{theorem}[Path A strict negative witnesses]
+\label{thm:path-a-neg}
+At $L = 7/20$, $\theta = 69/100$, $\Lzero = 2^{-30}$, the form
+$\qtilde_{7/20} - \Lzero I = T + \theta V + K_{7/20} - (c_{7/20}+\Lzero)I$
+satisfies
+\begin{align*}
+  (\qtilde_{7/20} - \Lzero I)[P_0 - P_2]
+  &\in [-0.053384,\; -0.052711], \\
+  (\qtilde_{7/20} - \Lzero I)[P_1 - \tfrac{1}{2}P_3]
+  &\in [-0.032327,\; -0.032119].
+\end{align*}
+In particular, both upper endpoints are strictly negative, so the weakened
+sufficient condition $\qtilde_{7/20} \ge \Lzero I$ is \emph{false}.
+
+\begin{remark}
+This does not falsify FP-0.35.
+The inequality $\qbar_{7/20} \ge \qtilde_{7/20}$ holds by
+\cref{cor:redistribution}, but $\qtilde_{7/20}$ having a negative direction
+carries no conclusion about the sign of $\qbar_{7/20}$.
+\end{remark}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The auto-correlation polynomials of $v_{\rm even} = P_0 - P_2$ and
+$v_{\rm odd} = P_1 - \tfrac12 P_3$ are computed exactly from Legendre
+recurrence:
+\begin{align*}
+  C_{v_{\rm even}}(t) &= \tfrac{12}{5} - 3t^2 + \tfrac32 t^3
+                         - \tfrac{3}{40}t^5, \\
+  C_{v_{\rm odd}}(t)  &= \tfrac{31}{42} - \tfrac14 t - \tfrac52 t^2
+                         + \tfrac{23}{12}t^3 - \tfrac{7}{32}t^5
+                         + \tfrac{5}{448}t^7.
+\end{align*}
+The kernel quadratic form $K_{7/20}[v]$ reduces to
+$2\int_0^2 (-\tfrac{7}{20})r''(\tfrac{7t}{20})\,C_v(t)\,dt$.
+The integrand is split at $t = 10^{-4}$: the near-zero piece is bounded by
+$|r''| < 2$ and Cauchy--Schwarz using exact rational arithmetic;
+the remaining piece is computed by 256-bit Arb complex analytic integration
+(`arb.integral`).
+Both upper endpoints of the resulting interval enclosures are strictly
+below zero.
+\end{proof}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section{The Main Conjecture and Remaining Obligations}
+\label{sec:conjecture}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{definition}
+\label{def:lambda}
+For $L > 0$, let
+\[
+  \lambda(L) = \inf_{\substack{v \in D(Q_W^L) \\ v \ne 0}}
+               \frac{Q_W^L(v)}{\norm{v}^2}.
+\]
+\end{definition}
+
+\begin{remark}[Main conjecture FP-0.35]
+It is \emph{conjectured} (but not proved in this paper) that
+$\lambda(7/20) > 0$.
+Because $\lambda$ is non-increasing in $L$, this would give
+$\lambda(L) > 0$ for all $0 < L \le 7/20$.
+
+The conjecture reduces, via \cref{cor:redistribution} and
+\cref{thm:schur} with $N_+ = 8$, $N_- = 6$, $\eta = 1/2$, to the
+verification of the two interval-matrix conditions:
+\begin{align*}
+  b_L > 0 \quad\text{and}\quad b_L F_{\rm even} - R_\eta^{\rm even} &\succ 0,\\
+  b_L > 0 \quad\text{and}\quad b_L F_{\rm odd}  - R_\eta^{\rm odd}  &\succ 0.
+\end{align*}
+Discovery pilots (mpmath, dps=100) with $c_L = 0$ give
+$\min\text{-pivot} \approx 0.529$ (even) and $\approx 0.560$ (odd),
+but a formally certified proof requires closing the Archimedean
+primitive chain (O2) and independently replaying the certificate.
+\end{remark}
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\section*{Acknowledgements}
+%% ══════════════════════════════════════════════════════════════════════════════
+
+% To be filled before submission.
+
+%% ══════════════════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem{Bombieri2001}
+E.~Bombieri, \emph{Remarks on Weil's quadratic functional in the theory of
+prime numbers, I}, Rend. Mat. Acc. Lincei \textbf{11} (2000), 183--233.
+
+\bibitem{Groskin2026}
+A.~Groskin, \emph{A finite Guinand--Weil dictionary and archimedean tail order
+for the truncated Weil quadratic form}, arXiv:2607.02828 (2026).
+
+\bibitem{Kim2026}
+T.~Kim et al., \emph{A numerical realization of Suzuki's Weil-quadratic-form
+operator}, arXiv:2607.24830 (2026).
+
+\bibitem{Suzuki2026}
+M.~Suzuki, \emph{Weil's quadratic form via the screw function},
+arXiv:2606.09096 (2026).
+
+\bibitem{Weil1952}
+A.~Weil, \emph{Sur les ``formules explicites'' de la th\'eorie des nombres
+premiers}, Comm. S\'em. Math. Univ. Lund (1952), 252--265.
+
+\bibitem{Yoshida1992}
+M.~Yoshida, \emph{On the positivity of the Weil functional}, unpublished
+manuscript (1992).
+
+\end{thebibliography}
+
+\end{document}
