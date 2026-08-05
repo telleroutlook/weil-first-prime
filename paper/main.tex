@@ -72,22 +72,24 @@
 \maketitle
 
 \begin{abstract}
-We establish six structural results for the local Weil quadratic form
+We prove six structural results for the local Weil quadratic form
 $Q_W^L$ on $L^2(-L,L)$ in the interval
 $\tfrac{1}{2}\log 2 < L < \tfrac{1}{2}\log 3$,
 the \emph{first-prime window} where only the prime $n = 2$ contributes
 to the explicit formula.
-Our main contribution is a pure-rational certificate
-(\cref{thm:rational-cert})
-showing that at $L = \tfrac{7}{20}$ the endpoint potential $V$ absorbs
-the full first-prime layer: $V + P_{2,7/20} \ge \tfrac{69}{100}V \ge 0$.
-We also give an exact spectral description of the truncated shift operator
-$C_{b,L}$ (\cref{thm:overlap}),
-prove that Path~A (potential redistribution) is strictly falsified
-(\cref{thm:path-a-neg}),
-and provide the algebraic and analytic framework for the Path~B
-Schur criterion (\cref{thm:prime-legendre,thm:schur}).
-These results are independent of the main conjecture FP-0.35
+Our main technical contribution (\cref{thm:prime-legendre}) is an
+algebraisation showing that the matrices $J_{ij}(\tau)$ and $E_{ij}(\tau)$
+encoding the coupling between the prime-2 layer and the Legendre basis lie in
+$\mathbb{Q}[\tau]$ and are computable without numerical quadrature.
+We also prove a pure-rational absorption certificate (\cref{thm:rational-cert}):
+$V + P_{2,7/20} \ge \tfrac{69}{100}V \ge 0$, with the key step
+$87^{16}\cdot 68^5 < 1701^5\cdot 32^{16}$ verified in Lean~4/Mathlib.
+We give an exact spectral description of $C_{b,L}$ (\cref{thm:overlap}),
+falsify Path~A by explicit certified negative witnesses (\cref{thm:path-a-neg}),
+and provide a conditional Path~B Schur criterion (\cref{thm:schur}):
+if $b_L > 0$ and $b_L F - R_\eta \succ 0$, then $\lambda(7/20) > 0$;
+the verification of these matrix conditions is ongoing work.
+All results are independent of the main conjecture FP-0.35
 ($\lambda(7/20) > 0$) and do not imply the Riemann Hypothesis.
 \end{abstract}
 
@@ -261,8 +263,21 @@ Since $b/2 < L < b$, all three intervals have positive length and no three
 points $x, x+b, x+2b$ lie simultaneously in $I_L$.
 For $h \in L^2(\Iminus)$ set $h_+ = T_bh \in L^2(\Iplus)$; then
 $\CbL(h \pm h_+) = \pm(h \pm h_+)$, giving eigenvectors for $\pm 1$.
-Functions supported in $\Izero$ satisfy $S_{b,L}f = S_{b,L}^*f = 0$.
-The spectral, norm, multiplicity, and non-compactness conclusions follow.
+Functions supported in $\Izero$ satisfy $S_{b,L}f = S_{b,L}^*f = 0$,
+so $\Izero$ contributes eigenvalue~$0$.
+Since $L^2(\Iminus)$ is infinite-dimensional (it is isomorphic to $L^2$ of a
+non-degenerate interval), every eigenvalue $\pm 1$ has infinite multiplicity;
+similarly the eigenspace for $0$ contains $L^2(\Izero)$, also infinite-dimensional.
+The spectrum $\sigma(\CbL) = \{-1,0,1\}$ follows because $\CbL^2 =
+\mathbf{1}_{L^2(\Iminus\cup\Iplus)}$ (the identity on the two boundary strips),
+so every $\lambda\in\sigma(\CbL)$ satisfies $\lambda^2\le 1$, giving
+$\sigma(\CbL)\subseteq[-1,1]$; together with the explicit eigenvalues this yields
+equality.
+Non-compactness: a compact operator on an infinite-dimensional Hilbert space
+cannot have $\pm 1$ as eigenvalues of infinite multiplicity (its spectrum
+accumulates only at~$0$); since $\CbL$ has $\pm 1$ as eigenvalues of infinite
+multiplicity, it is not compact.
+Finite rank is ruled out by the same argument.
 \end{proof}
 
 \begin{corollary}[Exact sign structure of the first-prime layer]
@@ -450,14 +465,24 @@ Theorem~\ref{thm:schur} take place within this domain.
 \end{lemma}
 
 \begin{proof}
-The kernel $V(x) = -\tfrac{1}{2}\log(1-x^2)$ satisfies $0 \le V(x) \le -\log|1-|x||$
-near $\pm 1$. By the Hardy--Rellich inequality on $(-1,1)$, $V$ is relatively
-form-bounded with respect to the one-dimensional Laplacian (which controls $T$
-up to a compact perturbation), giving the stated estimate. The constant
-$C_\delta$ can be computed explicitly from the Legendre harmonic numbers $H_n$.
-The Archimedean kernel $K_L$ is Hilbert--Schmidt, hence relatively compact
-and $\delta$-bounded for any $\delta > 0$. The closed form $\qbar_L$ is therefore
-defined on $D(T^{1/2})$ by the KLMN theorem.
+The kinetic operator $T$ acts on the Legendre basis as
+$(T P_n)(x) = H_n P_n(x)$ (where $H_n = \sum_{k=1}^n k^{-1}$),
+so $\ip{Tv}{v} = \sum_n H_n |\hat v_n|^2$ for $v = \sum_n \hat v_n P_n$.
+Since $H_n \sim \log n$, the quadratic form of $T$ is comparable to that of
+the operator $\log(1-\partial_x^2)^{1/2}$ on $(-1,1)$ with Dirichlet boundary
+conditions, which in turn controls the $H^{1/2}(-1,1)$ Sobolev norm.
+The logarithmic Hardy inequality on $(-1,1)$ states that for $f \in H^{1/2}_0$,
+\[
+  \int_{-1}^1 \frac{|f(x)|^2}{(1-x^2)\log^2 e(1-x^2)} \, dx
+  \;\lesssim\; \ip{Tf}{f} + \|f\|^2.
+\]
+Since $V(x) = -\tfrac12\log(1-x^2) \lesssim |\log(1-x^2)|$, the potential
+$\ip{Vf}{f}$ is controlled by the left side, giving the $\delta$-bound for any $\delta>0$
+with an explicit $C_\delta$ depending on the Legendre harmonic numbers $H_n$.
+The Archimedean kernel $K_L$ is Hilbert--Schmidt (its kernel $k_L(x,y) = -Lr''(L(x-y))$
+is square-integrable on $I_L^2$), hence relatively compact
+and $\delta$-form-bounded for any $\delta > 0$.
+The closed form $\qbar_L$ is therefore defined on $D(T^{1/2})$ by the KLMN theorem.
 \end{proof}
 
 \begin{theorem}[Split-residual Schur criterion]
@@ -544,6 +569,17 @@ recurrence:
                          + \tfrac{23}{12}t^3 - \tfrac{7}{32}t^5
                          + \tfrac{5}{448}t^7.
 \end{align*}
+\begin{remark}[Normalisation convention for $C_v$]
+\label{rem:normalisation}
+We define $C_v(t) = \int_{-1}^{1-t} v(x+t)\,v(x)\,dx$, which is the
+\emph{one-sided} auto-correlation (no leading factor of~$2$).
+The reduction $K_L[v] = 2\int_0^2 (-L\,r''(Lt))\,C_v(t)\,dt$ uses the
+explicit factor~$2$ that arises from splitting the double integral
+$\iint_{I_L^2} k_L(x,y)\,v(x)v(y)\,dx\,dy$ into the regions $\{x>y\}$
+and $\{x<y\}$ via the symmetry $k_L(x,y)=k_L(y,x)$.
+This is consistent with the factor~$2$ in $J_{ij}(\tau) = 2\int_{-1}^{1-\tau}
+P_i(x)P_j(x+\tau)\,dx$, which arises from the same kernel-symmetry splitting.
+\end{remark}
 The kernel quadratic form $K_{7/20}[v]$ reduces to
 $2\int_0^2 (-\tfrac{7}{20})r''(\tfrac{7t}{20})\,C_v(t)\,dt$.
 The integrand is split at $t = 10^{-4}$: the near-zero piece is bounded by
