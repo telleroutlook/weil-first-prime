@@ -1,16 +1,21 @@
 # weil-first-prime
 
-**Certificate-first proof infrastructure for FP-0.35.**
+**Certificate-first proof infrastructure for FP-0.35 and related results.**
 
 FP-0.35 asks whether the local Weil quadratic form on L²(-7/20, 7/20) is
 strictly positive. The interval L = 7/20 lies just past the first prime
 threshold (½ log 2 < 7/20 < ½ log 3), making it the minimal non-trivial
 target that requires genuine additive–multiplicative coupling.
 
-This repository handles **only** the first-prime window. It depends on the
-Archimedean primitives (M_V, M_K, S_VV, S_VK, S_KK) that were developed in
-`weil-lower-bound`; those primitives are re-implemented here with the two P0
-bugs fixed (see `docs/ARCHIMEDEAN_MIGRATION.md`).
+**Note on scope.** FP-0.35, even if proved, does not imply the Riemann
+Hypothesis. There is no known path from finite-scale Weil positivity to the
+full statement. This repository pursues results that stand on their own
+mathematical merit, with three extended goals (E1–E3) that are publishable
+independently of whether FP-0.35 is completed.
+
+This repository consolidates `weil-lower-bound` (archived DEPRECATED) with the
+first-prime window infrastructure and two P0 integrator bug fixes
+(see `docs/ARCHIMEDEAN_MIGRATION.md`).
 
 ## Status
 
@@ -30,6 +35,29 @@ bugs fixed (see `docs/ARCHIMEDEAN_MIGRATION.md`).
 | O2: trusted proof chain | **Unresolved** | Engineering bottleneck |
 
 **FP-0.35 does not imply RH.** Results are finite-scale only.
+
+## Extended goals (independent of FP-0.35)
+
+Three additional results are pursued in parallel. Each is publishable on its
+own merits regardless of whether FP-0.35 is completed.
+
+| Goal | Description | Target venue | Independent? |
+|---|---|---|---|
+| **E1** — Path A general obstruction theorem | Generalise Theorem 6: for *all* L in the first-prime window, any potential-redistribution coefficient θ below the absorption threshold produces a negative direction. A structural negative result for the whole window. | *Journal of Spectral Theory* | **Yes** |
+| **E2** — Exact effective range of endpoint absorption | Identify the critical L* where the Theorem 2 method becomes tight, prove it fails beyond L*, and characterise the structural change when a second prime (log 3/2) enters. Establishes the precise "range of fire" of this proof route. | Appendix of FP-0.35 paper, or *Analysis and Mathematical Physics* | Partial |
+| **E3** — Lean 4 formalisation of Theorems 1–3 | Machine-checked proofs of the spectral decomposition, endpoint absorption, and pure-rational certificate in Lean 4 / Mathlib. Theorem 3's integer comparison (87¹⁶ · 68⁵ < 1701⁵ · 32¹⁶) is fully decidable. | ITP 2027 or CPP 2027 | **Yes** |
+
+**Timeline sketch**
+
+| Period | Milestone |
+|---|---|
+| Aug 2026 | G1–G2 engineering gates (integrator fixes) |
+| Sep 2026 | O1-B interval LDL^T; E1 draft |
+| Oct–Nov 2026 | FP-0.35 PASS (if even-sector margin survives interval arithmetic); E2 analysis |
+| Dec 2026–Feb 2027 | E3 Lean 4 formalisation; paper drafts |
+
+Optimistic total: **6 months** to 2–3 publishable results.
+Conservative total: **9–12 months** (if even-sector margin requires larger N).
 
 ## Repository layout
 
