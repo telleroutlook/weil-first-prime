@@ -47,7 +47,15 @@ identify which INV it affects and provide a covering test.
 **INV-10 is the most critical for this project.** All contracts use `wasi` runtime.
 Never change `runtime.class` to `native` or `native-dev` in any contract or graph.json.
 
-## v0.3.5 additions (current)
+## v0.3.6 fixes (current)
+
+- **derive.go Rule 6a comment**: `scripted` exclusion from the native cap is now documented in-code
+- **fp035-policy template**: `version: "2"`, `forbidden_runtimes` includes `"native"` — matches our policy
+- **bridge.py conditional Weil keys**: `path_keys_match`, `intervals_intersect`, `matrix_reconstructed`, `ldlt_passes` now read from cert field (`true`/`false`) and only emitted when the cert carries them. fp035 certs that omit these fields produce no spurious metadata entries. `digests_fresh` remains unconditional.
+
+No changes needed in weil-first-prime for v0.3.6 — our policies already excluded the bogus keys.
+
+## v0.3.5 additions
 
 - **`scripted` runtime class**: honest label for native Python checkers. Can reach `GLOBALLY_VERIFIED`. All fp035 contracts use this.
 - **bridge.py**: `window_verified`, `archimedean_obligation`, `pivot_count` now extracted from certificate fields (not hardcoded)
