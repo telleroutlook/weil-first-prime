@@ -63,9 +63,9 @@ SECTOR_PARAMS = {
 
 # Three-tier presets: (depth_2d, depth_3d, prec, label)
 TIERS = {
-    "pilot":   (1, 1, 64,  "PILOT  (~1 min,  float-centre, no proof value)"),
-    "draft":   (2, 2, 128, "DRAFT  (~5 min,  narrow interval, exploratory)"),
-    "certify": (4, 3, 256, "CERTIFY (~60 min, production-quality certified)"),
+    "pilot":   (1, 1, 64,  "PILOT  (~1 min,  S_KK=0 lower bound, direction check only)"),
+    "draft":   (2, 2, 128, "DRAFT  (~10 min, full S with narrow intervals, exploratory)"),
+    "certify": (4, 3, 256, "CERTIFY (~60 min, full certified enclosures, production)"),
 }
 
 
@@ -115,37 +115,106 @@ def build_M0_S0(
     prec: int = 256,
     depth_2d: int = 4,
     depth_3d: int = 3,
+    skip_skk: bool = False,
 ) -> tuple[list[list[Interval]], list[list[Interval]]]:
     """M^(0) and S^(0) from Archimedean primitives.
 
-    depth_2d: integration depth for M_K, S_VK (2D integrals)
-    depth_3d: integration depth for S_KK (3D / expansion)
-    Lower depths run faster but produce wider interval enclosures.
+    Key optimisation: M_K is pre-computed for ALL expansion indices
+    (up to k_max = max(indices) + 4, same-parity) and cached. This
+    avoids O(N^2 * k_max) redundant M_K calls when building S_VK/S_KV.
+
+    S^(0)_{ij} = S_VV[i,j] + S_VK[i,j] + S_KV[i,j] + S_KK[i,j]
+
+    S_VK[i,j] = <V P_j, K P_i> = sum_k  c_k(i) * <V P_j, P_k>
+    where c_k(i) = (2k+1)/2 * M_K[k, indices[i]]
+    This sum reuses the precomputed M_K cache.
+
+    skip_skk: pilot optimisation — use S_KK=0 (conservative lower bound).
+    S_KK >= 0 always (it is a Gram matrix), so this widens R_0 upward,
+    making the Schur criterion harder to satisfy, not easier.
     """
-    from src.archimedean.integrator_a import (
-        integrate_M_K, integrate_S_VK, integrate_S_KK,
-    )
+    from src.archimedean.integrator_a import integrate_M_K
+    from src.archimedean.log_moments import V_matrix_entry as _vmv, V2_matrix_entry as _v2mv
+
     N = len(indices)
     a_num, a_den = L_NUM, L_DEN
+    parity_even = [n for n in indices if n % 2 == 0]
+    parity_odd  = [n for n in indices if n % 2 != 0]
+    max_idx = max(indices)
 
-    M_V = [[V_matrix_entry(indices[i], indices[j], prec) for j in range(N)]
+    # ── Step 1: Pre-compute M_K for all needed expansion indices ──────────
+    # For S_VK[row=ni, col=nj]: need M_K[k, ni] for k in same parity as ni.
+    # k_max_search = max(ni + nj + 4, 20) capped at 100.
+    # Covering all pairs: k up to max(indices)*2 + 4, capped at 100.
+    k_max_cache = min(2 * max_idx + 4, 100)
+    mk_cache: dict[tuple[int, int], Interval] = {}
+
+    all_needed_k = set()
+    for n in indices:
+        p = n % 2
+        for k in range(p, k_max_cache + 1, 2):
+            all_needed_k.add((k, n))
+
+    for (k, n) in sorted(all_needed_k):
+        r = integrate_M_K(k, n, a_num, a_den, depth=depth_2d, prec=prec)
+        mk_cache[(k, n)] = r.to_interval()
+
+    # ── Step 2: M^(0) = M_V + M_K (only for the basis index pairs) ───────
+    M_V = [[_vmv(indices[i], indices[j], prec) for j in range(N)]
            for i in range(N)]
-    M_K = [[integrate_M_K(indices[i], indices[j], a_num, a_den,
-                          depth=depth_2d, prec=prec).to_interval()
-            for j in range(N)] for i in range(N)]
-    M0 = [[add(M_V[i][j], M_K[i][j]) for j in range(N)] for i in range(N)]
+    M_K_basis = [[mk_cache.get((indices[i], indices[j]),
+                                mk_cache.get((indices[j], indices[i]),
+                                integrate_M_K(indices[i], indices[j],
+                                             a_num, a_den, depth=depth_2d,
+                                             prec=prec).to_interval()))
+                  for j in range(N)] for i in range(N)]
+    M0 = [[add(M_V[i][j], M_K_basis[i][j]) for j in range(N)] for i in range(N)]
 
-    S_VV = [[V2_matrix_entry(indices[i], indices[j], prec) for j in range(N)]
+    # ── Step 3: S^(0) using cached M_K ───────────────────────────────────
+    S_VV = [[_v2mv(indices[i], indices[j], prec) for j in range(N)]
             for i in range(N)]
+
     S0 = [[point(Fraction(0))] * N for _ in range(N)]
     for i in range(N):
+        ni = indices[i]
+        parity_i = ni % 2
+        k_max_i = min(max(ni + max_idx + 4, 20), 100)
+
         for j in range(N):
-            svk = integrate_S_VK(indices[i], indices[j], a_num, a_den,
-                                 depth=depth_2d, prec=prec).to_interval()
-            skv = integrate_S_VK(indices[j], indices[i], a_num, a_den,
-                                 depth=depth_2d, prec=prec).to_interval()
-            skk = integrate_S_KK(indices[i], indices[j], a_num, a_den,
-                                 depth=depth_3d, prec=prec).to_interval()
+            nj = indices[j]
+            # S_VK[i,j] = <V P_j, K P_i> = sum_k c_k(ni) * <V P_j, P_k>
+            # S_KV[i,j] = <K P_j, V P_i> = sum_k c_k(nj) * <V P_i, P_k>
+            svk = point(Fraction(0))
+            skv = point(Fraction(0))
+
+            # Only k with same parity as ni contribute to S_VK (K preserves parity)
+            for k in range(parity_i, k_max_i + 1, 2):
+                mk_k_ni = mk_cache.get((k, ni))
+                if mk_k_ni is None:
+                    continue
+                scale = Fraction(2 * k + 1, 2)
+                ck_ni = scalar_mul(scale, mk_k_ni)
+                v_jk = _vmv(nj, k, prec)   # <V P_j, P_k>
+                svk = add(svk, mul(ck_ni, v_jk))
+
+            parity_j = nj % 2
+            k_max_j = min(max(nj + max_idx + 4, 20), 100)
+            for k in range(parity_j, k_max_j + 1, 2):
+                mk_k_nj = mk_cache.get((k, nj))
+                if mk_k_nj is None:
+                    continue
+                scale = Fraction(2 * k + 1, 2)
+                ck_nj = scalar_mul(scale, mk_k_nj)
+                v_ik = _vmv(ni, k, prec)   # <V P_i, P_k>
+                skv = add(skv, mul(ck_nj, v_ik))
+
+            if skip_skk:
+                skk = point(Fraction(0))
+            else:
+                from src.archimedean.integrator_a import integrate_S_KK
+                skk = integrate_S_KK(ni, nj, a_num, a_den,
+                                     depth=depth_3d, prec=prec).to_interval()
+
             S0[i][j] = add(add(add(S_VV[i][j], svk), skv), skk)
 
     return M0, S0
@@ -237,7 +306,10 @@ def run_o1b_gate(
     M2, S2 = build_M2_S2(indices)
 
     print(f"[O1-B {sector}] Computing Archimedean primitives...")
-    M0, S0 = build_M0_S0(indices, prec, depth_2d, depth_3d)
+    skip_skk = (tier == "pilot")
+    if skip_skk:
+        print(f"[O1-B {sector}] pilot: skipping S_KK (using 0 as conservative lower bound)")
+    M0, S0 = build_M0_S0(indices, prec, depth_2d, depth_3d, skip_skk=skip_skk)
 
     R0 = build_R(M0, S0, G)
     R2 = build_R(M2, S2, G)

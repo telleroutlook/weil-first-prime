@@ -78,8 +78,8 @@ FP-0.35（L=7/20 有限尺度正性）
 
 | 档位 | 命令 | 时间 | 用途 |
 |---|---|---|---|
-| PILOT | `python3 -m src.assemble.o1b_gate --tier pilot` | ~1 分钟 | 确认 pivot 方向（无证明价值） |
-| DRAFT | `python3 -m src.assemble.o1b_gate --tier draft` | ~5 分钟 | 检查区间膨胀后裕量是否存活 |
+| PILOT | `python3 -m src.assemble.o1b_gate --tier pilot` | ~1 分钟 | 确认 pivot 方向（S_KK=0 保守下界，无证明价值） |
+| DRAFT | `python3 -m src.assemble.o1b_gate --tier draft` | ~10 分钟 | 完整 S 矩阵，检查区间膨胀后裕量是否存活 |
 | CERTIFY | `python3 -m src.assemble.o1b_gate --tier certify` | ~60 分钟 | 正式 O1-B 闸门闭合 |
 
 **规则**：
