@@ -1,0 +1,51 @@
+{
+  "claim_id": "lem-path-a-rejected",
+  "statement_digest": "",
+  "dependency_digests": null,
+  "evidence": null,
+  "checker": {
+    "id": "lem-path-a-checker",
+    "protocol_version": 2,
+    "checker_digest": "sha256:8505713d43223abc9ce60fa84de2948dcf7c5842ba301ac862462904190ea711",
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "runtime": {
+      "kind": "scripted",
+      "cmd": [
+        "python3",
+        "checker/lem_path_a/check_lem_path_a.py"
+      ],
+      "dependency_manifest_path": "environment.lock"
+    },
+    "network": "none"
+  },
+  "outcome": "accepted",
+  "assurance": "reproducible-computation",
+  "resources": {
+    "wall_millis": 24,
+    "cpu_millis": 0,
+    "mem_bytes": 0
+  },
+  "start_freshness": "2026-08-05",
+  "end_freshness": "2026-08-05",
+  "self_digest": "sha256:668275fddb498b0f4f2cf7830b72e07f34999eb0aa4c0da314681a5b5758e38f",
+  "metadata": {
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:1a9dc008cd7378af8276c8ae40fa643e4d7cc384b3b2d9d657a807cd29c5023a",
+    "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector even --out {cert}",
+    "semantic_replay": "true"
+  },
+  "replay_mode": "from_scratch",
+  "obligation_results": [
+    {
+      "id": "path-a-rejected.falsified-not-fp035",
+      "verdict": "pass"
+    },
+    {
+      "id": "path-a-rejected.standalone-replayable",
+      "verdict": "pass"
+    }
+  ]
+}

@@ -93,7 +93,7 @@
         "deterministic-cap"
       ],
       "evidence": [],
-      "checker_policy": "fp035-cap-checker"
+      "checker_policy": "thm3-checker"
     },
     {
       "id": "cor-3-1-potential-redistribution",
@@ -126,7 +126,7 @@
         "deterministic-cap"
       ],
       "evidence": [],
-      "checker_policy": "fp035-cap-checker"
+      "checker_policy": "thm4-checker"
     },
     {
       "id": "thm-5-split-residual-schur",
@@ -159,7 +159,7 @@
         "deterministic-cap"
       ],
       "evidence": [],
-      "checker_policy": "fp035-cap-checker"
+      "checker_policy": "thm6-checker"
     },
     {
       "id": "lem-l1-edge-mass",
@@ -223,7 +223,7 @@
         "deterministic-cap"
       ],
       "evidence": [],
-      "checker_policy": "fp035-cap-checker"
+      "checker_policy": "lem-path-a-checker"
     },
     {
       "id": "lem-o1b-even",
@@ -329,6 +329,74 @@
         "dependency_manifest_digest": "",
         "dependency_manifest_path": "environment.lock",
         "schema_path": "schemas/certificate-archimedean-v1.schema.json"
+      },
+      "network": "none"
+    },
+    {
+      "id": "thm3-checker",
+      "protocol_version": 2,
+      "checker_digest": "sha256:18dc65f43eb5575d7400593bcd3cc7866d7b6286e5c3604bc6a86b4b93f5649b",
+      "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "runtime": {
+        "kind": "scripted",
+        "cmd": [
+          "python3",
+          "checker/thm3/check_thm3.py"
+        ],
+        "dependency_manifest_digest": "",
+        "dependency_manifest_path": "environment.lock",
+        "schema_path": ""
+      },
+      "network": "none"
+    },
+    {
+      "id": "thm4-checker",
+      "protocol_version": 2,
+      "checker_digest": "sha256:e399ab0ba2c21e45fa539fd65cc415ad578ea459f1fbcd55d8f490a2462d5c6d",
+      "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "runtime": {
+        "kind": "scripted",
+        "cmd": [
+          "python3",
+          "checker/thm4/check_thm4.py"
+        ],
+        "dependency_manifest_digest": "",
+        "dependency_manifest_path": "environment.lock",
+        "schema_path": ""
+      },
+      "network": "none"
+    },
+    {
+      "id": "thm6-checker",
+      "protocol_version": 2,
+      "checker_digest": "sha256:becc121ddaa329bdf4cf77ff9a44e1440a2d428915f12077445e0c5b8dca48ca",
+      "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "runtime": {
+        "kind": "scripted",
+        "cmd": [
+          "python3",
+          "checker/thm6/check_thm6.py"
+        ],
+        "dependency_manifest_digest": "",
+        "dependency_manifest_path": "environment.lock",
+        "schema_path": ""
+      },
+      "network": "none"
+    },
+    {
+      "id": "lem-path-a-checker",
+      "protocol_version": 2,
+      "checker_digest": "sha256:8505713d43223abc9ce60fa84de2948dcf7c5842ba301ac862462904190ea711",
+      "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "runtime": {
+        "kind": "scripted",
+        "cmd": [
+          "python3",
+          "checker/lem_path_a/check_lem_path_a.py"
+        ],
+        "dependency_manifest_digest": "",
+        "dependency_manifest_path": "environment.lock",
+        "schema_path": ""
       },
       "network": "none"
     }

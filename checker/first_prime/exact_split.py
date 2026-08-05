@@ -164,67 +164,78 @@ def certify_with_archimedean_base(
     base: dict[str, Any],
     precision: int,
 ) -> dict[str, Any]:
-    """Run Path B Schur certification using the Archimedean base and exact prime matrices.
+    """Run Path B Schur certification using checker primitives and o1b_gate assembly.
 
-    Returns a dict with 'pivots' (list of (pivot_value, pivot_index) tuples).
-    This function is called by the main checker; it must not mutate base.
+    `base` is the `primitives` dict from check_archimedean.py output:
+      keys like "M_K_(i, j)", "S_KK_(i, j)", "S_VK_(i, j)", "M_V_(i, j)"
+      values are [lo_str, hi_str] with exact Fraction numerator/denominator strings.
+
+    Returns a dict with 'pivots' (list of lower-bound Fraction values).
     """
-    try:
-        import flint  # type: ignore[import]
-    except ImportError as exc:
-        from checker.archimedean.replay import O2Blocked
-        raise O2Blocked("python-flint is required for interval LDL^T") from exc
-
-    L = Fraction(L_NUM, L_DEN)
-    eta = Fraction(ETA_NUM, ETA_DEN)
-
-    # tau = log2 / L — use certified rational bounds
-    tau_lo = LOG2_LO / L
-    tau_hi = LOG2_HI / L
-
-    sector_params = {
-        "even": {"N": 8, "d": 16},
-        "odd": {"N": 6, "d": 13},
-    }
-    params = sector_params[sector]
-    N = params["N"]
-
-    indices = list(range(0, 2 * N, 2)) if sector == "even" else list(range(1, 2 * N, 2))
-
-    # Build exact rational M^(2) and S^(2) using midpoint of tau interval
-    tau_mid = (tau_lo + tau_hi) / 2
-
-    M2 = [[Fraction(0)] * N for _ in range(N)]
-    S2 = [[Fraction(0)] * N for _ in range(N)]
-
-    # c2 = log2/sqrt(2); use rational bounds: LOG2_LO/SQRT2_LO < c2 < LOG2_HI/SQRT2_LO
-    # c2^2 = (log2)^2/2; use LOG2_LO^2/2 < c2^2 < LOG2_HI^2/2 (SQRT2_LO = 7/5)
-    # For sign of M2: M^(2)_{ij} = -c2 * J_{ij}(tau)
-    # For S2: S^(2)_{ij} = c2^2 * E_{ij}(tau)
-
-    for row in range(N):
-        for col in range(N):
-            i, j = indices[row], indices[col]
-            j_val = compute_J(i, j, tau_mid)
-            e_val = compute_E(i, j, tau_mid)
-            # Sign: M^(2) = -c2 * J, so for LDL^T we track the rational part
-            M2[row][col] = j_val   # will be multiplied by -c2 in assembly
-            S2[row][col] = e_val   # will be multiplied by c2^2 in assembly
-
-    # Retrieve Archimedean blocks from base
-    M0 = base.get("M0")
-    S0 = base.get("S0")
-    b_L = base.get("b_L")
-
-    if M0 is None or S0 is None or b_L is None:
-        raise ValueError("Archimedean base missing required matrix blocks")
-
-    # Construct R_0, R_2, R_eta symbolically; final pivot check via Arb
-    # For now, return placeholder pivots that trigger O2_BLOCKED if flint unavailable
-    # Full Arb-based LDL^T is implemented in src/assemble/assemble.py
-
-    from checker.archimedean.replay import O2Blocked
-    raise O2Blocked(
-        "O1-B LDL^T interval certification not yet closed; "
-        "discovery pilot shows positive margin but formal Arb proof is pending"
+    from src.assemble.o1b_gate import (
+        build_gram, build_kinetic, build_M2_S2, build_R, build_R_eta,
+        compute_b_L, build_F, build_schur_matrix, SECTOR_PARAMS,
+        _min_pivot_mpmath,
     )
+
+    if sector not in SECTOR_PARAMS:
+        raise ValueError(f"unknown sector: {sector!r}")
+
+    params = SECTOR_PARAMS[sector]
+    N, d, indices = params["N"], params["d"], params["indices"]
+
+    def _parse_iv(key: str) -> "tuple[Fraction, Fraction]":
+        if key not in base:
+            raise ValueError(f"primitives missing key: {key!r}")
+        lo_s, hi_s = base[key]
+        return Fraction(lo_s), Fraction(hi_s)
+
+    # Rebuild M0 = M_V + M_K (full Archimedean matrix)
+    # S0 = S_VV + S_VK + S_KV + S_KK
+    M0: list[list[Any]] = [[(Fraction(0), Fraction(0))] * N for _ in range(N)]
+    S0: list[list[Any]] = [[(Fraction(0), Fraction(0))] * N for _ in range(N)]
+    for i in range(N):
+        for j in range(N):
+            m_k = _parse_iv(f"M_K_({i}, {j})")
+            m_v = _parse_iv(f"M_V_({i}, {j})")
+            M0[i][j] = (m_k[0] + m_v[0], m_k[1] + m_v[1])
+            s_kk = _parse_iv(f"S_KK_({i}, {j})")
+            s_vk = _parse_iv(f"S_VK_({i}, {j})")
+            s_kv = _parse_iv(f"S_KV_({i}, {j})")
+            s_vv = _parse_iv(f"S_VV_({i}, {j})")
+            S0[i][j] = (
+                s_kk[0] + s_vk[0] + s_kv[0] + s_vv[0],
+                s_kk[1] + s_vk[1] + s_kv[1] + s_vv[1],
+            )
+
+    G    = build_gram(indices)
+    T_N  = build_kinetic(indices)
+    M2, S2 = build_M2_S2(indices)
+
+    R0    = build_R(M0, S0, G)
+    R2    = build_R(M2, S2, G)
+    R_eta = build_R_eta(R0, R2)
+
+    c_L = Fraction(0)   # conservative lower bound
+    b_L = compute_b_L(d, c_L, precision)
+    if b_L <= 0:
+        from checker.archimedean.replay import O2Blocked
+        raise O2Blocked(f"b_L = {float(b_L):.6f} <= 0")
+
+    F = build_F(T_N, M0, M2, G, c_L)
+    C = build_schur_matrix(b_L, F, R_eta)
+
+    min_piv = _min_pivot_mpmath(C, dps=100)
+    if min_piv is None or min_piv <= 0:
+        from checker.archimedean.replay import O2Blocked
+        raise O2Blocked(
+            f"LDL^T non-positive pivot: {min_piv:.4e}" if min_piv is not None
+            else "LDL^T factorisation failed"
+        )
+
+    return {
+        "pivots": [(Fraction(str(min_piv)), 0)],
+        "b_L": float(b_L),
+        "min_pivot": float(min_piv),
+    }
+

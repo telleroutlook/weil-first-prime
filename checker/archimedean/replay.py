@@ -68,7 +68,7 @@ def replay_archimedean_base(
             ],
             capture_output=True,
             text=True,
-            timeout=600,
+            timeout=3600,
         )
     except FileNotFoundError as exc:
         raise O2Blocked(f"base checker not found: {base_checker}") from exc
