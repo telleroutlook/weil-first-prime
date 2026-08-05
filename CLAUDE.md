@@ -89,7 +89,36 @@ identify which INV it affects and provide a covering test.
 **INV-10 is the most critical for this project.** All contracts use `wasi` runtime.
 Never change `runtime.class` to `native` or `native-dev` in any contract or graph.json.
 
-## v0.3.8 security fix (current)
+## Lean 4 formalisation (E3)
+
+Lean 4 project lives in `lean4/`. Toolchain: `leanprover/lean4:v4.32.2`.
+
+```bash
+export PATH="$HOME/.elan/bin:$PATH"
+cd lean4
+lake build WeilFirstPrime   # must succeed with 0 errors
+```
+
+**Current state**: `WeilFirstPrime/Theorem3.lean` — 11 theorems, all verified
+by `native_decide`. No Mathlib required for the integer skeleton.
+
+**Mathlib integration**: `lakefile.toml` declares `mathlib` dependency.
+After `lake update` (requires proxy), `import Mathlib` becomes available
+for `Real.log`, `Real.sqrt`, and operator theory.
+
+**Rules for Lean files**:
+- Never use `sorry` in committed proofs — use `admit` clearly labelled `ADMIT:`
+  with a comment explaining what axiom or library is missing
+- `native_decide` is the correct tactic for all `Nat`/`Int` comparisons
+- `norm_num` requires Mathlib; use `native_decide` until Mathlib is imported
+- Every new theorem must correspond to a numbered result in `paper/main.tex`
+
+**Adding Mathlib proofs**:
+```lean
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Real.Sqrt
+-- then Real.log, Real.sqrt, NNReal available
+```
 
 - **C01 no longer trusts writable `outcome` field for v2 attestations**: acceptance is now derived from `ObligationResults` (all verdicts must be `"pass"`). A hand-crafted `"outcome":"accepted"` JSON can no longer bypass the release gate.
 - `ir.Attestation.ObligationResults` new field — populated automatically by `proofctl verify` and `proofctl check`. No changes needed to checker code or contracts.

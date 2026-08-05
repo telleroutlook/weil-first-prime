@@ -48,19 +48,26 @@ own merits regardless of whether FP-0.35 is completed.
 |---|---|---|---|
 | **E1** — Path A general obstruction theorem | Generalise Theorem 6: for *all* L in the first-prime window, any potential-redistribution coefficient θ below the absorption threshold produces a negative direction. A structural negative result for the whole window. | *Journal of Spectral Theory* | **Yes** |
 | **E2** — Exact effective range of endpoint absorption | Identify the critical L* where the Theorem 2 method becomes tight, prove it fails beyond L*, and characterise the structural change when a second prime (log 3/2) enters. Establishes the precise "range of fire" of this proof route. | Appendix of FP-0.35 paper, or *Analysis and Mathematical Physics* | Partial |
-| **E3** — Lean 4 formalisation of Theorems 1–3 | Machine-checked proofs of the spectral decomposition, endpoint absorption, and pure-rational certificate in Lean 4 / Mathlib. Theorem 3's integer comparison (87¹⁶ · 68⁵ < 1701⁵ · 32¹⁶) is fully decidable. | ITP 2027 or CPP 2027 | **Yes** |
+| **E3** — Lean 4 formalisation of Theorems 1–3 | Machine-checked proofs. Theorem 3's integer comparison (87¹⁶ · 68⁵ < 1701⁵ · 32¹⁶) verified by `native_decide`. Mathlib integration in progress. | ITP 2027 or CPP 2027 | **Yes** |
 
-**Timeline sketch**
+**Timeline (updated 2026-08-05)**
 
-| Period | Milestone |
-|---|---|
-| Aug 2026 | G1–G2 engineering gates (integrator fixes) |
-| Sep 2026 | O1-B interval LDL^T; E1 draft |
-| Oct–Nov 2026 | FP-0.35 PASS (if even-sector margin survives interval arithmetic); E2 analysis |
-| Dec 2026–Feb 2027 | E3 Lean 4 formalisation; paper drafts |
+| Period | Milestone | Status |
+|---|---|---|
+| Aug 2026 | G1–G2 integrator migration, Legendre algebra | ✅ Done |
+| Aug 2026 | O1-B certify (both sectors) | ✅ Done (min_pivot 0.529/0.560) |
+| Aug 2026 | Path A ∩ Path B dual-path verification | ✅ Done (100 entries) |
+| Aug 2026 | proofctl v0.3.8 integration, checkers pinned | ✅ Done |
+| Aug 2026 | E3 Lean 4 Theorem 3 integer skeleton | ✅ Done (`native_decide`) |
+| Aug 2026 | LaTeX preprint framework (Theorems 1–6) | ✅ Done (`paper/main.tex`) |
+| Aug 2026 | CI (pytest + schema + proofctl lint) | ✅ Done |
+| Aug–Sep 2026 | O2: Bernstein ellipse analytic remainder | In progress |
+| Aug–Sep 2026 | E3: Mathlib Real.log/sqrt integration | In progress |
+| Sep–Oct 2026 | proofctl replay cold-start; arXiv preprint | Planned |
+| Oct–Nov 2026 | E1 Path A obstruction theorem paper | Planned |
+| Dec 2026–Feb 2027 | E2 effective range analysis; ITP/CPP submission | Planned |
 
-Optimistic total: **6 months** to 2–3 publishable results.
-Conservative total: **9–12 months** (if even-sector margin requires larger N).
+Optimistic total: **2–3 publishable results by end of 2026.**
 
 ## Repository layout
 

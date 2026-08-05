@@ -1,7 +1,7 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
 **基准日期：2026-08-05**
-**当前状态：六个结构定理已闭合；路径 A 已严格淘汰；主路线为路径 B（O1-B）**
+**当前状态：O1-B 两扇区已认证；O2 进行中（双路径验证 ✓，proofctl 集成 ✓）；E3 Lean 4 定理 3 整数骨架已验证**
 
 ---
 
@@ -41,20 +41,30 @@ FP-0.35（L=7/20 有限尺度正性）
 |---|---|---|
 | 定理 1 + 推论 1–2 | 截断平移精确谱、无小扰动 | 解析证明，可进入 Lean |
 | 定理 2 | 端点势吸收首素数层 | 解析证明 |
-| 定理 3 | 纯有理吸收证书 (69/100) | 纯有理级数证书 |
+| 定理 3 | 纯有理吸收证书 (69/100) | 纯有理级数证书 + **Lean 4 整数骨架验证** |
 | 推论 3.1 | 势重分配降维 | 闭形次序直接推论 |
 | 定理 4 | 首素数 Legendre 矩阵完全代数化 | Q[log2, sqrt(2)] 精确代数 |
 | 定理 5 | 分裂残差 Schur 判据 | 解析证明 |
 | 定理 6 | 路径 A 严格负见证 | 纯有理端点界 + Arb 认证一维积分 |
 | L1–L3 | 边缘质量控制、H¹₀ 粗界、对数吸收 | 标准不等式 |
-| **O1-B 偶扇区** | N=8, d=16, η=1/2: b_L=2.125, min_pivot=0.529 | **mpmath dps=100 outward-rounded LDL^T** |
-| **O1-B 奇扇区** | N=6, d=13, η=1/2: b_L=1.925, min_pivot=0.560 | **mpmath dps=100 outward-rounded LDL^T** |
+| **O1-B 偶扇区** | N=8, d=16, η=1/2: b_L=2.125, min_pivot=0.529 | mpmath dps=100 outward-rounded LDL^T |
+| **O1-B 奇扇区** | N=6, d=13, η=1/2: b_L=1.925, min_pivot=0.560 | mpmath dps=100 outward-rounded LDL^T |
+| **Path A ∩ Path B** | 100 个 M_K 基础对全部相交（depth=4） | 23 个专项测试 |
+| **proofctl 集成** | doctor ✓, checkers pinned, status/frontier 可用 | v0.3.8 |
+| **E3 Lean 4 定理 3** | 5 个整数比较全部由 native_decide 验证 | `lean4/` 目录，0 错误 |
+| **预印本框架** | paper/main.tex：定理 1–6 完整 LaTeX 陈述与证明 | 待投稿 arXiv |
+| **CI** | .github/workflows/ci.yml（pytest + schema + proofctl lint） | GitHub Actions |
 
 ### 未解决
 
 | 编号 | 内容 | 备注 |
 |---|---|---|
-| O2 | 可信证明链 | 唯一剩余障碍 |
+| O2-解析余项界 | Bernstein 椭圆替代 GL-8/GL-4 Richardson | 下一个工程项 |
+| O2-proofctl replay | 冷重放退出码 0 | 需要先生成正式证书 |
+| O2-witness 绑定 | 积分叶节点到证书的绑定 | 待做 |
+| E3-Mathlib | 用 Real.log/Real.sqrt 升级转录界 | Mathlib 安装中 |
+| E1 | 路径 A 一般障碍定理 | 草稿阶段 |
+| E2 | 端点吸收有效范围 L* | 草稿阶段 |
 | FP-0.35 | 主猜想 λ(7/20) > 0 | O1-B 已闭合；O2 闭合后可标记 PASS |
 
 ---
@@ -90,9 +100,6 @@ FP-0.35（L=7/20 有限尺度正性）
    则直接调整 N 或 η 后重跑 PILOT，不跳过 DRAFT
 
 单个扇区测试：`--sector even` 或 `--sector odd`
-- M^(0), S^(0), R_0 由 Archimedean primitive（修复 P0 后）
-
-证明充分条件不使用任何新的素数—Archimedean 交叉积分。
 
 ---
 

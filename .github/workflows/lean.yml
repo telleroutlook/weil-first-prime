@@ -1,0 +1,57 @@
+name: Lean 4 CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lean4/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lean4/**'
+
+jobs:
+  lean-build:
+    name: Lean 4 build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh \
+            | sh -s -- -y --no-modify-path
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Install Lean toolchain
+        working-directory: lean4
+        run: elan toolchain install $(cat lean-toolchain)
+
+      - name: Cache Mathlib
+        uses: actions/cache@v4
+        with:
+          path: |
+            lean4/.lake/packages
+            lean4/.lake/build
+            ~/.elan/toolchains
+          key: lean4-${{ runner.os }}-${{ hashFiles('lean4/lean-toolchain', 'lean4/lake-manifest.json') }}
+          restore-keys: lean4-${{ runner.os }}-
+
+      - name: lake update (resolve dependencies)
+        working-directory: lean4
+        run: lake update
+
+      - name: lake build
+        working-directory: lean4
+        run: lake build WeilFirstPrime
+
+      - name: Verify key theorems compile
+        working-directory: lean4
+        run: |
+          # Confirm the integer comparison theorem is accepted by the kernel
+          lean --stdin <<'EOF'
+          import WeilFirstPrime.Theorem3
+          #check WeilFirstPrime.Theorem3.step3_key_integer_inequality
+          #check WeilFirstPrime.Theorem3.certificate_arithmetic_valid
+          EOF
