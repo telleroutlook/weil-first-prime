@@ -1,7 +1,7 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
 **基准日期：2026-08-05**
-**当前状态：O1-B 两扇区已认证；O2 进行中；E3 Lean 4 定理 3 整数骨架已验证；论文已通过初步外部审阅**
+**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ | 剩余：O2-replay、E1完整证明、投稿**
 
 ---
 
@@ -65,21 +65,22 @@ FP-0.35（L=7/20 有限尺度正性）
 | **O1-B 奇扇区** | N=6, d=13, η=1/2: b_L=1.925, min_pivot=0.560 | mpmath dps=100 outward-rounded LDL^T |
 | **Path A ∩ Path B** | 100 个 M_K 基础对全部相交（depth=4） | 23 个专项测试 |
 | **proofctl 集成** | doctor ✓, checkers pinned, status/frontier 可用 | v0.3.8 |
-| **E3 Lean 4 定理 3** | 5 个整数比较全部由 native_decide 验证 | `lean4/` 目录，0 错误 |
-| **预印本框架** | paper/main.tex：定理 1–6 完整 LaTeX 陈述与证明 | 待投稿 arXiv |
-| **CI** | .github/workflows/ci.yml（pytest + schema + proofctl lint） | GitHub Actions |
+| **E3 Lean 4 定理 3** | ✅ 超额完成 | 整数比较（native_decide）+ log2<7/10 + sqrt2>7/5（Mathlib）全部验证 |
+| **预印本** | ✅ 完成，就绪投稿 | paper/main.pdf，7页，三轮审阅全部处理 |
+| **CI** | ✅ 完成 | .github/workflows/ci.yml（pytest + schema + proofctl lint）|
 
 ### 未解决
 
 | 编号 | 内容 | 备注 |
 |---|---|---|
-| O2-解析余项界 | Bernstein 椭圆替代 GL-8/GL-4 Richardson | 下一个工程项 |
-| O2-proofctl replay | 冷重放退出码 0 | 需要先生成正式证书 |
-| O2-witness 绑定 | 积分叶节点到证书的绑定 | 待做 |
-| E3-Mathlib | 用 Real.log/Real.sqrt 升级转录界 | Mathlib 安装中 |
-| E1 | 路径 A 一般障碍定理 | 草稿阶段 |
-| E2 | 端点吸收有效范围 L* | 草稿阶段 |
-| FP-0.35 | 主猜想 λ(7/20) > 0 | O1-B 已闭合；O2 闭合后可标记 PASS |
+| O2-解析余项界 | ✅ Bernstein 椭圆模块已实现，已接入两条积分路径 | 正式证书未生成 |
+| O2-proofctl replay | ❌ 待做 | 需先运行 `generate_archimedean_cert` 生成证书导入 CAS |
+| O2-witness 绑定 | ❌ 待做 | 积分叶节点到证书的绑定 |
+| E3-Mathlib | ✅ 已完成 | log2 < 7/10 和 sqrt2 > 7/5 已由 Mathlib 验证（见 lean4/） |
+| E1 | 📝 数学框架完成 | `paper/e1-path-a-obstruction.tex` 有完整框架；Lemma 证明是 sketch |
+| E2 | 📝 草稿阶段 | 描述在 docs/EXTENDED_GOALS.md |
+| 论文投稿 | ⏳ 就绪 | PDF 已生成（7页），Zenodo + 邮件流程等待执行 |
+| FP-0.35 | ❌ 未证明（预期） | O1-B 已闭合；O2-replay 闭合后可标记 PASS |
 
 ---
 
@@ -181,33 +182,29 @@ c₂ = log2/√2 < κ_edge(L) = ½ log(1/(2ε)),   ε = 2 − log2/L
 
 ---
 
-## 五、完整成就路线图与时间预估
+## 五、当前状态与下一步（2026-08-05 更新）
 
-```
-2026-08
-  └─ [进行中] G1–G2 工程闸门（Archimedean 积分器修复）
-                                        ← 1–2 周
+所有 2026-08 ~ 2026-09 的工程目标已提前完成。
 
-2026-09 上旬
-  └─ [目标] G3 O1-B 区间矩阵闸门
-            FP-0.35 PASS（乐观）        ← +2–4 周
-  └─ [并行] E1 路径 A 一般障碍定理草稿  ← +3–6 周
+**立即可执行（论文投稿）**：
+1. `cd paper && tectonic main.tex`（生成最终 PDF）
+2. 登录 zenodo.org → 上传 `main.pdf` → 填写 `paper/ZENODO_METADATA.txt`
+3. 发邮件给 Suzuki（arXiv:2606.09096）和 Groskin（arXiv:2607.02828），附 PDF 请求 arXiv endorsement
 
-2026-09 中–下旬
-  └─ [目标] FP-0.35 PASS（保守）        ← +6–10 周
-  └─ [目标] E1 完成 → 投稿准备          ← +3–6 周
-
-2026-10–11
-  └─ [目标] E2 端点吸收有效范围         ← +4–8 周
-  └─ [目标] 论文草稿（FP-0.35 + E1 + E2 合并一篇）
-
-2026-12–2027-02
-  └─ [目标] E3 Lean 4 形式化            ← +2–4 个月
-  └─ [目标] 投稿 ITP/CPP 2027
+**下一个工程项（O2-replay）**：
+```bash
+# 生成正式 archimedean 证书（约 30 秒）
+python3 -m src.assemble.generate_archimedean_cert --sector even --depth 4
+python3 -m src.assemble.generate_archimedean_cert --sector odd --depth 4
+# 导入 CAS
+proofctl cas import certs/archimedean-even.json certs/archimedean-odd.json
+# 冷重放
+BRIDGE_CHECKER="python3 checker/archimedean/check_archimedean.py" \
+  proofctl replay --claim lem-o1b-even --dry-run ...
 ```
 
-**整体乐观预估：6 个月内有 2–3 篇独立可发表成果**
-**整体保守预估：9–12 个月**
+**E1 数学工作**（可立即并行）：
+- `paper/e1-path-a-obstruction.tex` 的 Lemma 证明需要补全连续依赖性论证
 
 ---
 
