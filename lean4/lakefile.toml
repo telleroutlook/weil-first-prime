@@ -1,0 +1,10 @@
+name = "WeilFirstPrime"
+version = "0.1.0"
+defaultTargets = ["weilfirstprime"]
+
+[[lean_lib]]
+name = "WeilFirstPrime"
+
+[[lean_exe]]
+name = "weilfirstprime"
+root = "Main"
