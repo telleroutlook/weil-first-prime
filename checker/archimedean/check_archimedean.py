@@ -27,7 +27,7 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 SCHEMA = _ROOT / "schemas" / "certificate-archimedean-v1.schema.json"
-MAX_CONTRACT_BYTES = 1024 * 1024
+MAX_CONTRACT_BYTES = 10 * 1024 * 1024
 
 
 def _load_and_validate(path: Path) -> dict:

@@ -1,7 +1,7 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
 **基准日期：2026-08-05**
-**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ O2-replay ✅ | 剩余：G4-witness绑定、E1完整证明、投稿**
+**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ O2-replay ✅ O2-witness ✅ | 剩余：G4-pin-checker、release gate、投稿**
 
 ---
 
