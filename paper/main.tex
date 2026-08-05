@@ -118,10 +118,13 @@ supported in $(-L,L)$:
 \[
   Q_W^L(v) = W(v * \widetilde v), \qquad v \in L^2(-L,L).
 \]
-Yoshida~\cite{Yoshida1992} and Bombieri~\cite{Bombieri2001} proved that
+Yoshida~\cite{Yoshida1992} and Bombieri~\cite{Bombieri2000} proved that
 $Q_W^L \ge 0$ for all $L$ in a certain small-support regime.
-Suzuki~\cite{Suzuki2026} gave a concrete Galerkin realization,
-and subsequent numerical work~\cite{Kim2026} established positivity up to
+Suzuki~\cite{Suzuki2026} gave a concrete Galerkin realization and
+developed the screw-function framework that we adopt;
+Groskin~\cite{Groskin2026} provided a finite Guinand--Weil dictionary
+and archimedean tail estimates closely related to the present work;
+and subsequent numerical computation~\cite{Kim2026} established positivity up to
 $L \approx 0.35$ by machine computation.
 
 \subsection{Scope and independent value of the results}
@@ -147,17 +150,28 @@ in operator theory and computational analysis; each stands independently
 of the main conjecture FP-0.35.
 In particular:
 \begin{itemize}[leftmargin=2em]
-\item \emph{Theorem~\ref{thm:overlap}} (spectral decomposition of $C_{b,L}$)
-  answers a natural question about truncated shift operators that arises
-  in any analysis of the Weil explicit formula near a prime threshold.
+\item \emph{Theorem~\ref{thm:prime-legendre}}
+  (first-prime Legendre matrix algebraisation) is the technical core of this
+  paper. It shows that the matrices $J_{ij}(\tau)$ and $E_{ij}(\tau)$, which
+  encode the coupling between the prime-2 layer and the Legendre basis, lie in
+  $\mathbb{Q}[\tau]$ and are computable by exact polynomial arithmetic without
+  any numerical quadrature. This makes the prime layer algebraically tractable
+  and underlies the Path~B Schur criterion (Theorem~\ref{thm:schur}).
 \item \emph{Theorem~\ref{thm:rational-cert}} (pure-rational certificate)
-  provides the first formally machine-verified step in this programme,
-  reducing a transcendental inequality to five integer comparisons
-  verifiable in under one second.
-\item \emph{Theorem~\ref{thm:path-a-neg}} (Path~A falsification) is a
-  negative result of independent interest: it identifies a structural
-  obstruction to a natural class of proof strategies throughout the
-  first-prime window, with implications for future approaches.
+  provides a pure-rational certificate for $V + P_{2,7/20} \ge (69/100)V$
+  whose integer-arithmetic steps are machine-verified in Lean~4 using
+  \texttt{native\_decide}. The five verified comparisons are the
+  computationally non-trivial core of the argument; the algebraic
+  reductions leading to them are carried out by hand in the proof.
+\item \emph{Theorem~\ref{thm:overlap}} (spectral decomposition of $C_{b,L}$)
+  gives a complete, elementary description of the first-prime layer as an
+  operator: its spectrum is $\{-1,0,1\}$ with all eigenvalues of infinite
+  multiplicity, and it is not compact. This rules out several naive reduction
+  strategies and is used in the proof of Theorem~\ref{thm:prime-legendre}.
+\item \emph{Theorem~\ref{thm:path-a-neg}} (Path~A falsification)
+  proves that the potential redistribution strategy fails at $L = 7/20$ with
+  explicit interval-certified negative witnesses, showing the absorption
+  threshold is sharp.
 \end{itemize}
 
 \medskip
@@ -417,6 +431,32 @@ The $\Q[\tau]$ membership and sample values are verified by explicit Legendre
 recursion and polynomial antiderivatives.
 \end{proof}
 
+\begin{lemma}[Form boundedness of $V$ relative to $T$]
+\label{lem:form-bounded}
+The potential $V(x) = -\tfrac{1}{2}\log(1-x^2)$ is infinitesimally form-bounded
+relative to the kinetic operator $T$ (whose Legendre basis representation has
+diagonal $H_{n_j} \cdot G_{jj}$, with $H_n = \sum_{k=1}^n \tfrac{1}{k}$).
+Concretely, for every $\delta > 0$ there exists $C_\delta > 0$ such that
+\[
+  \ip{Vv}{v} \le \delta\,\ip{Tv}{v} + C_\delta\,\|v\|^2
+  \qquad \forall\, v \in D(T).
+\]
+Consequently the closed quadratic form $\qbar_L$ is well-defined on the
+domain $D(\qbar_L) = D(T^{1/2})$, and all matrix operations in
+Theorem~\ref{thm:schur} take place within this domain.
+\end{lemma}
+
+\begin{proof}
+The kernel $V(x) = -\tfrac{1}{2}\log(1-x^2)$ satisfies $0 \le V(x) \le -\log|1-|x||$
+near $\pm 1$. By the Hardy--Rellich inequality on $(-1,1)$, $V$ is relatively
+form-bounded with respect to the one-dimensional Laplacian (which controls $T$
+up to a compact perturbation), giving the stated estimate. The constant
+$C_\delta$ can be computed explicitly from the Legendre harmonic numbers $H_n$.
+The Archimedean kernel $K_L$ is Hilbert--Schmidt, hence relatively compact
+and $\delta$-bounded for any $\delta > 0$. The closed form $\qbar_L$ is therefore
+defined on $D(T^{1/2})$ by the KLMN theorem.
+\end{proof}
+
 \begin{theorem}[Split-residual Schur criterion]
 \label{thm:schur}
 Write $\qbar_L = T + V + K_L + \mathcal{P}_{2,L} - c_L I$.
@@ -566,8 +606,6 @@ Lean~4 / Mathlib, and proofctl for the computational infrastructure
 that underpins this work.
 %% ══════════════════════════════════════════════════════════════════════════════
 
-% To be filled before submission.
-
 %% ══════════════════════════════════════════════════════════════════════════════
 \begin{thebibliography}{99}
 
@@ -575,7 +613,7 @@ that underpins this work.
 F.~Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius interval
 arithmetic}, IEEE Trans.\ Comput.\ \textbf{66} (2017), no.~8, 1281--1292.
 
-\bibitem{Bombieri2001}
+\bibitem{Bombieri2000}
 E.~Bombieri, \emph{Remarks on Weil's quadratic functional in the theory of
 prime numbers, I}, Rend. Mat. Acc. Lincei \textbf{11} (2000), 183--233.
 
@@ -597,7 +635,8 @@ premiers}, Comm. S\'em. Math. Univ. Lund (1952), 252--265.
 
 \bibitem{Yoshida1992}
 M.~Yoshida, \emph{On the positivity of the Weil functional}, unpublished
-manuscript (1992).
+manuscript (1992). The small-support positivity result is also discussed
+in Bombieri~\cite{Bombieri2000}.
 
 \end{thebibliography}
 
