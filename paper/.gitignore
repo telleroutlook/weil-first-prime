@@ -1,5 +1,4 @@
-main.pdf
-e1-path-a-obstruction.pdf
+# Only ignore intermediate LaTeX files, not the final PDFs
 *.aux
 *.log
 *.out
