@@ -89,6 +89,16 @@ identify which INV it affects and provide a covering test.
 **INV-10 is the most critical for this project.** All contracts use `wasi` runtime.
 Never change `runtime.class` to `native` or `native-dev` in any contract or graph.json.
 
+## v0.3.8 security fix (current)
+
+- **C01 no longer trusts writable `outcome` field for v2 attestations**: acceptance is now derived from `ObligationResults` (all verdicts must be `"pass"`). A hand-crafted `"outcome":"accepted"` JSON can no longer bypass the release gate.
+- `ir.Attestation.ObligationResults` new field — populated automatically by `proofctl verify` and `proofctl check`. No changes needed to checker code or contracts.
+- Three new adversarial regression tests in `gate_security_test.go`.
+
+**weil-first-prime action required**: none. bridge.py already emits `obligation_results` with correct verdicts. `proofctl check/verify` will populate the new field automatically on next run.
+
+**graph.json fix**: `proofctl pin checker` wrote `runtime.kind: "native"` (pre-scripted proofctl). Fixed to `"scripted"` after rebuild.
+
 ## v0.3.6 fixes (current)
 
 - **derive.go Rule 6a comment**: `scripted` exclusion from the native cap is now documented in-code
