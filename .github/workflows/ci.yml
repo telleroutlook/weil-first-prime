@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install python-flint==0.9.0 mpmath==1.3.0 jsonschema==4.23.0 pytest==9.1.1
+
+      - name: Run test suite
+        run: python -m pytest tests/ -v --tb=short
+
+      - name: Run mutation tests (schema rejection)
+        run: python -m pytest tests/mutation/ -v
+
+  schema-lint:
+    name: Schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install jsonschema
+        run: pip install jsonschema==4.23.0
+
+      - name: Validate all ContractV2 JSON files against known structure
+        run: |
+          python3 -c "
+          import json, pathlib, sys
+          errors = []
+          for f in sorted(pathlib.Path('domains/fp035/contracts').glob('*.json')):
+              d = json.loads(f.read_text())
+              required = {'contract_version','claim_id','statement_digest',
+                          'obligations','assurance','replay','replay_profile','runtime'}
+              missing = required - d.keys()
+              if missing:
+                  errors.append(f'{f.name}: missing fields {missing}')
+              if d.get('runtime', {}).get('class') in ('native-dev', 'native'):
+                  errors.append(f'{f.name}: forbidden runtime.class {d[\"runtime\"][\"class\"]} (INV-10)')
+          if errors:
+              for e in errors: print(f'ERROR: {e}', file=sys.stderr)
+              sys.exit(1)
+          print(f'All {len(list(pathlib.Path(\"domains/fp035/contracts\").glob(\"*.json\")))} contracts valid.')
+          "
+
+      - name: Validate certificate schemas are well-formed JSON Schema
+        run: |
+          python3 -c "
+          import json, pathlib, jsonschema, sys
+          for f in pathlib.Path('schemas').glob('*.schema.json'):
+              d = json.loads(f.read_text())
+              try:
+                  jsonschema.Draft7Validator.check_schema(d)
+                  print(f'  OK: {f.name}')
+              except jsonschema.exceptions.SchemaError as e:
+                  print(f'  FAIL: {f.name}: {e.message}', file=sys.stderr)
+                  sys.exit(1)
+          "
+
+  proofctl-lint:
+    name: proofctl contract lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build proofctl from source
+        run: |
+          git clone https://github.com/telleroutlook/proofctl.git /tmp/proofctl
+          cd /tmp/proofctl && go build -o /usr/local/bin/proofctl ./cmd/proofctl
+
+      - name: Run proofctl contract lint on all fp035 contracts
+        run: |
+          fails=0
+          for f in domains/fp035/contracts/*.json; do
+            result=$(proofctl contract lint "$f" 2>&1)
+            if echo "$result" | grep -qE "^error:|— [1-9][0-9]* error"; then
+              echo "FAIL: $f"
+              echo "$result"
+              fails=$((fails+1))
+            else
+              echo "  OK: $f"
+            fi
+          done
+          echo "Result: $fails failures / 17 contracts"
+          exit $fails
+
+      - name: Run proofctl status (smoke test — all claims OPEN expected)
+        env:
+          BRIDGE_CHECKER: "python3 checker/first_prime/check_first_prime_certificate.py"
+          PROOFCTL_ADAPTERS: "/tmp/proofctl/adapters"
+        run: proofctl status

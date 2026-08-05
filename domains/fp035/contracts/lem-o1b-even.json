@@ -17,10 +17,7 @@
   ],
   "evidence": {
     "mode": "joint",
-    "required": [
-      "archimedean_base_certificate",
-      "first_prime_certificate_even"
-    ]
+    "required": []
   },
   "checker": {
     "protocol": "proofctl-checker/v2",

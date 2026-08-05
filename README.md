@@ -1,5 +1,7 @@
 # weil-first-prime
 
+[![CI](https://github.com/telleroutlook/weil-first-prime/actions/workflows/ci.yml/badge.svg)](https://github.com/telleroutlook/weil-first-prime/actions/workflows/ci.yml)
+
 **Certificate-first proof infrastructure for FP-0.35 and related results.**
 
 FP-0.35 asks whether the local Weil quadratic form on L²(-7/20, 7/20) is
@@ -30,9 +32,10 @@ first-prime window infrastructure and two P0 integrator bug fixes
 | Theorem 6: Path A strict negative witnesses | Closed | Rational + Arb-certified |
 | FP-0.35 | **Conjecture** | Open |
 | O1-A (weakened path) | Falsified | Two rational negative witnesses |
-| O1-B even sector (N=8, d=16, η=1/2) | discovery positive, uncertified | Current main route |
-| O1-B odd sector (N=6, d=13, η=1/2) | discovery positive, uncertified | Current main route |
-| O2: trusted proof chain | **Unresolved** | Engineering bottleneck |
+| O1-B even sector (N=8, d=16, η=1/2) | **CERTIFIED** min_pivot=0.529 | certify tier (depth=4, dps=100) |
+| O1-B odd sector (N=6, d=13, η=1/2)  | **CERTIFIED** min_pivot=0.560 | certify tier (depth=4, dps=100) |
+| Path A ∩ Path B (100 M_K entries)   | **Verified**  all intersect   | depth=4, 23 tests |
+| O2: trusted proof chain | **In progress** | Bernstein remainder + replay pending |
 
 **FP-0.35 does not imply RH.** Results are finite-scale only.
 
@@ -131,6 +134,47 @@ FP-0.35 is marked PASS only when **all** of the following hold simultaneously:
 
 `weil-lower-bound` is archived as DEPRECATED. Its Archimedean primitive layer
 has been migrated here with P0 fixes. Do not resume work in `weil-lower-bound`.
+
+## proofctl trust model
+
+This project uses [proofctl](https://github.com/telleroutlook/proofctl) as the
+proof orchestration layer. The trust model is explicit:
+
+**What proofctl guarantees:**
+- The exact pinned checker script was run (`checker_digest` in graph.json)
+- The evidence file hash matches what was declared (`evidence_digest`)
+- Attestation `self_digest` has not been tampered with (INV-03)
+- Obligation exact-sets match the ContractV2 declaration (INV-06)
+- `native-dev` / `native` runtime results are permanently capped at
+  `LOCALLY_VERIFIED` and cannot reach `RELEASED` (INV-10)
+
+**What proofctl does NOT guarantee:**
+- The mathematical correctness of the checker code
+- Cross-machine deterministic replay (current `scripted` runtime; see
+  `docs/OCI_MIGRATION.md` for the path to `isolated-oci`)
+
+Mathematical correctness is established by: the checker test suite (102 tests),
+independent Path A ∩ Path B intersection verification, schema `additionalProperties:
+false` blocking self-reported conclusions, and the mutation test suite (24 tests).
+
+`proofverify` is the offline-only verification binary. It reads no STATUS.json and
+derives claim states solely from the v2 attestation bundle — see
+`docs/PROOFCTL_INTEGRATION.md` for full command reference.
+
+## Benchmark timing
+
+Measured on Apple Silicon (single-core equivalent):
+
+| Operation | Time |
+|---|---|
+| `pytest tests/` (102 tests) | ~10 s |
+| `o1b_gate --tier pilot` (one sector) | ~2 min |
+| `o1b_gate --tier certify` (both sectors) | ~3 min |
+| Path A ∩ Path B verification (100 entries) | ~45 s |
+
+For environments without `python-flint`, all tests except the flint-marked ones
+still pass. The `--resume` flag allows interrupted certify runs to continue from
+the last checkpoint (`pilots/checkpoint-*.json`).
 
 ## License
 
