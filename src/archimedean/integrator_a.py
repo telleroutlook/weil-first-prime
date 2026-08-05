@@ -324,7 +324,8 @@ def _mk_integrand_arb(x, y, n_row: int, n_col: int,
 
 
 def integrate_M_K(n_row: int, n_col: int, a_num: int, a_den: int,
-                  depth: int = 4, prec: int = 256) -> PathAResult:
+                  depth: int = 4, prec: int = 256,
+                  use_bernstein: bool = True) -> PathAResult:
     """
     Certified enclosure of M_K[row,col] = <K_a P_{n_col}, P_{n_row}>.
 
@@ -339,6 +340,13 @@ def integrate_M_K(n_row: int, n_col: int, a_num: int, a_den: int,
     The kernel is evaluated as -a * r''(s) where s = |t| = |a*(x-y)|.
     r'' is even, so using |t| is equivalent to the original formula but
     makes the symmetry explicit and avoids ambiguity with signed t.
+
+    Parameters
+    ----------
+    use_bernstein : bool
+        If True (default), use the Bernstein ellipse analytic remainder
+        for formally derivable certificates (O2 certification path).
+        If False, use Richardson GL-8/GL-4 remainder (backward compat).
     """
     from flint import arb, ctx
     ctx.prec = prec
@@ -445,6 +453,22 @@ def integrate_M_K(n_row: int, n_col: int, a_num: int, a_den: int,
                 remainder_bound=_arb_rad_to_frac_upper(abs(x_hf_arb * strip_sum).rad()),
             )
             leaves.append(w)
+
+    # Add Bernstein ellipse outer remainder if requested
+    if use_bernstein:
+        from src.archimedean.bernstein import bernstein_mk_bound
+        a = Fraction(a_num, a_den)
+        # Each x-strip has half-width x_hf_frac = x_step/2
+        x_step = Fraction(2, n_sub)
+        strip_half = x_step / 2
+        # Total bound = per-strip * n_sub * 2 triangles
+        per_strip_bound = bernstein_mk_bound(
+            a_num, a_den, n_row, n_col, strip_half, n_gl=8
+        )
+        total_bound_frac = per_strip_bound * n_sub * 2
+        from flint import arb
+        tb_arb = arb(str(total_bound_frac.numerator)) / arb(str(total_bound_frac.denominator))
+        total_arb = total_arb + arb.union(-tb_arb, tb_arb)
 
     total_enc = _arb_to_interval(total_arb)
     return PathAResult(
