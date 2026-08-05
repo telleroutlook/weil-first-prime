@@ -333,6 +333,30 @@ def build_F(
              for j in range(N)] for i in range(N)]
 
 
+def _mat_to_float(M: list[list[Interval]]) -> list[list[tuple[float, float]]]:
+    """Convert Fraction interval matrix to float for fast pilot LDL^T."""
+    return [[(float(r), float(c)) for r, c in row] for row in M]
+
+
+def _min_pivot_float(C: list[list[tuple[float, float]]]) -> float | None:
+    """Fast float LDL^T for pilot sign check. Not certified — pilot only."""
+    n = len(C)
+    A = [[C[i][j][0] for j in range(n)] for i in range(n)]  # use lower endpoints
+    pivots = []
+    for k in range(n):
+        pivot = A[k][k]
+        if pivot <= 0:
+            return pivot  # return the failing pivot
+        pivots.append(pivot)
+        for i in range(k + 1, n):
+            A[i][k] /= pivot
+        for i in range(k + 1, n):
+            for j in range(i, n):
+                A[i][j] -= A[i][k] * A[k][k] * A[j][k]
+                A[j][i] = A[i][j]
+    return min(pivots)
+
+
 def build_schur_matrix(
     b_L: Fraction,
     F: list[list[Interval]],
@@ -395,11 +419,16 @@ def run_o1b_gate(
     F = build_F(T_N, M0, M2, G, c_L)
     C = build_schur_matrix(b_L, F, R_eta)
 
-    print(f"[O1-B {sector}] Running interval LDL^T...", flush=True)
-    pivot = min_pivot_lower(C)
-    certified = (tier == "certify") and pivot is not None and pivot > 0
+    print(f"[O1-B {sector}] Running LDL^T ({tier})...", flush=True)
+    if tier == "pilot":
+        # Float fast path: not certified, for sign direction only
+        C_f = _mat_to_float(C)
+        pivot = _min_pivot_float(C_f)
+        certified = False
+    else:
+        pivot = min_pivot_lower(C)
+        certified = (tier == "certify") and pivot is not None and pivot > 0
     positive = pivot is not None and pivot > 0
-
     status = ("CERTIFIED" if certified else
               "POSITIVE (not yet certified — run certify tier)" if positive else
               "FAIL")
