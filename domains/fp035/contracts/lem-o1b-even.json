@@ -21,8 +21,8 @@
   },
   "checker": {
     "protocol": "proofctl-checker/v2",
-    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000011",
-    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000011"
+    "checker_digest": "sha256:0c6efe2a64b2e36693c67d3fc33b238b692a99a02a3226216afa32cb5f569fbd",
+    "schema_digest": "sha256:e8d231a210c92f7d956288d44a5f1279e2b592f30d3ac87a0e6a491212999f91"
   },
   "runtime": {
     "class": "scripted",

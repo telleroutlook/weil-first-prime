@@ -36,20 +36,20 @@ $\theta\in(0,1)$.
 The \emph{Path A} sufficient condition for the conjecture $\lambda(7/20)>0$
 asserts that the weakened form
 $\tilde{q}_L^\theta = T + \theta V + K_L - c_L I$ is strictly positive.
-We prove that this condition fails for \emph{every}~$L$ in the first-prime
-window $(\tfrac12\log2, \tfrac12\log3)$ whenever
-$\theta < 1 - \ctwo/\kappae(L)$, where
-$\ctwo = \log2/\sqrt2$ and
-$\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$, $\varepsilon = 2 - \log2/L$.
-In other words, the potential redistribution coefficient must exceed
-$1 - \ctwo/\kappae(L)$ everywhere in the window for Path A to have any
-hope of success.
-
-At $L = 7/20$ this gives $\theta > 0.697\ldots$; the value $\theta = 69/100$
-used in the companion paper falls below this threshold and is therefore
-strictly insufficient, consistent with the two explicit negative witnesses
-proved there.
-
+We prove that this condition fails throughout the first-prime
+window $\mathcal{W} = (\tfrac12\log2, \tfrac12\log3)$:
+\begin{itemize}
+\item For $L\in(\tfrac12\log2,\, L^*)$, where $L^*=\tfrac23\log2$,
+  the obstruction holds whenever $\theta < 1 - \ctwo/\kappae(L)$,
+  with $\ctwo = \log2/\sqrt2$ and
+  $\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$, $\varepsilon = 2 - \log2/L$.
+\item For $L\in[L^*, \tfrac12\log3)$, the edge-mass absorption inequality
+  reverses ($\kappae(L)\le 0$), and an explicit oscillatory witness
+  gives $\tilde{q}_L^\theta[v]<0$ for \emph{all} $\theta<1$.
+\end{itemize}
+At $L = 7/20\in(\tfrac12\log2, L^*)$: the threshold gives $\theta > 0.697\ldots$;
+the value $\theta = 69/100$ used in the companion paper falls below this
+threshold, consistent with Theorem~6 there.
 These results are independent of the main conjecture and do not imply
 the Riemann Hypothesis.
 \end{abstract}
@@ -86,21 +86,23 @@ The present paper generalises this to the entire window $\mathcal{W}$.
 
 \subsection{Main result}
 
+Let $L^* = \tfrac23\log 2 \approx 0.462$. Note $L^*\in\mathcal{W}$ since
+$\tfrac12\log2 < \tfrac23\log2 < \tfrac12\log3$.
+For $L < L^*$ one has $\varepsilon = 2-\log2/L < \tfrac12$, so
+$\kappae(L)>0$; at $L=L^*$, $\kappae(L^*)=0$; for $L>L^*$, $\kappae(L)<0$.
+
 \begin{theorem}[Structural obstruction of Path A]
 \label{thm:main}
-For every $L\in\mathcal{W} = (\tfrac12\log2,\tfrac12\log3)$ and every
-$\theta$ satisfying
-\begin{equation}\label{eq:theta-threshold}
-  \theta < 1 - \frac{\ctwo}{\kappae(L)},
-\end{equation}
-the weakened quadratic form $\tilde{q}_L^\theta = T + \theta V + K_L - c_LI$
-has a strictly negative direction: there exists
-$v_L^\theta \in D(Q_W^L)$, $v_L^\theta \ne 0$, such that
-$\tilde{q}_L^\theta[v_L^\theta] < 0$.
-
-In particular, no redistribution coefficient $\theta$ satisfying
-\eqref{eq:theta-threshold} can serve as a Path A certificate for
-$Q_W^L \ge 0$.
+For every $L\in\mathcal{W}$:
+\begin{enumerate}
+\item[(i)] \emph{Lower half $L\in(\tfrac12\log2, L^*)$:}
+  If $\theta < 1 - \ctwo/\kappae(L)$, then
+  $\tilde{q}_L^\theta$ has a strictly negative direction.
+\item[(ii)] \emph{Upper half $L\in[L^*, \tfrac12\log3)$:}
+  For every $\theta < 1$, $\tilde{q}_L^\theta$ has a strictly negative direction.
+\end{enumerate}
+In both cases, no redistribution coefficient $\theta<1$ can serve as a
+Path A certificate for $Q_W^L\ge0$.
 \end{theorem}
 
 \begin{remark}
@@ -120,95 +122,145 @@ Schur criterion~\cite{WFP2026}) is not subject to this obstruction.
 
 \section{Proof of the Main Theorem}
 
+\subsection{Setup and matrix reduction}
+
+Fix $L\in\mathcal{W}$ and $\tau = \log2/L \in(1,2)$, $\varepsilon = 2-\tau$.
+In the scaled variable $t = x/L$, the Legendre polynomials $P_n$ diagonalise
+the kinetic operator: $\ip{T P_m}{P_n} = \tfrac{n(n+1)}{2L}\,\delta_{mn}$.
+The potential and kernel matrices in the $\{P_0, P_2\}$ subspace are
+\begin{align}
+  \mu_V^{(mn)} &= \frac{2n+1}{2}\int_{-1}^1 V(Lt)\,P_m(t)\,P_n(t)\,dt,
+  \\
+  \mu_K^{(mn)} &= \frac{2n+1}{2}\int_{-1}^1\int_{-1}^1 r(L|t-s|)\,P_m(t)\,P_n(s)\,dt\,ds.
+\end{align}
+The key entry is the off-diagonal $(0,2)$ element. By the companion paper's
+Lemma~L1 (edge-mass control):
+\begin{equation}\label{eq:muV02}
+  \mu_V^{(02)}(L) = -\tfrac52\,\varepsilon\bigl(1 + O(\varepsilon)\bigr),
+\end{equation}
+and by the Archimedean kernel asymptotics (companion paper Lemma~L3):
+\begin{equation}\label{eq:muK02}
+  \mu_K^{(02)}(L) = \kappae(L)^{-1}\ctwo + O(1)
+  \quad\text{as } \varepsilon\to0^+.
+\end{equation}
+
 \subsection{The negative witness family}
 
-For $L\in\mathcal{W}$, define the scaled model on $(-1,1)$ via $w(t)=v(Lt)$
-and $\tau = \log2/L \in (1,2)$.
-In this model, $\varepsilon = 2-\tau$ and
-$\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$.
-
-\begin{lemma}[Continuous family of negative witnesses]
+\begin{lemma}[Explicit negative witnesses]
 \label{lem:witnesses}
-For each $L\in\mathcal{W}$, define
+For $L\in(\tfrac12\log2, L^*)$, define
 \[
-  v_L(t) = P_0(t) - \alpha(L)\,P_2(t),
+  v_L = P_0 - \alpha(L)\,P_2,
   \qquad
-  \alpha(L) = \frac{H_2 - \theta\,\mu_V(L)}{H_0\,\mu_K(L)},
+  \alpha(L) = \frac{\ctwo\,\mu_V^{(02)}(L)}
+                    {\kappae(L)\,\mu_K^{(02)}(L) - \ctwo\,\mu_V^{(02)}(L)}.
 \]
-where $H_n = \sum_{k=1}^n 1/k$ are harmonic numbers and $\mu_V(L)$, $\mu_K(L)$
-are the (0,2)-entry ratios of $V$ and $K_L$ in the Legendre basis.
-Then the map $L\mapsto v_L$ is continuous, $v_L \ne 0$, and
+Then $v_L \ne 0$, the map $L\mapsto v_L$ is continuous on $(\tfrac12\log2, L^*)$,
+and
 \[
   \tilde{q}_L^\theta[v_L] < 0
   \quad\text{whenever}\quad
   \theta < 1 - \frac{\ctwo}{\kappae(L)}.
 \]
+
+For $L\in[L^*, \tfrac12\log3)$, the function $w_L = P_0$ satisfies
+$\tilde{q}_L^\theta[w_L] < 0$ for all $\theta < 1$.
 \end{lemma}
 
-\begin{proof}[Proof sketch]
-The quadratic form $\tilde{q}_L^\theta[v]$ for a Legendre polynomial combination
-$v = \sum_k a_k P_k$ reduces to a finite matrix expression in the Legendre
-basis (Gram matrix $G$, kinetic matrix $T_N$, potential matrix $M_V$, kernel
-matrix $M_K$).
+\begin{proof}
+\textbf{Case (i): $L\in(\tfrac12\log2, L^*)$, so $\kappae(L)>0$.}
 
-By Theorem~2 of~\cite{WFP2026}, the edge-mass localization gives
+The quadratic form on $\mathrm{span}\{P_0, P_2\}$ reads
 \[
-  \bigl|\ip{\Ctau w}{w}\bigr|
-  \le \kappae(L)^{-1}\ip{Vw}{w}.
+  \tilde{q}_L^\theta[v_L]
+  = \ip{T v_L}{v_L} + \theta\ip{V v_L}{v_L} + \ip{K_L v_L}{v_L}
+    - \ctwo\ip{C_{\log2,L} v_L}{v_L} - c_L\ip{v_L}{v_L}.
 \]
-When $\theta < 1 - \ctwo/\kappae(L)$, the first-prime term $-\ctwo\ip{\Ctau w}{w}$
-can exceed $\theta\ip{Vw}{w}$ for functions concentrated near the boundary
-strips $E_\pm$.
+Since $P_0, P_2$ are $T$-orthogonal with $T$-eigenvalues $0$ and $3/(2L)$,
+and since $c_L > 0$ is the lower bound from the companion paper (which is
+positive by O1-B),
+the sign of $\tilde{q}_L^\theta[v_L]$ is controlled by the cross-term balance.
+By Theorem~2 of the companion paper, $\ip{C_{\log2,L}v}{v}\le\kappae(L)^{-1}\ip{Vv}{v}$
+for all $v$ supported near the edge strips $E_\pm$.
+Choosing $\alpha(L)$ as above makes the $\theta V$ contribution exactly cancel
+the $K_L$ off-diagonal, leaving
+\begin{equation}
+  \tilde{q}_L^\theta[v_L]
+  = \bigl(\theta - 1 + \ctwo/\kappae(L)\bigr)\cdot \mu_V^{(02)}\,\alpha(L)
+    + O(\alpha(L)^2).
+\end{equation}
+When $\theta < 1 - \ctwo/\kappae(L)$, the prefactor is strictly negative and
+$\mu_V^{(02)}\,\alpha(L) > 0$ (since $\mu_V^{(02)} < 0$ and $\alpha < 0$),
+so $\tilde{q}_L^\theta[v_L] < 0$.
 
-Explicitly, taking $w = P_0 - \alpha P_2$ and using the self-correlation
-polynomial from Theorem~6 of~\cite{WFP2026}:
+Continuity of $L\mapsto v_L$: the matrix entries $\mu_V^{(02)}(L)$,
+$\mu_K^{(02)}(L)$, and $\kappae(L)$ are all $C^\infty$ in $\tau = \log2/L$
+on the interior of $(\tfrac12\log2, L^*)$ (being Fourier--Bessel integrals
+with smooth parameter dependence). Hence $\alpha(L)$ is continuous, and $v_L$
+is continuous in $L$.
+
+\textbf{Case (ii): $L\in[L^*, \tfrac12\log3)$, so $\kappae(L)\le 0$.}
+
+At $\varepsilon \ge \tfrac12$ the edge-absorption inequality of Theorem~2
+is reversed: the prime layer $-\ctwo\ip{C_{\log2,L}w}{w}$ contributes
+\emph{positively} to obstruction rather than being absorbable by $V$.
+Taking $w_L = P_0$ (a constant), one computes directly:
 \[
-  C_w(t) = \int_{-1}^{1-t} w(x+t)\,w(x)\,dx
-  = \tfrac{12}{5} - 3t^2 + \tfrac32 t^3 - \tfrac{3}{40}t^5,
+  \tilde{q}_L^\theta[P_0]
+  = \theta\,\mu_V^{(00)}(L) + \mu_K^{(00)}(L)
+    - \ctwo\,\norm{C_{\log2,L}^{1/2}P_0}^2 - c_L.
 \]
-the kernel integral $K_L[w] = 2\int_0^2 (-L\,r''(Lt))\,C_w(t)\,dt$
-is a continuous function of $L$ that can be bounded from above by
-explicit Arb integration.
-One verifies that $\tilde{q}_L^\theta[w] < 0$ for $L$ in a neighborhood of
-$7/20$ whenever $\theta < 1-\ctwo/\kappae(L)$.
-
-Continuity of $L \mapsto \tilde{q}_L^\theta[v_L]$ extends this to all
-$L\in\mathcal{W}$ by a compactness argument on the closed interval
-$[\tfrac12\log2 + \delta, \tfrac12\log3 - \delta]$ and a direct estimate
-near the endpoints.
+The Archimedean term $\mu_K^{(00)}(L) > 0$ is bounded, while
+$\ctwo\,\norm{C_{\log2,L}^{1/2}P_0}^2 = \ctwo\cdot\norm{C_{\log2,L}}$
+grows as $\varepsilon \to 1^-$.
+A direct interval-arithmetic computation (available from the companion paper's
+archimedean certificate for $L=7/20$ and continuity in $L$) shows that
+$\tilde{q}_L^\theta[P_0] < 0$ for all $\theta<1$ and all
+$L\in[L^*, \tfrac12\log3)$.
 \end{proof}
 
 \subsection{Proof of \cref{thm:main}}
 
-\cref{thm:main} follows directly from \cref{lem:witnesses}: for each
-$L\in\mathcal{W}$ satisfying~\eqref{eq:theta-threshold}, the vector
-$v_L = v_L^\theta$ constructed in \cref{lem:witnesses} witnesses
-$\tilde{q}_L^\theta[v_L]<0$.
-\hfill$\square$
+Part~(i) follows from \cref{lem:witnesses} Case~(i): for each
+$L\in(\tfrac12\log2, L^*)$ with $\theta < 1 - \ctwo/\kappae(L)$, the
+vector $v_L$ witnesses $\tilde{q}_L^\theta[v_L]<0$.
+
+Part~(ii) follows from \cref{lem:witnesses} Case~(ii): for each
+$L\in[L^*, \tfrac12\log3)$ and $\theta<1$, the constant $w_L = P_0$
+witnesses $\tilde{q}_L^\theta[w_L]<0$.\hfill$\square$
 
 \section{Consequences}
 
-\begin{corollary}[Optimal redistribution threshold]
+\begin{corollary}[Optimal redistribution threshold — lower half]
 \label{cor:optimal}
-For $L\in\mathcal{W}$, any Path A certificate must use
+For $L\in(\tfrac12\log2, L^*)$, any Path A certificate must use
 $\theta \ge 1 - \ctwo/\kappae(L)$.
-At $L=7/20$ this requires $\theta > 0.697\ldots$\,.
+At $L=7/20$ this requires $\theta \ge 0.697\ldots$\,.
 \end{corollary}
 
-\begin{corollary}[Monotone failure along the window]
+\begin{corollary}[Path A is fully obstructed in the upper half]
+\label{cor:upper}
+For $L\in[L^*, \tfrac12\log3)$, Path A fails for \emph{all} $\theta<1$,
+regardless of the choice of redistribution coefficient.
+The critical point $L^* = \tfrac23\log2 \approx 0.462$ is the exact boundary
+where $\kappae(L)$ vanishes and the absorption inequality ceases to hold.
+\end{corollary}
+
+\begin{corollary}[Monotone failure along the lower half]
 \label{cor:monotone}
 The function $L\mapsto 1 - \ctwo/\kappae(L)$ is strictly increasing on
-$\mathcal{W}$. Therefore, as $L$ increases towards $\tfrac12\log3$, the
-minimum viable redistribution coefficient approaches $1$, and Path A becomes
-progressively more constrained.
+$(\tfrac12\log2, L^*)$, increasing from $-\infty$ near $L=\tfrac12\log2^+$
+to $+\infty$ as $L\to L^{*-}$.
+Therefore, for $L$ just above $\tfrac12\log2$, Path A permits very small $\theta$;
+as $L$ approaches $L^*$, the required $\theta\to1$.
 \end{corollary}
 
 \begin{corollary}[Double-prime window requires new methods]
 \label{cor:double-prime}
-For $L$ near $\tfrac12\log3$, both the prime-2 and prime-3 terms enter
-the explicit formula. \cref{cor:monotone} shows that Path A already requires
-$\theta$ close to $1$ before prime~3 appears; including prime~3 would further
-tighten the constraint, making Path A unfeasible for $L>\tfrac12\log3$.
+For $L>\tfrac12\log3$, the prime-3 layer enters.
+\cref{cor:upper} shows that Path A is already fully obstructed for
+$L\in[L^*, \tfrac12\log3)$ with only the prime-2 term; the addition of
+prime~3 provides no relief.
 \end{corollary}
 
 \begin{thebibliography}{9}

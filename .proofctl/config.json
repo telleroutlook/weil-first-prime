@@ -1,3 +1,4 @@
 {
-  "graph_source": "graph.json"
+  "graph_source": "graph.json",
+  "policy_file": "domains/fp035/policy-v2.json"
 }

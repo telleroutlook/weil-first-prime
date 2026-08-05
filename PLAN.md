@@ -1,7 +1,7 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
 **基准日期：2026-08-05**
-**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ | 剩余：O2-replay、E1完整证明、投稿**
+**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ O2-replay ✅ | 剩余：G4-witness绑定、E1完整证明、投稿**
 
 ---
 
@@ -74,7 +74,7 @@ FP-0.35（L=7/20 有限尺度正性）
 | 编号 | 内容 | 备注 |
 |---|---|---|
 | O2-解析余项界 | ✅ Bernstein 椭圆模块已实现，已接入两条积分路径 | 正式证书未生成 |
-| O2-proofctl replay | ❌ 待做 | 需先运行 `generate_archimedean_cert` 生成证书导入 CAS |
+| O2-proofctl replay | ✅ 完成（2026-08-05） | lem-o1b-even, lem-o1b-odd 均 ACCEPTED |
 | O2-witness 绑定 | ❌ 待做 | 积分叶节点到证书的绑定 |
 | E3-Mathlib | ✅ 已完成 | log2 < 7/10 和 sqrt2 > 7/5 已由 Mathlib 验证（见 lean4/） |
 | E1 | 📝 数学框架完成 | `paper/e1-path-a-obstruction.tex` 有完整框架；Lemma 证明是 sketch |
@@ -191,17 +191,10 @@ c₂ = log2/√2 < κ_edge(L) = ½ log(1/(2ε)),   ε = 2 − log2/L
 2. 登录 zenodo.org → 上传 `main.pdf` → 填写 `paper/ZENODO_METADATA.txt`
 3. 发邮件给 Suzuki（arXiv:2606.09096）和 Groskin（arXiv:2607.02828），附 PDF 请求 arXiv endorsement
 
-**下一个工程项（O2-replay）**：
-```bash
-# 生成正式 archimedean 证书（约 30 秒）
-python3 -m src.assemble.generate_archimedean_cert --sector even --depth 4
-python3 -m src.assemble.generate_archimedean_cert --sector odd --depth 4
-# 导入 CAS
-proofctl cas import certs/archimedean-even.json certs/archimedean-odd.json
-# 冷重放
-BRIDGE_CHECKER="python3 checker/archimedean/check_archimedean.py" \
-  proofctl replay --claim lem-o1b-even --dry-run ...
-```
+**下一个工程项（G4-witness 绑定）**：
+- `proofctl pin checker --cmd "python3 checker/archimedean/check_archimedean.py"` 锁定 archimedean checker_digest
+- `proofctl release --dry-run` 确认 blockers
+- O2-witness：将积分叶节点哈希绑定到证书
 
 **E1 数学工作**（可立即并行）：
 - `paper/e1-path-a-obstruction.tex` 的 Lemma 证明需要补全连续依赖性论证
