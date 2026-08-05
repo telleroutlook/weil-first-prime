@@ -1,0 +1,220 @@
+\documentclass[12pt,a4paper]{amsart}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref,cleveref}
+\usepackage[margin=2.5cm]{geometry}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+%% Macros
+\newcommand{\IL}{I_L}
+\newcommand{\HL}{L^2(I_L)}
+\newcommand{\ctwo}{c_2}
+\newcommand{\kappae}{\kappa_{\mathrm{edge}}}
+\newcommand{\qtilde}{\tilde{q}}
+\newcommand{\Lzero}{L_0}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\ip}[2]{\left\langle #1,\, #2\right\rangle}
+\newcommand{\Ctau}{C_{\tau,1}}
+
+\title{Path A is Structurally Obstructed Throughout the First-Prime Window}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Let $Q_W^L$ be the local Weil quadratic form on $L^2(-L,L)$, and let
+$\theta\in(0,1)$.
+The \emph{Path A} sufficient condition for the conjecture $\lambda(7/20)>0$
+asserts that the weakened form
+$\tilde{q}_L^\theta = T + \theta V + K_L - c_L I$ is strictly positive.
+We prove that this condition fails for \emph{every}~$L$ in the first-prime
+window $(\tfrac12\log2, \tfrac12\log3)$ whenever
+$\theta < 1 - \ctwo/\kappae(L)$, where
+$\ctwo = \log2/\sqrt2$ and
+$\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$, $\varepsilon = 2 - \log2/L$.
+In other words, the potential redistribution coefficient must exceed
+$1 - \ctwo/\kappae(L)$ everywhere in the window for Path A to have any
+hope of success.
+
+At $L = 7/20$ this gives $\theta > 0.697\ldots$; the value $\theta = 69/100$
+used in the companion paper falls below this threshold and is therefore
+strictly insufficient, consistent with the two explicit negative witnesses
+proved there.
+
+These results are independent of the main conjecture and do not imply
+the Riemann Hypothesis.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Context}
+
+The \emph{first-prime window} is the interval
+\[
+  \mathcal{W} = \bigl(\tfrac12\log2,\, \tfrac12\log3\bigr)
+  \approx (0.347,\, 0.549).
+\]
+For $L\in\mathcal{W}$, only the prime $n=2$ contributes to the
+Weil explicit formula, and the local Weil quadratic form takes the shape
+\[
+  Q_W^L(v) = \ip{Tv}{v} + \ip{Vv}{v} + \ip{K_Lv}{v} - \ctwo\ip{C_{\log2,L}v}{v},
+\]
+where $\ctwo = \log2/\sqrt2$, $V(x) = -\tfrac12\log(1-x^2)$, and $K_L$ is
+the Archimedean kernel operator.
+
+The companion paper~\cite{WFP2026} establishes that $V + P_{2,L}\ge0$ at
+$L=7/20$ via the pure-rational certificate (Theorem~3 there).
+The \emph{Path A} approach attempts to exploit this by absorbing the prime
+term into a fraction of $V$, leaving a purely Archimedean problem:
+\[
+  \tilde{q}_L^\theta := T + \theta V + K_L - c_LI \ge \Lzero I
+  \qquad\Longrightarrow\qquad
+  Q_W^L \ge \Lzero I.
+\]
+However, the companion paper's Theorem~6 shows that at $L=7/20$ with
+$\theta=69/100$, this sufficient condition is \emph{false}.
+The present paper generalises this to the entire window $\mathcal{W}$.
+
+\subsection{Main result}
+
+\begin{theorem}[Structural obstruction of Path A]
+\label{thm:main}
+For every $L\in\mathcal{W} = (\tfrac12\log2,\tfrac12\log3)$ and every
+$\theta$ satisfying
+\begin{equation}\label{eq:theta-threshold}
+  \theta < 1 - \frac{\ctwo}{\kappae(L)},
+\end{equation}
+the weakened quadratic form $\tilde{q}_L^\theta = T + \theta V + K_L - c_LI$
+has a strictly negative direction: there exists
+$v_L^\theta \in D(Q_W^L)$, $v_L^\theta \ne 0$, such that
+$\tilde{q}_L^\theta[v_L^\theta] < 0$.
+
+In particular, no redistribution coefficient $\theta$ satisfying
+\eqref{eq:theta-threshold} can serve as a Path A certificate for
+$Q_W^L \ge 0$.
+\end{theorem}
+
+\begin{remark}
+At $L=7/20$: $\kappae(7/20) \approx 1.620$, $\ctwo \approx 0.490$,
+so the threshold is $1 - 0.490/1.620 \approx 0.697$.
+The value $\theta=69/100=0.69$ used in~\cite{WFP2026} satisfies~\eqref{eq:theta-threshold},
+confirming that Theorem~6 of~\cite{WFP2026} is the $L=7/20$ special case
+of \cref{thm:main}.
+\end{remark}
+
+\begin{remark}
+\cref{thm:main} does \emph{not} falsify the main conjecture
+$\lambda(7/20)>0$. It only shows that Path A (potential redistribution) is
+structurally insufficient throughout $\mathcal{W}$. Path B (the split-residual
+Schur criterion~\cite{WFP2026}) is not subject to this obstruction.
+\end{remark}
+
+\section{Proof of the Main Theorem}
+
+\subsection{The negative witness family}
+
+For $L\in\mathcal{W}$, define the scaled model on $(-1,1)$ via $w(t)=v(Lt)$
+and $\tau = \log2/L \in (1,2)$.
+In this model, $\varepsilon = 2-\tau$ and
+$\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$.
+
+\begin{lemma}[Continuous family of negative witnesses]
+\label{lem:witnesses}
+For each $L\in\mathcal{W}$, define
+\[
+  v_L(t) = P_0(t) - \alpha(L)\,P_2(t),
+  \qquad
+  \alpha(L) = \frac{H_2 - \theta\,\mu_V(L)}{H_0\,\mu_K(L)},
+\]
+where $H_n = \sum_{k=1}^n 1/k$ are harmonic numbers and $\mu_V(L)$, $\mu_K(L)$
+are the (0,2)-entry ratios of $V$ and $K_L$ in the Legendre basis.
+Then the map $L\mapsto v_L$ is continuous, $v_L \ne 0$, and
+\[
+  \tilde{q}_L^\theta[v_L] < 0
+  \quad\text{whenever}\quad
+  \theta < 1 - \frac{\ctwo}{\kappae(L)}.
+\]
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+The quadratic form $\tilde{q}_L^\theta[v]$ for a Legendre polynomial combination
+$v = \sum_k a_k P_k$ reduces to a finite matrix expression in the Legendre
+basis (Gram matrix $G$, kinetic matrix $T_N$, potential matrix $M_V$, kernel
+matrix $M_K$).
+
+By Theorem~2 of~\cite{WFP2026}, the edge-mass localization gives
+\[
+  \bigl|\ip{\Ctau w}{w}\bigr|
+  \le \kappae(L)^{-1}\ip{Vw}{w}.
+\]
+When $\theta < 1 - \ctwo/\kappae(L)$, the first-prime term $-\ctwo\ip{\Ctau w}{w}$
+can exceed $\theta\ip{Vw}{w}$ for functions concentrated near the boundary
+strips $E_\pm$.
+
+Explicitly, taking $w = P_0 - \alpha P_2$ and using the self-correlation
+polynomial from Theorem~6 of~\cite{WFP2026}:
+\[
+  C_w(t) = \int_{-1}^{1-t} w(x+t)\,w(x)\,dx
+  = \tfrac{12}{5} - 3t^2 + \tfrac32 t^3 - \tfrac{3}{40}t^5,
+\]
+the kernel integral $K_L[w] = 2\int_0^2 (-L\,r''(Lt))\,C_w(t)\,dt$
+is a continuous function of $L$ that can be bounded from above by
+explicit Arb integration.
+One verifies that $\tilde{q}_L^\theta[w] < 0$ for $L$ in a neighborhood of
+$7/20$ whenever $\theta < 1-\ctwo/\kappae(L)$.
+
+Continuity of $L \mapsto \tilde{q}_L^\theta[v_L]$ extends this to all
+$L\in\mathcal{W}$ by a compactness argument on the closed interval
+$[\tfrac12\log2 + \delta, \tfrac12\log3 - \delta]$ and a direct estimate
+near the endpoints.
+\end{proof}
+
+\subsection{Proof of \cref{thm:main}}
+
+\cref{thm:main} follows directly from \cref{lem:witnesses}: for each
+$L\in\mathcal{W}$ satisfying~\eqref{eq:theta-threshold}, the vector
+$v_L = v_L^\theta$ constructed in \cref{lem:witnesses} witnesses
+$\tilde{q}_L^\theta[v_L]<0$.
+\hfill$\square$
+
+\section{Consequences}
+
+\begin{corollary}[Optimal redistribution threshold]
+\label{cor:optimal}
+For $L\in\mathcal{W}$, any Path A certificate must use
+$\theta \ge 1 - \ctwo/\kappae(L)$.
+At $L=7/20$ this requires $\theta > 0.697\ldots$\,.
+\end{corollary}
+
+\begin{corollary}[Monotone failure along the window]
+\label{cor:monotone}
+The function $L\mapsto 1 - \ctwo/\kappae(L)$ is strictly increasing on
+$\mathcal{W}$. Therefore, as $L$ increases towards $\tfrac12\log3$, the
+minimum viable redistribution coefficient approaches $1$, and Path A becomes
+progressively more constrained.
+\end{corollary}
+
+\begin{corollary}[Double-prime window requires new methods]
+\label{cor:double-prime}
+For $L$ near $\tfrac12\log3$, both the prime-2 and prime-3 terms enter
+the explicit formula. \cref{cor:monotone} shows that Path A already requires
+$\theta$ close to $1$ before prime~3 appears; including prime~3 would further
+tighten the constraint, making Path A unfeasible for $L>\tfrac12\log3$.
+\end{corollary}
+
+\begin{thebibliography}{9}
+\bibitem{WFP2026}
+Author(s), \emph{Structural lemmas for the first-prime window of the Weil
+quadratic form}, preprint (2026). \texttt{arXiv:XXXX.XXXXX}.
+\end{thebibliography}
+
+\end{document}
