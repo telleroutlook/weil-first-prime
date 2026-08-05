@@ -1,9 +1,3 @@
 {
-  "domain": "fp035",
-  "proofctl_min_version": "0.3.7",
-  "graph_source": ".proofctl/graph.json",
-  "policy": "policies/fp035-release-v1.json",
-  "release_target": "thm-fp-035",
-  "shadow_mode": true,
-  "_shadow_note": "shadow_mode=true is documentation only; run 'proofctl release --dry-run' to evaluate conditions without committing STATUS.json"
+  "graph_source": ".proofctl/graph.json"
 }

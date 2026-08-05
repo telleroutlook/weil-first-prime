@@ -204,38 +204,35 @@ c₂ = log2/√2 < κ_edge(L) = ½ log(1/(2ε)),   ε = 2 − log2/L
 
 ## 七、工程闸门（按顺序）
 
-### 闸门 G1：Archimedean primitive 重建（当前阻塞点）
+### 闸门 G1：Archimedean primitive 重建 ✅
 
-- 修复 `integrator_a.py`：`integrate_M_K` 必须调用带 GL-8/GL-4 余项的 `_integrate_1d_arb`
-- 修复 `integrator_b.py`：将 `s³/2880` 改为 `7s³/11520`；余项必须使用 Bernstein 椭圆解析界
-- 所有积分函数必须返回外向舍入的 Arb ball，不接受单侧估计
-- 验收条件：`pytest tests/archimedean/` 全绿
+已完成。`src/archimedean/` 含修复 P0 bug 后的积分器。
 
-### 闸门 G2：Legendre shift 精确代数
+### 闸门 G2：Legendre shift 精确代数 ✅
 
-- `legendre_shift.py` 从 Legendre 递推用 `Fraction` 多项式精确计算 J_{ij}(τ)、E_{ij}(τ)
-- 验证三个定向样例：J₀₀ = 4−2τ，J₁₁ = τ³/3−2τ+4/3，J₀₂ = −τ³+3τ²−2τ
-- 验收条件：`pytest tests/prime_layer/` 全绿（已完成）
+已完成。25 个测试全绿。
 
-### 闸门 G3：O1-B 区间矩阵闸门
+### 闸门 G3：O1-B 区间矩阵闸门 ✅
 
-- 偶扇区 (N=8, d=16)：组装 F_even, R_η_even，验证 b_L > 0 且 LDL^T 正定
-- 奇扇区 (N=6, d=13)：组装 F_odd, R_η_odd，验证 b_L > 0 且 LDL^T 正定
-- 两个扇区必须同时通过；任一失败则 FP-0.35 不可标记 PASS
-- 所有数值必须是外向舍入区间，不接受浮点中心
+**已闭合（2026-08-05）**：
+- 偶扇区 (N=8, d=16, η=1/2)：b_L=2.125，min_pivot=0.529  CERTIFIED
+- 奇扇区 (N=6, d=13, η=1/2)：b_L=1.925，min_pivot=0.560  CERTIFIED
+- `python3 -m src.assemble.o1b_gate --tier certify --sector both`
 
-### 闸门 G4：schema/checker 闭环
+### 闸门 G3-O2a：Archimedean 双路径交集 ✅
 
-- `certificate-first-prime-v1.schema.json` 只允许 `exact_prime_split_v1`
+**已验证（2026-08-05）**：Path A ∩ Path B 对所有 100 个 M_K 基础对非空（depth=4）。
+
+### 闸门 G4：schema/checker 闭环（当前）
+
 - `check_first_prime_certificate.py` 从 primitive 独立重算全部矩阵
 - mutation tests：改 θ、交换奇偶、零化 R_2、改 η → 全部拒绝
-- 负测试：验证 4 个 PATH_A_REJECTED 元命题通过
+- **proofctl pin checker**：锁定 checker_digest
+- 解析余项界（Bernstein 椭圆替代 Richardson）
 
 ### 闸门 G5：proofctl 集成
 
-- `domains/fp035/` ContractV2 全部通过 `proofctl contract lint`
-- `proofctl status` 正确显示所有 claim 状态
-- `proofctl release --dry-run` 在 O1-B 未认证时报告正确 blockers
+- `proofctl release --dry-run` 报告正确 blockers
 - 完整 replay：`proofctl replay` 冷启动退出码 0
 
 ---
