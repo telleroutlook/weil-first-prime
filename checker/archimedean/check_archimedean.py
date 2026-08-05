@@ -58,6 +58,32 @@ def _load_and_validate(path: Path) -> dict:
     return value
 
 
+def _check_leaf_witnesses(contract: dict) -> list[str]:
+    """Verify Path A leaf witnesses from mk_entries when present.
+
+    For each leaf, checks that enclosure[lower] <= enclosure[upper] and
+    that the remainder bound is non-negative. Returns list of failure keys.
+    """
+    from fractions import Fraction
+
+    failures = []
+    for entry in contract.get("mk_entries", []):
+        for i, leaf in enumerate(entry.get("leaf_witnesses", [])):
+            key = f"M_K[{entry['n_row']},{entry['n_col']}].leaf[{i}]"
+            try:
+                enc = leaf.get("enclosure", {})
+                lo = Fraction(enc.get("lower", "0"))
+                hi = Fraction(enc.get("upper", "0"))
+                rem = Fraction(leaf.get("remainder", {}).get("bound", "0"))
+                if lo > hi:
+                    failures.append(f"{key}: enclosure inverted lo={lo} > hi={hi}")
+                if rem < 0:
+                    failures.append(f"{key}: negative remainder {rem}")
+            except (ValueError, ZeroDivisionError) as exc:
+                failures.append(f"{key}: parse error {exc}")
+    return failures
+
+
 def check(args: argparse.Namespace) -> int:
     try:
         contract = _load_and_validate(args.contract)
@@ -92,6 +118,16 @@ def check(args: argparse.Namespace) -> int:
         failing = [k for k, v in verified["checks"].items() if not v]
         print(
             f"ARCHIMEDEAN CHECKER UNCERTIFIED: failing checks: {failing}",
+            file=sys.stderr,
+        )
+        return 1
+
+    # Verify leaf witnesses when present in the certificate
+    leaf_failures = _check_leaf_witnesses(contract)
+    if leaf_failures:
+        print(
+            f"ARCHIMEDEAN CHECKER LEAF FAIL: {len(leaf_failures)} leaf witness failures: "
+            f"{leaf_failures[:3]}",
             file=sys.stderr,
         )
         return 1

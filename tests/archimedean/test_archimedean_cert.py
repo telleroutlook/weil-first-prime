@@ -90,29 +90,27 @@ class TestCertificateOutput:
     """Test the certificate file output (mock integration)."""
 
     def test_output_file_contains_required_fields(self, tmp_path) -> None:
-        """Verify output JSON has all required O2 fields."""
-        # Simulate what generate() would write (without running integration)
+        """Verify output JSON has all required fields matching current schema."""
         cert = {
             "format_version": "archimedean-1.0",
             "obligation": "archimedean_primitives_o2_v1",
             "radius": {"numerator": 7, "denominator": 20},
             "sector": "odd",
-            "window": "log2_le_2L_lt_log3",
+            "index_set": [1, 3, 5, 7, 9, 11],
             "path_a": {
-                "method": "GL_with_Bernstein_remainder",
+                "method": "GL_with_certified_remainder",
                 "quadrature_rule": "GL8",
                 "remainder_method": "bernstein_ellipse_analytic",
-                "depth": 4,
-                "prec": 256,
+                "integrand_source_sha256": "a" * 64,
             },
             "path_b": {
-                "method": "mpmath_GL_independent",
-                "dps": 50,
+                "method": "taylor_plus_GL_with_certified_remainder",
+                "taylor_cutoff": "1/50",
                 "taylor_cubic_coefficient": {"numerator": 7, "denominator": 11520},
+                "remainder_method": "bernstein_ellipse_analytic",
+                "integrand_source_sha256": "b" * 64,
             },
-            "intersection_verified": True,
-            "mk_entries": [],
-            "elapsed_s": 45.0,
+            "theorem_contract_sha256": "c" * 64,
         }
 
         out = tmp_path / "test_cert.json"
@@ -121,8 +119,57 @@ class TestCertificateOutput:
         loaded = json.loads(out.read_text())
         assert loaded["format_version"] == "archimedean-1.0"
         assert loaded["obligation"] == "archimedean_primitives_o2_v1"
-        assert loaded["intersection_verified"] is True
+        assert loaded["sector"] == "odd"
+        assert loaded["index_set"] == [1, 3, 5, 7, 9, 11]
         assert loaded["path_b"]["taylor_cubic_coefficient"] == {
             "numerator": 7, "denominator": 11520
         }
-        assert loaded["window"] == "log2_le_2L_lt_log3"
+
+    def test_output_with_leaf_witnesses_passes_schema(self, tmp_path) -> None:
+        """Verify cert with leaf_witnesses validates against schema."""
+        import jsonschema
+        schema_path = pathlib.Path("schemas/certificate-archimedean-v1.schema.json")
+        schema = json.loads(schema_path.read_text())
+
+        cert = {
+            "format_version": "archimedean-1.0",
+            "obligation": "archimedean_primitives_o2_v1",
+            "radius": {"numerator": 7, "denominator": 20},
+            "sector": "even",
+            "index_set": [0, 2, 4, 6, 8, 10, 12, 14],
+            "path_a": {
+                "method": "GL_with_certified_remainder",
+                "quadrature_rule": "GL8",
+                "remainder_method": "bernstein_ellipse_analytic",
+                "integrand_source_sha256": "a" * 64,
+            },
+            "path_b": {
+                "method": "taylor_plus_GL_with_certified_remainder",
+                "taylor_cutoff": "1/50",
+                "taylor_cubic_coefficient": {"numerator": 7, "denominator": 11520},
+                "remainder_method": "bernstein_ellipse_analytic",
+                "integrand_source_sha256": "b" * 64,
+            },
+            "theorem_contract_sha256": "c" * 64,
+            "mk_entries": [
+                {
+                    "n_row": 0, "n_col": 0,
+                    "path_a": ["1/3", "2/3"],
+                    "path_b": ["4/9", "7/9"],
+                    "intersects": True,
+                    "leaf_witnesses": [
+                        {
+                            "entry": {"matrix": "M_K", "row": 0, "col": 0},
+                            "path": "A",
+                            "domain": {"dimension": 2, "cell_lo": [[-1, 1]], "cell_hi": [[0, 1]]},
+                            "transform": {"type": "duffy_2d", "jacobian": "(x+1)"},
+                            "branch": "triangle_1",
+                            "enclosure": {"lower": "1/10", "upper": "3/10"},
+                            "remainder": {"type": "arb_ball", "bound": "1/1000"},
+                        }
+                    ],
+                }
+            ],
+        }
+        errors = list(jsonschema.Draft7Validator(schema).iter_errors(cert))
+        assert not errors, f"Schema errors: {[e.message for e in errors]}"

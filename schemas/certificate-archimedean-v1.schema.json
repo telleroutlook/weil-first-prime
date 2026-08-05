@@ -104,7 +104,62 @@
           "n_col": {"type": "integer"},
           "path_a": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
           "path_b": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
-          "intersects": {"type": "boolean"}
+          "intersects": {"type": "boolean"},
+          "leaf_witnesses": {
+            "type": "array",
+            "description": "Path A leaf-cell integration witnesses for independent audit.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["entry", "path", "domain", "transform", "branch", "enclosure", "remainder"],
+              "properties": {
+                "entry": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["matrix", "row", "col"],
+                  "properties": {
+                    "matrix": {"type": "string"},
+                    "row": {"type": "integer"},
+                    "col": {"type": "integer"}
+                  }
+                },
+                "path": {"type": "string"},
+                "domain": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["dimension", "cell_lo", "cell_hi"],
+                  "properties": {
+                    "dimension": {"type": "integer"},
+                    "cell_lo": {"type": "array"},
+                    "cell_hi": {"type": "array"}
+                  }
+                },
+                "transform": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["type", "jacobian"],
+                  "properties": {
+                    "type": {"type": "string"},
+                    "jacobian": {"type": "string"}
+                  }
+                },
+                "branch": {"type": "string"},
+                "enclosure": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["lower", "upper"],
+                  "properties": {
+                    "lower": {"type": "string"},
+                    "upper": {"type": "string"}
+                  }
+                },
+                "remainder": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["type", "bound"],
+                  "properties": {
+                    "type": {"type": "string"},
+                    "bound": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

@@ -86,10 +86,11 @@ def generate(sector: str, depth: int, prec: int, dps: int, out: pathlib.Path) ->
                 "path_a": [_frac_str(iv_a[0]), _frac_str(iv_a[1])],
                 "path_b": [_frac_str(iv_b[0]), _frac_str(iv_b[1])],
                 "intersects": intersects,
+                "leaf_witnesses": [leaf.to_dict() for leaf in ra.leaves],
             })
             print(f"  M_K[{ni:2d},{nj:2d}] A={float(iv_a[0]):.6e} "
                   f"B=[{float(iv_b[0]):.6e},{float(iv_b[1]):.6e}] "
-                  f"{'✓' if intersects else '✗'}", flush=True)
+                  f"{'✓' if intersects else '✗'} [{len(ra.leaves)} leaves]", flush=True)
 
     elapsed = time.time() - t0
 
