@@ -1,0 +1,187 @@
+\documentclass[12pt,a4paper]{amsart}
+\usepackage{verbatim}
+\usepackage{hyperref,cleveref}
+\usepackage[margin=2.5cm]{geometry}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Certificate-First Proof Orchestration: \\
+       The \texttt{proofctl} Framework for Computational Mathematics}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We describe \texttt{proofctl}, a proof orchestration layer for computational
+mathematics that enforces a \emph{certificate-first} architecture: every
+numerical result entering a proof must be accompanied by an independently
+replayable certificate, and the release gate derives claim acceptance solely
+from obligation results, never from self-reported outcomes.
+We illustrate the framework through its application to the FP-0.35 conjecture
+(Weil quadratic form positivity at $L=7/20$), where 17 inter-dependent claims
+spanning pure rational arithmetic, Lean~4 formalisation, and 256-bit Arb
+interval arithmetic are orchestrated into a single offline-verifiable bundle.
+Key design decisions — fail-closed schema validation, identity-closure
+propagation, and the \texttt{scripted} runtime class — are motivated by
+concrete failure modes encountered during development.
+\end{abstract}
+
+\section{Introduction}
+
+Computational proofs in number theory and analysis increasingly involve
+heterogeneous evidence: formal proofs in proof assistants, certified interval
+arithmetic, and independently replayable computational certificates.
+Orchestrating these into a single verifiable artefact requires infrastructure
+that is both rigorous and practical.
+
+\texttt{proofctl} is an open-source Go tool that provides this infrastructure.
+Its core invariants are:
+
+\begin{enumerate}
+\item \textbf{No self-reported conclusions.} A claim is accepted only when
+  its checker emits \texttt{obligation\_results} with all verdicts \texttt{"pass"};
+  a hand-crafted \texttt{"outcome":"accepted"} field cannot bypass the gate.
+\item \textbf{Identity closure.} Every attestation binds the exact checker
+  digest, schema digest, and dependency digests. Changing any input
+  automatically stalens downstream attestations.
+\item \textbf{Cold-replay requirement.} Release is blocked until every
+  deterministic-cap claim has been independently replayed from scratch.
+\item \textbf{Offline verifiability.} The release bundle is self-contained;
+  no network access is required to verify it.
+\end{enumerate}
+
+\section{Architecture}
+
+\subsection{ProofGraph and Claims}
+
+A \emph{ProofGraph} is a directed acyclic graph of \emph{claims}.
+Each claim has:
+\begin{itemize}
+\item a \texttt{statement\_digest} (SHA-256 of the claim text),
+\item a list of \texttt{dependencies} with required assurance levels,
+\item a \texttt{checker\_policy} identifying which checker verifies it,
+\item an \texttt{obligations} list specifying what the checker must certify.
+\end{itemize}
+
+\subsection{Checker Protocol v2}
+
+A checker is a subprocess that receives a certificate file path and emits
+JSON to stdout:
+\begin{verbatim}
+{
+  "protocol_version": 2,
+  "obligation_results": [
+    {"id": "thm3.log2-bounds-verified", "verdict": "pass"},
+    ...
+  ],
+  "metadata": {"format_version": "first-prime-1.0", ...}
+}
+\end{verbatim}
+Exit code 0 = certified; 1 = uncertified; 2 = malformed; 3 = O2\_BLOCKED.
+
+\subsection{Release Gate}
+
+The release gate evaluates 11 conditions against the full attestation graph.
+Critical conditions include:
+\begin{itemize}
+\item \textbf{C01}: Every claim in the graph is accepted.
+\item \textbf{C04}: Replay consistency — every deterministic-cap claim has
+  a freshness-dated cold-replay attestation.
+\item \textbf{LEGACY}: No v1 attestation (protocol\_version $\neq$ 2) may
+  appear in the graph.
+\end{itemize}
+
+\section{Application to FP-0.35}
+
+\subsection{Proof Graph Structure}
+
+The FP-0.35 proof graph contains 17 claims organised in four layers:
+
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Layer & Claims & Assurance \\
+\hline
+Frozen model & 1 & independent-review \\
+Analytic lemmas & 8 & independent-review \\
+Deterministic-cap & 7 & deterministic-cap \\
+Main conjecture & 1 & deterministic-cap + exact-replay \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Checker Taxonomy}
+
+\begin{description}
+\item[\texttt{check\_thm3.py}] Pure rational arithmetic: five inequalities
+  about $\log 2$, $\varepsilon$, $\kappa_{\rm edge}$, and $c_2$.
+  No floating point; exit~0 iff all five hold.
+\item[\texttt{check\_archimedean.py}] Dual-path certification:
+  independently integrates $M_K$ via Arb~(Path~A) and mpmath~(Path~B),
+  verifies non-empty intersection for all $6{\times}6$ or $8{\times}8$
+  matrix entries, and emits leaf witnesses.
+\item[\texttt{check\_fp\_wrapper.py}] Orchestrates the full O1-B gate:
+  calls the archimedean sub-checker, assembles $F$ and $R_\eta$, runs
+  mpmath LDL$^T$ at dps=100, and emits 7 obligation results.
+\end{description}
+
+\subsection{Key Engineering Lessons}
+
+\begin{enumerate}
+\item \textbf{M\_V + M\_K not M\_K alone.} The Archimedean matrix block
+  $M^{(0)} = M_V + M_K$; using only $M_K$ produces a matrix whose Schur
+  complement is indefinite.
+\item \textbf{Interval blowup in LDL$^T$.} Running outward-rounded LDL$^T$
+  on the full interval matrix amplifies off-diagonal widths; the mpmath
+  midpoint approach with certified width bound is more robust.
+\item \textbf{Timeout asymmetry.} The archimedean sub-checker reruns full
+  integration on each replay ($\approx600$\,s for the even sector); the
+  \texttt{replay.py} timeout was raised from 600\,s to 3600\,s to avoid
+  spurious O2\_BLOCKED exits.
+\end{enumerate}
+
+\section{Comparison with Related Systems}
+
+\begin{description}
+\item[Coq/Isabelle certificates] Formal kernels provide the strongest
+  guarantees but require the full proof term. \texttt{proofctl} is
+  complementary: it orchestrates \emph{computational} evidence that
+  formal systems could, in principle, certify.
+\item[CertiCoq / CompCert] Compiler verification uses similar
+  certificate-passing architectures but targets a different domain.
+\item[Jupyter notebooks] Reproducible but not independently replayable
+  in the proofctl sense: no checker digest, no obligation exact-set,
+  no fail-closed gate.
+\end{description}
+
+\section{Conclusion}
+
+\texttt{proofctl} demonstrates that certificate-first proof orchestration
+is practical for research-scale computational mathematics.
+The FP-0.35 case study produced a 19-member offline-verifiable bundle
+passing all 11 release conditions, with each checker independently
+replayable and each obligation explicitly attested.
+
+\begin{thebibliography}{9}
+\bibitem{WFP2026}
+Author(s), \emph{Structural lemmas for the first-prime window of the Weil
+quadratic form}, preprint (2026). \texttt{doi:10.5281/zenodo.21807498}.
+
+\bibitem{Johansson2017}
+F.~Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius
+interval arithmetic}, IEEE Trans.\ Comput.\ \textbf{66} (2017), 1281--1292.
+
+\bibitem{Lean4}
+L.~de~Moura et al., \emph{The Lean 4 theorem prover and programming
+language}, CADE 2021.
+\end{thebibliography}
+
+\end{document}

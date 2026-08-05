@@ -1,0 +1,69 @@
+# Zenodo submission metadata for paper/e1-path-a-obstruction.tex
+# Status: ready to upload
+# Companion to: 10.5281/zenodo.21807498
+
+## Upload type
+Publication
+
+## Publication type
+Preprint
+
+## Title
+Path A is Structurally Obstructed Throughout the First-Prime Window
+
+## Authors
+Family name: Tao
+Given names: Lin
+Identifiers: (leave blank if no ORCID)
+Affiliations: (leave blank for independent researcher)
+Role: Author
+
+## Description
+We prove that the "Path A" sufficient condition for the FP-0.35 conjecture
+— that the weakened form q~_L = T + theta*V + K_L - c_L*I is strictly
+positive — fails for every L in the first-prime window (half*log2, half*log3).
+The obstruction has two regimes. For L in (half*log2, L*) where L* = (2/3)*log2
+approximately 0.462, Path A fails whenever the redistribution coefficient
+theta < 1 - c_2/kappa_edge(L); the threshold is explicit and strictly positive.
+For L in [L*, half*log3), the edge-absorption inequality reverses
+(kappa_edge(L) <= 0), and Path A fails for ALL theta < 1 regardless of the
+redistribution coefficient. These results are independent of the main conjecture
+FP-0.35 and do not imply the Riemann Hypothesis. The companion paper
+(doi:10.5281/zenodo.21807498) establishes that Path B (the split-residual Schur
+criterion) is not subject to this obstruction.
+
+## Keywords (enter each on a separate line)
+Weil quadratic form
+Path A obstruction
+first prime window
+negative witness
+potential redistribution
+Legendre basis
+operator theory
+spectral theory
+interval arithmetic
+
+## License
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+## Related/alternate identifiers
+URL: https://github.com/telleroutlook/weil-first-prime
+Relation: is supplemented by
+
+DOI: 10.5281/zenodo.21807498
+Relation: is supplement to
+Resource type: Publication / Preprint
+
+## Additional notes
+2020 Mathematics Subject Classification:
+  47A10 (Spectrum, resolvent),
+  47B32 (Operators in reproducing-kernel Hilbert spaces),
+  11M26 (Nonreal zeros of zeta and L-functions)
+
+Companion paper (main structural lemmas):
+  doi:10.5281/zenodo.21807498
+  "Structural Lemmas for the First-Prime Window of the Weil Quadratic Form"
+
+## Target journal (after arXiv)
+Journal of Spectral Theory (EMS) — primary
+Integral Equations and Operator Theory (Birkhäuser) — secondary

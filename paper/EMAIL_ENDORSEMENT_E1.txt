@@ -1,0 +1,33 @@
+Subject: arXiv endorsement request — follow-up paper on Path A obstruction (weil-first-prime)
+
+Dear Professor Suzuki / Dr. Groskin,
+
+Thank you again for your recent paper [arXiv:2606.09096 / arXiv:2607.02828],
+which was essential background for the work I described in my previous email.
+
+I am writing to request arXiv endorsement for a second preprint, a follow-up
+to the structural lemmas paper (doi:10.5281/zenodo.21807498).
+
+Title:
+  "Path A is Structurally Obstructed Throughout the First-Prime Window"
+
+Summary:
+  The main theorem proves that the "Path A" sufficient condition for FP-0.35
+  — the weakened form q~_L = T + theta*V + K_L - c_L*I being positive — fails
+  for every L in the first-prime window (½log2, ½log3). The obstruction has
+  two explicit regimes determined by the critical point L* = (2/3)log2 ≈ 0.462:
+  (i) For L < L*: Path A fails when theta < 1 - c_2/kappa_edge(L).
+  (ii) For L >= L*: Path A fails for ALL theta < 1, unconditionally.
+  This result is independent of the main conjecture and does not imply RH.
+
+The paper is 7 pages, compiled PDF available at:
+  [attach e1-path-a-obstruction.pdf]
+
+Supporting repository: https://github.com/telleroutlook/weil-first-prime
+
+The recommended endorsement category is math.SP (Spectral Theory) or math.NT.
+
+Thank you very much for your time and support.
+
+Best regards,
+Lin Tao
