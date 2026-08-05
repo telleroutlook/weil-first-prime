@@ -1,5 +1,47 @@
 # CLAUDE.md — weil-first-prime development rules
 
+## Long-running computation requirements
+
+Any computation that takes more than 30 seconds MUST satisfy three properties:
+
+### 1. Observable
+- Print progress to stdout as each unit of work completes, not only at the end
+- Use `print(..., flush=True)` — Python buffers stdout by default; without flush,
+  nothing appears until the process exits or the buffer fills
+- Format: `[sector] step N/total: description (elapsed: Xs)`
+- Every cache build, matrix row, and LDL^T step must emit at least one line
+
+### 2. Pausable / killable cleanly
+- Catch `KeyboardInterrupt` at the top level and save partial results to a JSON
+  checkpoint file before exiting
+- Checkpoint path: `pilots/<timestamp>-<sector>-<tier>.checkpoint.json`
+- Checkpoint format: `{"sector", "tier", "mk_cache": {}, "completed_rows": [], "elapsed_s": N}`
+
+### 3. Resumable from checkpoint
+- On startup, check for an existing checkpoint matching the requested sector+tier
+- If found, load the cached M_K values and skip already-completed rows
+- CLI flag: `--resume` to explicitly load the latest checkpoint for that sector+tier
+- This avoids restarting a 60-minute certify run from scratch after an interruption
+
+### Implementation pattern for cache builds
+
+```python
+for i, (k, n) in enumerate(sorted(needed)):
+    t = time.time()
+    result = integrate_M_K(k, n, ...)
+    cache[(k, n)] = result
+    print(f"  M_K cache [{i+1}/{len(needed)}] k={k} n={n}  "
+          f"[{float(result.enclosure_lower):.4e}, {float(result.enclosure_upper):.4e}]  "
+          f"{time.time()-t:.2f}s", flush=True)
+    checkpoint_save(cache, ...)  # save after every entry
+```
+
+### Why this matters
+- The O1-B certify tier takes ~60 minutes; a crash at 59 minutes loses everything
+- The pilot tier was expected to take 1 minute but ran 63 minutes silently,
+  making it impossible to know if the process was stuck or making progress
+- `flush=True` is not optional — it is a hard requirement for any long computation
+
 ## Project identity
 
 weil-first-prime is a **certificate-first proof repository** for the FP-0.35

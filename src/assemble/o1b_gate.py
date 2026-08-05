@@ -10,22 +10,27 @@ Frozen parameters (Theorem 5):
 
 ## Three-tier computation strategy
 
-This module implements the "explore first, certify later" principle:
+  PILOT  (depth=1, prec=64):  ~2 min.  S_KK=0 lower bound. Direction check.
+  DRAFT  (depth=2, prec=128): ~15 min. Full S. Interval inflation check.
+  CERTIFY (depth=4, prec=256): ~60 min. Production certified enclosures.
 
-  PILOT  (depth=1, prec=64):  ~1 min.  Float-centre only.  No proof value.
-                               Purpose: confirm sign direction before committing.
-  DRAFT  (depth=2, prec=128): ~5 min.  Narrow interval, may be too wide to pass.
-                               Purpose: detect if margin survives interval inflation.
-  CERTIFY (depth=4, prec=256): ~60 min. Production-quality certified enclosures.
-                               Purpose: formal O1-B gate closure.
+Always run PILOT first. Only proceed to DRAFT if PILOT pivots are positive.
+Only proceed to CERTIFY if DRAFT lower-endpoint pivots are positive.
 
-Always run PILOT first.  Only proceed to DRAFT if PILOT shows positive pivots.
-Only proceed to CERTIFY if DRAFT shows positive lower endpoints.
+## Observability, checkpointing, resumability
+
+Per CLAUDE.md requirements:
+- All long loops print progress with flush=True
+- M_K cache is checkpointed after every entry to pilots/
+- --resume flag loads latest checkpoint for the sector+tier combination
 """
 
 from __future__ import annotations
 
 import argparse
+import json
+import pathlib
+import time
 from fractions import Fraction
 from typing import Any
 
@@ -110,63 +115,122 @@ def build_M2_S2(
     return M2, S2
 
 
+def _checkpoint_path(sector: str, tier: str) -> pathlib.Path:
+    p = pathlib.Path("pilots")
+    p.mkdir(exist_ok=True)
+    return p / f"checkpoint-{sector}-{tier}.json"
+
+
+def _save_checkpoint(
+    sector: str, tier: str, mk_cache: dict, elapsed: float
+) -> None:
+    """Save M_K cache to disk after every entry (fault-tolerant)."""
+    data = {
+        "sector": sector, "tier": tier, "elapsed_s": elapsed,
+        "mk_cache": {
+            f"{k},{n}": [str(v[0]), str(v[1])]
+            for (k, n), v in mk_cache.items()
+        },
+    }
+    path = _checkpoint_path(sector, tier)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data))
+    tmp.replace(path)  # atomic rename
+
+
+def _load_checkpoint(sector: str, tier: str) -> dict[tuple[int, int], "Interval"] | None:
+    """Load M_K cache from checkpoint if it exists and matches sector+tier."""
+    path = _checkpoint_path(sector, tier)
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text())
+        if data.get("sector") != sector or data.get("tier") != tier:
+            return None
+        cache: dict[tuple[int, int], Interval] = {}
+        for key, (lo_s, hi_s) in data["mk_cache"].items():
+            k, n = map(int, key.split(","))
+            cache[(k, n)] = (Fraction(lo_s), Fraction(hi_s))
+        elapsed = data.get("elapsed_s", 0)
+        print(f"  [checkpoint] loaded {len(cache)} M_K entries "
+              f"(prior elapsed: {elapsed:.0f}s)", flush=True)
+        return cache
+    except Exception as e:
+        print(f"  [checkpoint] load failed ({e}), starting fresh", flush=True)
+        return None
+
+
 def build_M0_S0(
     indices: list[int],
     prec: int = 256,
     depth_2d: int = 4,
     depth_3d: int = 3,
     skip_skk: bool = False,
+    sector: str = "unknown",
+    tier: str = "pilot",
+    resume: bool = False,
 ) -> tuple[list[list[Interval]], list[list[Interval]]]:
     """M^(0) and S^(0) from Archimedean primitives.
 
     Key optimisation: M_K is pre-computed for ALL expansion indices
-    (up to k_max = max(indices) + 4, same-parity) and cached. This
-    avoids O(N^2 * k_max) redundant M_K calls when building S_VK/S_KV.
+    and cached to disk. Progress is printed with flush=True.
+    Supports --resume to skip already-computed entries.
 
-    S^(0)_{ij} = S_VV[i,j] + S_VK[i,j] + S_KV[i,j] + S_KK[i,j]
-
-    S_VK[i,j] = <V P_j, K P_i> = sum_k  c_k(i) * <V P_j, P_k>
-    where c_k(i) = (2k+1)/2 * M_K[k, indices[i]]
-    This sum reuses the precomputed M_K cache.
-
-    skip_skk: pilot optimisation — use S_KK=0 (conservative lower bound).
-    S_KK >= 0 always (it is a Gram matrix), so this widens R_0 upward,
-    making the Schur criterion harder to satisfy, not easier.
+    skip_skk: pilot optimisation — S_KK=0 (conservative lower bound).
+    S_KK >= 0 always (Gram matrix), so this makes the criterion harder.
     """
     from src.archimedean.integrator_a import integrate_M_K
     from src.archimedean.log_moments import V_matrix_entry as _vmv, V2_matrix_entry as _v2mv
 
     N = len(indices)
     a_num, a_den = L_NUM, L_DEN
-    parity_even = [n for n in indices if n % 2 == 0]
-    parity_odd  = [n for n in indices if n % 2 != 0]
     max_idx = max(indices)
 
-    # ── Step 1: Pre-compute M_K for all needed expansion indices ──────────
-    # For S_VK[row=ni, col=nj]: need M_K[k, ni] for k in same parity as ni.
-    # k_max_search = max(ni + nj + 4, 20) capped at 100.
-    # Covering all pairs: k up to max(indices)*2 + 4, capped at 100.
+    # ── Step 1: Build M_K cache with progress, checkpointing, resume ─────
     k_max_cache = min(2 * max_idx + 4, 100)
+    all_needed_k = sorted({
+        (k, n)
+        for n in indices
+        for k in range(n % 2, k_max_cache + 1, 2)
+    })
+    total = len(all_needed_k)
+
+    # Try to resume from checkpoint
     mk_cache: dict[tuple[int, int], Interval] = {}
+    if resume:
+        loaded = _load_checkpoint(sector, tier)
+        if loaded:
+            mk_cache = loaded
 
-    all_needed_k = set()
-    for n in indices:
-        p = n % 2
-        for k in range(p, k_max_cache + 1, 2):
-            all_needed_k.add((k, n))
+    remaining = [(k, n) for (k, n) in all_needed_k if (k, n) not in mk_cache]
+    if mk_cache:
+        print(f"  resuming: {len(mk_cache)}/{total} already cached, "
+              f"{len(remaining)} remaining", flush=True)
 
-    for (k, n) in sorted(all_needed_k):
+    t_start = time.time()
+
+    for i, (k, n) in enumerate(remaining):
+        t0 = time.time()
         r = integrate_M_K(k, n, a_num, a_den, depth=depth_2d, prec=prec)
-        mk_cache[(k, n)] = r.to_interval()
+        iv = r.to_interval()
+        mk_cache[(k, n)] = iv
+        elapsed = time.time() - t_start
+        done = len(mk_cache)
+        eta = (elapsed / done) * (total - done) if done < total else 0
+        print(
+            f"  M_K [{done:3d}/{total}] k={k:2d} n={n:2d}  "
+            f"[{float(iv[0]):.4e}, {float(iv[1]):.4e}]  "
+            f"{time.time()-t0:.2f}s  eta={eta:.0f}s",
+            flush=True,
+        )
+        _save_checkpoint(sector, tier, mk_cache, elapsed)
 
     # ── Step 2: M^(0) = M_V + M_K (only for the basis index pairs) ───────
     M_V = [[_vmv(indices[i], indices[j], prec) for j in range(N)]
            for i in range(N)]
     M_K_basis = [[mk_cache.get((indices[i], indices[j]),
                                 mk_cache.get((indices[j], indices[i]),
-                                integrate_M_K(indices[i], indices[j],
-                                             a_num, a_den, depth=depth_2d,
-                                             prec=prec).to_interval()))
+                                             point(Fraction(0))))
                   for j in range(N)] for i in range(N)]
     M0 = [[add(M_V[i][j], M_K_basis[i][j]) for j in range(N)] for i in range(N)]
 
@@ -285,6 +349,7 @@ def run_o1b_gate(
     c_L: Fraction,
     tier: str = "pilot",
     prec: int | None = None,
+    resume: bool = False,
 ) -> dict[str, Any]:
     """Run O1-B Schur gate for one parity sector.
 
@@ -299,24 +364,25 @@ def run_o1b_gate(
     N, d, indices = params["N"], params["d"], params["indices"]
 
     print(f"[O1-B {sector}] tier={tier.upper()}  N={N} d={d}  "
-          f"depth_2d={depth_2d} depth_3d={depth_3d} prec={prec}")
+          f"depth_2d={depth_2d} depth_3d={depth_3d} prec={prec}", flush=True)
 
     G = build_gram(indices)
     T_N = build_kinetic(indices)
     M2, S2 = build_M2_S2(indices)
 
-    print(f"[O1-B {sector}] Computing Archimedean primitives...")
+    print(f"[O1-B {sector}] Computing Archimedean primitives...", flush=True)
     skip_skk = (tier == "pilot")
     if skip_skk:
-        print(f"[O1-B {sector}] pilot: skipping S_KK (using 0 as conservative lower bound)")
-    M0, S0 = build_M0_S0(indices, prec, depth_2d, depth_3d, skip_skk=skip_skk)
+        print(f"[O1-B {sector}] pilot: skipping S_KK (using 0 as conservative lower bound)", flush=True)
+    M0, S0 = build_M0_S0(indices, prec, depth_2d, depth_3d, skip_skk=skip_skk,
+                          sector=sector, tier=tier, resume=resume)
 
     R0 = build_R(M0, S0, G)
     R2 = build_R(M2, S2, G)
     R_eta = build_R_eta(R0, R2)
 
     b_L = compute_b_L(d, c_L, prec)
-    print(f"[O1-B {sector}] b_L = {float(b_L):.6f}")
+    print(f"[O1-B {sector}] b_L = {float(b_L):.6f}", flush=True)
 
     if b_L <= 0:
         return {
@@ -329,7 +395,7 @@ def run_o1b_gate(
     F = build_F(T_N, M0, M2, G, c_L)
     C = build_schur_matrix(b_L, F, R_eta)
 
-    print(f"[O1-B {sector}] Running interval LDL^T...")
+    print(f"[O1-B {sector}] Running interval LDL^T...", flush=True)
     pivot = min_pivot_lower(C)
     certified = (tier == "certify") and pivot is not None and pivot > 0
     positive = pivot is not None and pivot > 0
@@ -350,12 +416,10 @@ def run_o1b_gate(
 
 
 if __name__ == "__main__":
-    import json
-
     parser = argparse.ArgumentParser(description="O1-B Schur gate runner")
     parser.add_argument(
         "--tier", choices=["pilot", "draft", "certify"], default="pilot",
-        help="Computation tier (default: pilot ~1 min)"
+        help="Computation tier (default: pilot ~2 min)"
     )
     parser.add_argument(
         "--sector", choices=["even", "odd", "both"], default="both",
@@ -364,22 +428,26 @@ if __name__ == "__main__":
         "--c_L", type=float, default=0.0,
         help="c_L constant from frozen model (default: 0 = conservative)"
     )
+    parser.add_argument(
+        "--resume", action="store_true",
+        help="Resume from checkpoint if available"
+    )
     args = parser.parse_args()
 
     _, _, _, tier_label = TIERS[args.tier]
-    print(f"Running O1-B gate: {tier_label}")
-    print(f"c_L = {args.c_L}")
-    print()
+    print(f"Running O1-B gate: {tier_label}", flush=True)
+    print(f"c_L = {args.c_L}  resume={args.resume}", flush=True)
+    print(flush=True)
 
     c_L = Fraction(args.c_L).limit_denominator(10**6)
     sectors = ["even", "odd"] if args.sector == "both" else [args.sector]
 
     results = {}
     for sector in sectors:
-        result = run_o1b_gate(sector, c_L, tier=args.tier)
+        result = run_o1b_gate(sector, c_L, tier=args.tier, resume=args.resume)
         results[sector] = result
-        print(json.dumps(result, indent=2))
-        print()
+        print(json.dumps(result, indent=2), flush=True)
+        print(flush=True)
 
     if len(sectors) > 1:
         all_positive = all(r.get("pivot_positive") for r in results.values())
