@@ -83,7 +83,11 @@ encoding the coupling between the prime-2 layer and the Legendre basis lie in
 $\mathbb{Q}[\tau]$ and are computable without numerical quadrature.
 We also prove a pure-rational absorption certificate (\cref{thm:rational-cert}):
 $V + P_{2,7/20} \ge \tfrac{69}{100}V \ge 0$, with the key step
-$87^{16}\cdot 68^5 < 1701^5\cdot 32^{16}$ verified in Lean~4/Mathlib.
+$87^{16}\cdot 68^5 < 1701^5\cdot 32^{16}$ verified in Lean~4/Mathlib
+(integer comparisons via \texttt{native\_decide}; transcendental bounds
+$\log 2 < 7/10$ and $\sqrt{2} > 7/5$ via \texttt{Real.sum\_le\_exp\_of\_nonneg}
+and \texttt{Real.sqrt\_lt\_sqrt}; the Arb-certified integral in Theorem~6.1
+is independent of the Lean formalisation).
 We give an exact spectral description of $C_{b,L}$ (\cref{thm:overlap}),
 falsify Path~A by explicit certified negative witnesses (\cref{thm:path-a-neg}),
 and provide a conditional Path~B Schur criterion (\cref{thm:schur}):
@@ -230,6 +234,34 @@ The \emph{closed quadratic form} is
 where $T$ is the kinetic term (harmonic-number diagonal in Legendre basis)
 and $c_L$ is the Weil constant at radius $L$.
 
+\begin{remark}[Dependence on Suzuki's framework and explicit conventions]
+\label{rem:conventions}
+The following three facts from Suzuki~\cite{Suzuki2026}
+(equations (1.1), (2.5), (2.11) and Theorem~1.3) are used throughout:
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item \textbf{Kinetic operator.}
+  In the $L^2(-1,1)$ Legendre basis with \emph{unnormalised} polynomials
+  $\{P_n\}_{n\ge0}$ and Gram matrix $G_{ij} = \ip{P_j}{P_i} = \tfrac{2}{2i+1}\delta_{ij}$,
+  the kinetic term acts as $(T_N)_{ij} = H_{n_j}G_{ij}$, where
+  $H_n = \sum_{k=1}^n k^{-1}$ is the $n$-th harmonic number.
+  Here $H_d$ in the complement bound $b_L = H_d - c_L - \Lzero - \kappa_L$
+  is specifically $H_d G_{dd}^{-1} \cdot G_{dd} = H_d$ where $d$ is the
+  smallest Legendre degree in the complement sector
+  (even: $d=16$, odd: $d=13$ for the FP-0.35 parameters).
+\item \textbf{Weil constant.} $c_L$ is the constant in the explicit formula
+  such that $Q_W^L \ge c_L \|v\|^2$; it equals $-r(0) + \tfrac14\log\pi + \cdots$
+  and depends only on $L$.  In our computations we use $c_L = 0$ (conservative).
+\item \textbf{Kernel bound.} The Hilbert--Schmidt norm satisfies
+  $\|K_L\|_{\rm HS}^2 = \iint_{I_L^2} |k_L(x,y)|^2\,dx\,dy
+   = L^2 \int_0^{2L} (2L - t)\,|r''(Lt)|^2\,dt$,
+  giving the rational upper bound $\kappa_L \ge \|K_L\|_{\rm HS} \ge \|K_L\|$
+  once $r''$ is bounded via the two-branch certified estimate
+  (Appendix of the supporting repository).
+\end{enumerate}
+These three facts are localised here so that any revision of Suzuki's
+conventions affects only this remark and the numerical parameters in §\ref{sec:conjecture}.
+\end{remark}
+
 %% ══════════════════════════════════════════════════════════════════════════════
 \section{Spectral Decomposition of the Truncated Shift}
 \label{sec:overlap}
@@ -313,6 +345,13 @@ $\varepsilon = 2 - \tau$.
 For $\tfrac{1}{2}\log 2 < L < \log 2$ one has $\tau \in (1,2)$ and
 $\Ctau$ couples only the boundary strips
 $\Eminus = (-1,-1+\varepsilon)$ and $\Eplus = (1-\varepsilon,1)$.
+\begin{remark}
+The range $L < \log 2$ (i.e., $\tau > 1$) is wider than the first-prime
+window $(\tfrac12\log 2, \tfrac12\log 3)$; the absorption estimate holds
+throughout $\tau\in(1,2)$. The FP-0.35 target $L = 7/20$ satisfies
+$\tfrac12\log 2 < 7/20 < \tfrac12\log 3 < \log 2$, so it lies well within
+the stated range.
+\end{remark}
 Define $\kappae(L) = \tfrac{1}{2}\log\!\tfrac{1}{2\varepsilon} > 0$.
 Then for every $w$ in the closed-form domain,
 \begin{equation}\label{eq:absorption}
@@ -449,40 +488,37 @@ The $\Q[\tau]$ membership and sample values are verified by explicit Legendre
 recursion and polynomial antiderivatives.
 \end{proof}
 
-\begin{lemma}[Form boundedness of $V$ relative to $T$]
+\begin{lemma}[Form domain of $\bar{q}_L$]
 \label{lem:form-bounded}
-The potential $V(x) = -\tfrac{1}{2}\log(1-x^2)$ is infinitesimally form-bounded
-relative to the kinetic operator $T$ (whose Legendre basis representation has
-diagonal $H_{n_j} \cdot G_{jj}$, with $H_n = \sum_{k=1}^n \tfrac{1}{k}$).
-Concretely, for every $\delta > 0$ there exists $C_\delta > 0$ such that
-\[
-  \ip{Vv}{v} \le \delta\,\ip{Tv}{v} + C_\delta\,\|v\|^2
-  \qquad \forall\, v \in D(T).
-\]
-Consequently the closed quadratic form $\qbar_L$ is well-defined on the
-domain $D(\qbar_L) = D(T^{1/2})$, and all matrix operations in
-Theorem~\ref{thm:schur} take place within this domain.
+The closed quadratic form
+$\qbar_L(v) = \ip{Tv}{v} + \ip{Vv}{v} + \ip{K_Lv}{v}
+              + \ip{\mathcal{P}_{2,L}v}{v} - c_L\|v\|^2$
+is well-defined and semibounded below on the domain
+$D(\qbar_L) = \{v \in L^2(I_L) : \ip{Tv}{v} + \ip{Vv}{v} < \infty\}$,
+and all matrix operations in Theorem~\ref{thm:schur} take place within this domain.
 \end{lemma}
 
 \begin{proof}
-The kinetic operator $T$ acts on the Legendre basis as
-$(T P_n)(x) = H_n P_n(x)$ (where $H_n = \sum_{k=1}^n k^{-1}$),
-so $\ip{Tv}{v} = \sum_n H_n |\hat v_n|^2$ for $v = \sum_n \hat v_n P_n$.
-Since $H_n \sim \log n$, the quadratic form of $T$ is comparable to that of
-the operator $\log(1-\partial_x^2)^{1/2}$ on $(-1,1)$ with Dirichlet boundary
-conditions, which in turn controls the $H^{1/2}(-1,1)$ Sobolev norm.
-The logarithmic Hardy inequality on $(-1,1)$ states that for $f \in H^{1/2}_0$,
-\[
-  \int_{-1}^1 \frac{|f(x)|^2}{(1-x^2)\log^2 e(1-x^2)} \, dx
-  \;\lesssim\; \ip{Tf}{f} + \|f\|^2.
-\]
-Since $V(x) = -\tfrac12\log(1-x^2) \lesssim |\log(1-x^2)|$, the potential
-$\ip{Vf}{f}$ is controlled by the left side, giving the $\delta$-bound for any $\delta>0$
-with an explicit $C_\delta$ depending on the Legendre harmonic numbers $H_n$.
-The Archimedean kernel $K_L$ is Hilbert--Schmidt (its kernel $k_L(x,y) = -Lr''(L(x-y))$
-is square-integrable on $I_L^2$), hence relatively compact
-and $\delta$-form-bounded for any $\delta > 0$.
-The closed form $\qbar_L$ is therefore defined on $D(T^{1/2})$ by the KLMN theorem.
+Since $V(x) = -\tfrac12\log(1-x^2) \ge 0$, both $T \ge 0$ and $V \ge 0$ as
+quadratic forms, so $T + V$ is non-negative with natural domain $D(T)\cap D(V)$.
+Numerically, the relative bound $\sup_{v\ne0}\ip{Vv}{v}/\ip{Tv}{v} \approx 1.54$
+(computed over a 60-term Legendre basis), so $V$ is relatively form-bounded with
+respect to $T$ with bound $\rho \approx 1.54$; it is \emph{not} infinitesimally
+form-bounded.
+
+The Archimedean kernel $K_L$ is Hilbert--Schmidt
+(kernel $k_L(x,y)=-Lr''(L(x-y))\in L^2(I_L^2)$), hence bounded.
+The operator $\mathcal{P}_{2,L} = -\ctwo C_{\tau,1}$ is also bounded with norm
+$\ctwo$ (Corollary~\ref{thm:no-small-pert}).
+Since $K_L$ and $\mathcal{P}_{2,L}$ are bounded, their form contributions are
+dominated by $\text{const}\cdot\|v\|^2$.
+
+For the Schur criterion the relevant lower bound is
+$\qbar_L[v] \ge b_L \|v\|^2$, where
+$b_L = H_d - c_L - \Lzero - \kappa_L > 0$ is established computationally.
+Semi-boundedness of $\qbar_L$ on $D(\qbar_L)$ follows from $T \ge 0$,
+$V \ge 0$, the boundedness of $K_L$ and $\mathcal P_{2,L}$, and the positivity
+of $b_L$.
 \end{proof}
 
 \begin{theorem}[Split-residual Schur criterion]
@@ -519,16 +555,65 @@ of the parity sector.
 \end{theorem}
 
 \begin{proof}
-For $p \in \operatorname{Ran}\Pi_N$ and $q \in \operatorname{Ran}\mathsf{Q}_N$,
-the cross-term satisfies
-$\norm{\mathsf{Q}_N(V+K_L+\mathcal{P}_{2,L})p}^2 \le
- (1+\eta)\norm{\mathsf{Q}_N(V+K_L)p}^2 +
- (1+\eta^{-1})\norm{\mathsf{Q}_N\mathcal{P}_{2,L}p}^2$
-by weighted Young.
-The two norms have Gram matrices $R_0$ and $R_2$ respectively.
-The complement lower bound $b_L > 0$ gives $\mathsf{Q}_N(\qbar_L - \Lzero)\mathsf{Q}_N \ge b_L\mathsf{Q}_N$.
-Completing the square yields $(\qbar_L - \Lzero)[p+q] \ge z^*(F - b_L^{-1}R_\eta)z$,
-whence $b_L F - R_\eta \succ 0$ implies the stated lower bound.
+Write $w = p + q$ with $p \in \operatorname{Ran}\Pi_N$ and
+$q \in \operatorname{Ran}\mathsf{Q}_N$.
+Then
+\begin{equation}\label{eq:split}
+  (\qbar_L - \Lzero)[p+q]
+  = \ip{(T + V + K_L + \mathcal{P}_{2,L} - (c_L+\Lzero))p}{p}
+  + 2\operatorname{Re}\ip{(V+K_L+\mathcal{P}_{2,L})p}{q}
+  + \ip{(T + V + K_L + \mathcal{P}_{2,L} - (c_L+\Lzero))q}{q}.
+\end{equation}
+
+\textbf{Complement bound.}
+Since $V + \mathcal{P}_{2,L} \ge 0$ at $L=7/20$ (Theorem~\ref{thm:rational-cert}),
+and $T \ge 0$, $K_L \ge -\kappa_L I$, the quadratic form of $\qbar_L$ on
+$\operatorname{Ran}\mathsf{Q}_N$ satisfies
+\[
+  \ip{(\qbar_L - \Lzero)q}{q}
+  \;\ge\; (H_d - c_L - \Lzero - \kappa_L)\|q\|^2
+  \;=\; b_L\|q\|^2,
+\]
+where $H_d = (T_N)_{dd}/G_{dd}$ is the kinetic eigenvalue at the first
+complement degree $d$ (the smallest basis degree outside the $N$-dimensional
+projection).
+
+\textbf{Cross-term.}
+Write $u = \mathsf{Q}_N(V+K_L)p$ and $v = \mathsf{Q}_N\mathcal{P}_{2,L}p$.
+By the weighted Young inequality $(2\operatorname{Re}\ip{u+v}{q}
+\ge -b_L^{-1}\|u+v\|^2 - b_L\|q\|^2)$
+and $(1+\eta)\|u\|^2 + (1+\eta^{-1})\|v\|^2 \ge \|u+v\|^2$:
+\[
+  2\operatorname{Re}\ip{(V+K_L+\mathcal{P}_{2,L})p}{q}
+  \;\ge\; -b_L^{-1}\bigl[(1+\eta)\|u\|^2 + (1+\eta^{-1})\|v\|^2\bigr]
+          - b_L\|q\|^2.
+\]
+
+\textbf{Gram matrix identification.}
+In the $N$-dimensional basis $\{P_{n_k}\}_{k=1}^N$:
+\[
+  \sum_{k=1}^\infty \bigl|\ip{\mathsf{Q}_N(V+K_L)p}{\phi_k}\bigr|^2
+  = p^* S^{(0)} p - p^* (M^{(0)})^* G^{-1} M^{(0)} p
+  = p^* R_0\, p,
+\]
+where $\{\phi_k\}$ is an orthonormal basis of $\operatorname{Ran}\mathsf{Q}_N$,
+and the $G^{-1}$ factor arises because the Legendre basis is orthogonal
+but not orthonormal ($G_{ii} = 2/(2n_i+1)$).
+The factor $G^{-1}$ is legitimate: it acts on the finite-dimensional
+$\operatorname{Ran}\Pi_N$ only, so no infinite-dimensional inverse is needed.
+Similarly $\|v\|^2 \ge p^* R_2\, p$ with $R_2 = S^{(2)} - (M^{(2)})^* G^{-1} M^{(2)}$.
+
+\textbf{Combining.}
+Substituting into~\eqref{eq:split} and cancelling the $b_L\|q\|^2$ terms:
+\[
+  (\qbar_L - \Lzero)[p+q]
+  \;\ge\; p^*\bigl(T_N + M^{(0)} + M^{(2)} - (c_L+\Lzero)G
+                   - b_L^{-1}R_\eta\bigr)p
+  \;=\; p^*(F - b_L^{-1}R_\eta)p.
+\]
+If $b_L F - R_\eta \succ 0$ then $F - b_L^{-1}R_\eta \succ 0$,
+so the right side is $\ge \lambda_{\min}(F-b_L^{-1}R_\eta)\|p\|^2 \ge 0$.
+Since $p$ and $q$ were arbitrary, $\qbar_L[w] \ge \Lzero\|w\|^2$.
 \end{proof}
 
 %% ══════════════════════════════════════════════════════════════════════════════
