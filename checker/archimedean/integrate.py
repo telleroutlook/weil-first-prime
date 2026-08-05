@@ -1,15 +1,16 @@
-"""Archimedean primitive integrators — stub pending O2 closure.
+"""Archimedean primitive integrators for L = 7/20.
 
-This module is the integration point for both Path A (GL + Bernstein remainder)
-and Path B (Taylor + GL + Bernstein remainder) primitive computations.
+Implements Path A (Arb GL-8/GL-4 with Bernstein ellipse remainder) and
+Path B (mpmath independent path) for all five primitive matrix blocks:
+M_V, M_K, S_VV, S_VK, S_KK.
 
-P0 fixes applied vs weil-lower-bound:
-  - integrate_M_K uses _integrate_1d_arb with GL-8/GL-4 remainder (not raw GL-8)
-  - _rpp_series uses coefficient Fraction(7, 11520) for s^3 term (not 1/2880)
-  - All functions return outward-rounded Arb balls
+P0 bugs from weil-lower-bound are NOT present here:
+  - integrate_M_K calls _integrate_1d_arb with GL-8/GL-4 Richardson remainder
+  - _rpp_mpmath uses correct s/48 linear coefficient (not s^2/48)
+  - All remainders use Bernstein ellipse analytic bounds
 
-Status: structural scaffolding complete; full Arb interval implementation
-        pending O2 closure.
+Both paths are independent: different arithmetic engines (Arb vs mpmath),
+different splitting strategies, no shared approximation code.
 """
 
 from __future__ import annotations
@@ -17,91 +18,199 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import Any
 
+from src.archimedean.interval import Interval, add, intersect, point
+from src.archimedean.integrator_a import (
+    integrate_M_K as _a_mk,
+    integrate_full_S as _a_S,
+    PathAResult,
+)
+from src.archimedean.log_moments import V_matrix_entry, V2_matrix_entry
+
+# Frozen parameters for L = 7/20
+A_NUM = 7
+A_DEN = 20
+
 
 class IntegrationUnavailable(Exception):
-    """Raised when python-flint is not installed or Arb precision is insufficient."""
+    """Raised when python-flint or mpmath is not installed."""
 
 
-def _check_flint() -> None:
+def _check_deps() -> None:
     try:
         import flint  # noqa: F401  # type: ignore[import]
+        import mpmath  # noqa: F401  # type: ignore[import]
     except ImportError as exc:
         raise IntegrationUnavailable(
-            "python-flint >= 0.7 is required for Arb interval integration"
+            "python-flint and mpmath are required for Archimedean integration"
         ) from exc
 
 
-# Frozen parameters
-_L = Fraction(7, 20)
-_LOG2_LO = Fraction(842, 1215)
-_LOG2_HI = Fraction(23581, 34020)
-
-# Correct Taylor cubic coefficient for r''(s) near s=0
-# r''(s) = -1/2 + ... (7/96)s^2 + ...  =>  antiderivative s^3 term = 7/11520
-_RPP_CUBIC_COEFF = Fraction(7, 11520)
-
-
-def _rpp_series(s: Fraction, cutoff: Fraction) -> Fraction:
-    """Near-zero rational Taylor approximation of r''(s) for s < cutoff.
-
-    Uses the corrected coefficient 7/11520 for the cubic term.
-    This is a rational upper/lower bound; the caller must add a certified remainder.
-    """
-    # r''(s) ~ -1/2 + (7/96)s^2 + ...
-    # Antiderivative (indefinite integral) ~ -s/2 + (7/288)s^3 + ...
-    # For the s^3 term in the integral: coefficient = 7/11520 (not 1/2880)
-    assert s < cutoff, f"_rpp_series called outside near-zero regime: s={s} >= cutoff={cutoff}"
-    return Fraction(-1, 2) + Fraction(7, 96) * s**2
-
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
 def compute_all_primitives_path_a(
-    contract: dict[str, Any], precision: int = 256
+    contract: dict[str, Any],
+    precision: int = 256,
 ) -> dict[str, Any]:
-    """Compute M_V, M_K, S_VV, S_VK, S_KK using Path A (GL + certified remainder).
+    """Compute M_V, M_K, S_VV, S_VK, S_KK via Path A (Arb + GL-8/GL-4 remainder).
 
-    All returned values are Arb balls with outward rounding.
-    Raises IntegrationUnavailable if python-flint is not installed.
+    Returns a dict with keys:
+      M_V, M_K, S_VV, S_VK, S_KV, S_KK  ->  {(i,j): Interval}
+      witnesses -> list of LeafWitnessA
     """
-    _check_flint()
-    # Full implementation deferred to O2 closure.
-    raise IntegrationUnavailable(
-        "Path A full Arb integration not yet implemented; "
-        "this is the O2 engineering bottleneck."
-    )
+    _check_deps()
+
+    sector = contract.get("sector", "even")
+    index_set = contract.get("index_set", [0, 2, 4, 6, 8, 10, 12, 14])
+    N = len(index_set)
+
+    # M_V: exact formula via log-moment Beta derivatives
+    M_V: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            M_V[(i, j)] = V_matrix_entry(ni, nj, precision)
+
+    # M_K: Duffy 2D quadrature with GL-8/GL-4 Richardson remainder
+    M_K: dict[tuple[int, int], Interval] = {}
+    mk_witnesses = []
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            result = _a_mk(ni, nj, A_NUM, A_DEN, depth=4, prec=precision)
+            M_K[(i, j)] = result.to_interval()
+            mk_witnesses.extend(result.leaves)
+
+    # S_VV: exact formula
+    S_VV: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            S_VV[(i, j)] = V2_matrix_entry(ni, nj, precision)
+
+    # S_VK, S_KV, S_KK via full assembly
+    s_result = _a_S(index_set, A_NUM, A_DEN, depth_2d=4, depth_3d=3, prec=precision)
+    S_full = s_result["S"]
+    s_witnesses = s_result["witnesses"]
+
+    # Extract S_VK, S_KV, S_KK from full S
+    # Full S = S_VV + S_VK + S_KV + S_KK; we need the breakdown.
+    # _a_S returns the sum already — store the full S and the components separately.
+    S_VK: dict[tuple[int, int], Interval] = {}
+    S_KV: dict[tuple[int, int], Interval] = {}
+    S_KK: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            from src.archimedean.integrator_a import integrate_S_VK, integrate_S_KK
+            svk = integrate_S_VK(ni, nj, A_NUM, A_DEN, depth=4, prec=precision)
+            skv = integrate_S_VK(nj, ni, A_NUM, A_DEN, depth=4, prec=precision)
+            skk = integrate_S_KK(ni, nj, A_NUM, A_DEN, depth=3, prec=precision)
+            S_VK[(i, j)] = svk.to_interval()
+            S_KV[(i, j)] = skv.to_interval()
+            S_KK[(i, j)] = skk.to_interval()
+
+    return {
+        "M_V": M_V,
+        "M_K": M_K,
+        "S_VV": S_VV,
+        "S_VK": S_VK,
+        "S_KV": S_KV,
+        "S_KK": S_KK,
+        "witnesses": mk_witnesses + s_witnesses,
+    }
 
 
 def compute_all_primitives_path_b(
-    contract: dict[str, Any], precision: int = 256
+    contract: dict[str, Any],
+    precision: int = 256,
 ) -> dict[str, Any]:
-    """Compute M_V, M_K, S_VV, S_VK, S_KK using Path B (Taylor + GL + certified remainder).
+    """Compute M_V, M_K, S_VV, S_VK, S_KV, S_KK via Path B (mpmath independent).
 
-    Uses _rpp_series with the corrected 7/11520 coefficient.
-    All returned values are Arb balls with outward rounding.
-    Raises IntegrationUnavailable if python-flint is not installed.
+    Path B uses mpmath.quad with a different splitting strategy and the
+    corrected _rpp_mpmath (s/48 linear term, not s^2/48) with Bernstein
+    ellipse discretization remainder.
     """
-    _check_flint()
-    # Full implementation deferred to O2 closure.
-    raise IntegrationUnavailable(
-        "Path B full Arb integration not yet implemented; "
-        "this is the O2 engineering bottleneck."
+    _check_deps()
+
+    sector = contract.get("sector", "even")
+    index_set = contract.get("index_set", [0, 2, 4, 6, 8, 10, 12, 14])
+
+    from src.archimedean.integrator_b import (
+        integrate_M_K_path_b,
+        integrate_S_VK_path_b,
+        integrate_S_KK_path_b,
+        PathBResult,
     )
+
+    # M_V: same exact formula (no quadrature needed, path-independent)
+    M_V: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            M_V[(i, j)] = V_matrix_entry(ni, nj, precision)
+
+    M_K: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            result = integrate_M_K_path_b(ni, nj, A_NUM, A_DEN)
+            M_K[(i, j)] = result.to_interval()
+
+    S_VV: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            S_VV[(i, j)] = V2_matrix_entry(ni, nj, precision)
+
+    S_VK: dict[tuple[int, int], Interval] = {}
+    S_KV: dict[tuple[int, int], Interval] = {}
+    S_KK: dict[tuple[int, int], Interval] = {}
+    for i, ni in enumerate(index_set):
+        for j, nj in enumerate(index_set):
+            S_VK[(i, j)] = integrate_S_VK_path_b(ni, nj, A_NUM, A_DEN).to_interval()
+            S_KV[(i, j)] = integrate_S_VK_path_b(nj, ni, A_NUM, A_DEN).to_interval()
+            S_KK[(i, j)] = integrate_S_KK_path_b(ni, nj, A_NUM, A_DEN).to_interval()
+
+    return {
+        "M_V": M_V,
+        "M_K": M_K,
+        "S_VV": S_VV,
+        "S_VK": S_VK,
+        "S_KV": S_KV,
+        "S_KK": S_KK,
+        "witnesses": [],
+    }
 
 
 def verify_intersection(
     primitives_a: dict[str, Any],
     primitives_b: dict[str, Any],
 ) -> dict[str, Any]:
-    """Verify that Path A and Path B interval matrices intersect for all entries.
+    """Verify Path A ∩ Path B non-empty for every matrix entry.
 
-    Returns a dict with 'all_pass', 'checks', and 'primitives' (midpoint estimates).
+    Returns:
+      all_pass: bool
+      checks: {key: bool}  — True if interval intersection is non-empty
+      primitives: {key: Interval}  — intersection intervals (for CERTIFIED entries)
     """
     checks: dict[str, bool] = {}
-    for key in primitives_a:
-        if key in primitives_b:
-            # Arb interval intersection check would go here
-            checks[key] = True  # placeholder
+    merged: dict[str, Any] = {}
+
+    for block in ("M_V", "M_K", "S_VV", "S_VK", "S_KV", "S_KK"):
+        a_block = primitives_a.get(block, {})
+        b_block = primitives_b.get(block, {})
+        for key in a_block:
+            check_key = f"{block}_{key}"
+            iv_a = a_block[key]
+            iv_b = b_block.get(key)
+            if iv_b is None:
+                checks[check_key] = False
+                continue
+            try:
+                merged_iv = intersect(iv_a, iv_b)
+                checks[check_key] = True
+                merged[check_key] = merged_iv
+            except ValueError:
+                checks[check_key] = False
+
+    all_pass = all(checks.values())
     return {
-        "all_pass": all(checks.values()),
+        "all_pass": all_pass,
         "checks": checks,
-        "primitives": {},
+        "primitives": merged,
     }
