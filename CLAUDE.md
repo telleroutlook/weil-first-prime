@@ -84,16 +84,37 @@ BRIDGE_CHECKER=python3 checker/first_prime/check_first_prime_certificate.py
 PROOFCTL_ADAPTERS=<path-to-proofctl-checkout>/adapters
 ```
 
-Key commands:
-```bash
-proofctl doctor                    # must pass before any other command
-proofctl status                    # current claim states
-proofctl graph --mermaid           # dependency diagram
-proofctl frontier thm-fp-035       # what directly blocks release
-proofctl release --dry-run         # evaluate all conditions without writing STATUS.json
-proofctl check --all               # run all checkers (pytest-style summary)
-proofctl pin checker --cmd "..."   # run after any checker script change
-```
+### When to use which command
+
+| Command | When | Why |
+|---|---|---|
+| `proofctl doctor` | Start of every session | Confirm env is wired before any check/replay |
+| `proofctl status` | Daily, during active work | See all 17 claim states at a glance |
+| `proofctl frontier thm-fp-035` | During O1-B work | See what directly blocks the main theorem right now |
+| `proofctl graph --mermaid` | Weekly or before doc updates | Refresh the dependency diagram in docs/ |
+| `proofctl pin checker --cmd ...` | After any checker script change | Lock checker_digest so cache keys are valid |
+| `proofctl check --all` | After pinning | Verify all checkers run without protocol errors |
+| `proofctl replay --dry-run` | Before generating a new certificate | Confirm CAS state and generator syntax are correct |
+| `proofctl release --dry-run` | After O1-B closes | See exactly which conditions still block release |
+| `proofctl snapshot` | At each milestone | Point-in-time progress record for comparison |
+| `proofctl bundle create` | At final PASS only | Produce the offline-verifiable release bundle |
+
+### What proofctl does NOT guarantee
+
+proofctl verifies that:
+- The exact pinned checker script was run (`checker_digest`)
+- The evidence file hash matches what was declared (`evidence_digest`)
+- Attestation self-digests have not been tampered with (INV-03)
+- Obligation exact-sets match the ContractV2 declaration (INV-06)
+
+proofctl does **not** verify that the checker's mathematics is correct.
+Mathematical correctness comes from the checker code, the test suite, and
+independent review. Do not conflate proofctl attestation with mathematical proof.
+
+The `scripted` runtime means the trust anchor is `evidence_digest + checker_digest`
+(same as a pinned binary, interpreted rather than compiled). Cross-machine
+deterministic replay requires container isolation (OCI), which is not yet
+implemented. Current `proofctl replay` is same-environment replay only.
 
 ## Architecture
 
