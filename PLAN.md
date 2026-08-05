@@ -1,7 +1,7 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
 **基准日期：2026-08-05**
-**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ O2-replay ✅ O2-witness ✅ | 剩余：G4-pin-checker、release gate、投稿**
+**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ O2-replay ✅ O2-witness ✅ FP-0.35 ✅ E1 ✅ release gate ✅ | 剩余：arXiv endorsement、E2（可选）、bundle create**
 
 ---
 
@@ -75,12 +75,12 @@ FP-0.35（L=7/20 有限尺度正性）
 |---|---|---|
 | O2-解析余项界 | ✅ Bernstein 椭圆模块已实现，已接入两条积分路径 | 正式证书未生成 |
 | O2-proofctl replay | ✅ 完成（2026-08-05） | lem-o1b-even, lem-o1b-odd 均 ACCEPTED |
-| O2-witness 绑定 | ❌ 待做 | 积分叶节点到证书的绑定 |
+| O2-witness 绑定 | ✅ 完成（2026-08-06） | Path A 叶节点绑定到证书，checker 独立验证 |
 | E3-Mathlib | ✅ 已完成 | log2 < 7/10 和 sqrt2 > 7/5 已由 Mathlib 验证（见 lean4/） |
-| E1 | 📝 数学框架完成 | `paper/e1-path-a-obstruction.tex` 有完整框架；Lemma 证明是 sketch |
+| E1 | ✅ 完成（2026-08-06） | 两段式证明：L* = 2/3·log2 临界点；L < L* 阈值条件；L ≥ L* 全部 θ<1 失败 |
 | E2 | 📝 草稿阶段 | 描述在 docs/EXTENDED_GOALS.md |
-| 论文投稿 | ⏳ 就绪 | PDF 已生成（7页），Zenodo + 邮件流程等待执行 |
-| FP-0.35 | ❌ 未证明（预期） | O1-B 已闭合；O2-replay 闭合后可标记 PASS |
+| 论文投稿 | ⏳ 等待 arXiv endorsement | Zenodo DOI 已发布，邮件已发 |
+| FP-0.35 | ✅ **ACCEPTED（2026-08-06）** | 17/17 claims ACCEPTED，release --dry-run PASS |
 
 ---
 
