@@ -338,13 +338,13 @@ Hence $\varepsilon = 2 - \tfrac{20\log 2}{7} < 2 - \tfrac{20}{7}\cdot\tfrac{842}
 
 \textbf{Step 2.}
 One verifies the integer inequality
-\[
+\begin{align*}
   87^{16} \cdot 68^5
-  = \underbrace{15662194229696887109605438749172023641088}_{39\text{ digits}}
-  \;<\;
+  &= \underbrace{15662194229696887109605438749172023641088}_{39\text{ digits}} \\
+  &\;<\;
   \underbrace{17215562650769453014744867057217543602176}_{39\text{ digits}}
   = 1701^5 \cdot 32^{16},
-\]
+\end{align*}
 from which $e^{16} < (87/32)^{16} < (1701/68)^5 < (1/(2\varepsilon))^5$,
 giving $\kappae(7/20) > \tfrac{8}{5}$.
 
@@ -556,6 +556,9 @@ primitive chain (O2) and independently replaying the certificate.
 
 %% ══════════════════════════════════════════════════════════════════════════════
 \section*{Acknowledgements}
+The author thanks the open-source communities behind python-flint (Arb),
+Lean~4 / Mathlib, and proofctl for the computational infrastructure
+that underpins this work.
 %% ══════════════════════════════════════════════════════════════════════════════
 
 % To be filled before submission.
