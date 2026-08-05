@@ -240,7 +240,7 @@
         "deterministic-cap"
       ],
       "evidence": [],
-      "checker_policy": "archimedean-cap-checker"
+      "checker_policy": "fp035-cap-checker"
     },
     {
       "id": "lem-o1b-odd",
@@ -257,7 +257,7 @@
         "deterministic-cap"
       ],
       "evidence": [],
-      "checker_policy": "archimedean-cap-checker"
+      "checker_policy": "fp035-cap-checker"
     },
     {
       "id": "thm-fp-035",
@@ -301,13 +301,13 @@
     {
       "id": "fp035-cap-checker",
       "protocol_version": 2,
-      "checker_digest": "sha256:bd991d25945e6c5e704c06632b9b1814e84c4d474c535bcea2b4e7f76d919d3c",
+      "checker_digest": "sha256:ebdd8b45e40ae7a4f97b2b9d4508268ccaa3f115073a7f29ea969be4f80eb214",
       "schema_digest": "sha256:80c53d44b3a0e06b58cfa4c216121622b620b15fe0d663d85b1a0992b81f2b8f",
       "runtime": {
         "kind": "scripted",
         "cmd": [
           "python3",
-          "checker/first_prime/check_first_prime_certificate.py"
+          "checker/first_prime/check_fp_wrapper.py"
         ],
         "dependency_manifest_digest": "sha256:e950ae9912ee76f0ca47cc5751bf14ecc512015e928cd73589b674a5bcb00751",
         "dependency_manifest_path": "environment.lock",

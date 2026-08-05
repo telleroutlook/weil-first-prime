@@ -138,6 +138,10 @@ def check(args: argparse.Namespace) -> int:
         return [f"{lo.numerator}/{lo.denominator}", f"{hi.numerator}/{hi.denominator}"]
 
     output = {
+        "protocol_version": 2,
+        "obligation_results": [
+            {"id": "archimedean_primitives_o2_v1", "verdict": "pass"}
+        ],
         "status": "CERTIFIED",
         "obligation": "archimedean_primitives_o2_v1",
         "primitives": {k: _ser_iv(v) for k, v in verified["primitives"].items()},

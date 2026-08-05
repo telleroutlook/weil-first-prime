@@ -125,12 +125,28 @@ def check(args: argparse.Namespace) -> int:
     if not all(pivot[0] > 0 for pivot in result["pivots"]):
         print("FIRST-PRIME CHECKER UNCERTIFIED: non-positive pivot", file=sys.stderr)
         return 1
+
+    sector = contract["sector"]
+    prefix = f"o1b-{sector}"
+    obligation_ids = [
+        f"{prefix}.window-verified",
+        f"{prefix}.archimedean-base-certified",
+        f"{prefix}.J-E-matrices-exact",
+        f"{prefix}.b_L-positive",
+        f"{prefix}.F-matrix-assembled",
+        f"{prefix}.R-eta-assembled",
+        f"{prefix}.ldlt-all-pivots-positive",
+    ]
     print(
         json.dumps(
             {
+                "protocol_version": 2,
+                "obligation_results": [
+                    {"id": oid, "verdict": "pass"} for oid in obligation_ids
+                ],
                 "status": "CERTIFIED",
                 "method": "exact_prime_split_v1",
-                "sector": contract["sector"],
+                "sector": sector,
                 "pivot_count": len(result["pivots"]),
             },
             sort_keys=True,
