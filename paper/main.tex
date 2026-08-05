@@ -442,8 +442,14 @@ giving $\kappae(7/20) > \tfrac{8}{5}$.
 
 \textbf{Step 3.}
 From~\eqref{eq:log2-bounds} and $\sqrt{2} > \tfrac{7}{5}$,
-$\ctwo = \log2/\sqrt2 < \tfrac{23581}{34020}\big/\tfrac{7}{5}
-       = \tfrac{23581}{47628} < \tfrac{62}{125}$,
+\[
+  \ctwo = \frac{\log 2}{\sqrt{2}}
+  < \frac{23581/34020}{7/5}
+  = \frac{23581 \times 5}{34020 \times 7}
+  = \frac{117905}{238140}
+  = \frac{23581}{47628}
+  < \frac{62}{125},
+\]
 where the last inequality follows from $23581 \times 125 = 2947625 < 2952936 = 62 \times 47628$.
 
 \textbf{Step 4.}
@@ -576,12 +582,12 @@ of the parity sector.
 Write $w = p + q$ with $p \in \operatorname{Ran}\Pi_N$ and
 $q \in \operatorname{Ran}\mathsf{Q}_N$.
 Then
-\begin{equation}\label{eq:split}
+\begin{align}\label{eq:split}
   (\qbar_L - \Lzero)[p+q]
-  = \ip{(T + V + K_L + \mathcal{P}_{2,L} - (c_L+\Lzero))p}{p}
-  + 2\operatorname{Re}\ip{(V+K_L+\mathcal{P}_{2,L})p}{q}
-  + \ip{(T + V + K_L + \mathcal{P}_{2,L} - (c_L+\Lzero))q}{q}.
-\end{equation}
+  &= \ip{(T + V + K_L + \mathcal{P}_{2,L} - (c_L+\Lzero))p}{p} \notag\\
+  &\quad + 2\operatorname{Re}\ip{(V+K_L+\mathcal{P}_{2,L})p}{q} \notag\\
+  &\quad + \ip{(T + V + K_L + \mathcal{P}_{2,L} - (c_L+\Lzero))q}{q}.
+\end{align}
 
 \textbf{Complement bound.}
 Since $V + \mathcal{P}_{2,L} \ge 0$ at $L=7/20$ (Theorem~\ref{thm:rational-cert}),
