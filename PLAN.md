@@ -67,6 +67,29 @@ FP-0.35（L=7/20 有限尺度正性）
 - F = T_N + M^(0) + M^(2) − (c_L + L_0)G
 - R_η = (1 + η)R_0 + (1 + 1/η)R_2，η = 1/2
 - M^(2), S^(2), R_2 由定理 4 的 Q[τ] 代数计算
+
+---
+
+## 三‑A、研究方法：探路优先
+
+**原则**：积分计算量大（深度 4 需 ~60 分钟），必须先用低精度探路，确认方向后再投入完整计算。
+
+### 三档模式（`src/assemble/o1b_gate.py`）
+
+| 档位 | 命令 | 时间 | 用途 |
+|---|---|---|---|
+| PILOT | `python3 -m src.assemble.o1b_gate --tier pilot` | ~1 分钟 | 确认 pivot 方向（无证明价值） |
+| DRAFT | `python3 -m src.assemble.o1b_gate --tier draft` | ~5 分钟 | 检查区间膨胀后裕量是否存活 |
+| CERTIFY | `python3 -m src.assemble.o1b_gate --tier certify` | ~60 分钟 | 正式 O1-B 闸门闭合 |
+
+**规则**：
+1. 只有 PILOT 显示正 pivot，才运行 DRAFT
+2. 只有 DRAFT 区间下端点仍为正，才运行 CERTIFY
+3. CERTIFY 的结果才能进入证书——PILOT/DRAFT 结果不进入证明链
+4. 偶扇区发现裕量 ~8.81×10⁻⁴，极小；DRAFT 阶段若下端点变负，
+   则直接调整 N 或 η 后重跑 PILOT，不跳过 DRAFT
+
+单个扇区测试：`--sector even` 或 `--sector odd`
 - M^(0), S^(0), R_0 由 Archimedean primitive（修复 P0 后）
 
 证明充分条件不使用任何新的素数—Archimedean 交叉积分。
