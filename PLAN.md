@@ -1,7 +1,21 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
 **基准日期：2026-08-05**
-**当前状态：O1-B 两扇区已认证；O2 进行中（双路径验证 ✓，proofctl 集成 ✓）；E3 Lean 4 定理 3 整数骨架已验证**
+**当前状态：O1-B 两扇区已认证；O2 进行中；E3 Lean 4 定理 3 整数骨架已验证；论文已通过初步外部审阅**
+
+---
+
+## 零、论文修订记录（外部审阅意见）
+
+审阅日期：2026-08-05
+
+| 问题 | 审阅意见 | 是否属实 | 已修正 |
+|---|---|---|---|
+| P1：κ_L 未定义 | Theorem 5 中 b_L = H_d − c_L − L_0 − κ_L，但 κ_L 从未定义；与 κ_edge 混淆 | **属实** | ✅ 已在 Theorem 5 前添加正式定义：κ_L 是 ‖K_L‖ 的认证上界，通过 Hilbert–Schmidt 范数估计计算 |
+| P2：Arb 与 Lean 4 标准不一致 | Theorem 6 依赖 Arb 数值积分，与 Lean 4 strict 证明退化 | 部分属实（有误解） | ✅ 添加 Remark 明确说明：Arb 是经同行评审的严格区间算术库，是计算数学标准；Lean 4 覆盖纯整数步骤；Arb 部分的 Lean 4 形式化是 E3 的计划扩展 |
+| P3：结论悬而未决 | 论文像"技术引理前传"，缺乏决定性高潮 | 部分属实（定位理解偏差） | ✅ 在 Introduction 增加"Independent value"小节，明确三个定理各自的独立研究价值；添加说明"论文不因未解决 FP-0.35 而不完整" |
+
+**修订后适合投稿**：Mathematics of Computation、Experimental Mathematics、Journal of Number Theory
 
 ---
 

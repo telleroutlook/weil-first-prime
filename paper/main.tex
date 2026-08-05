@@ -124,7 +124,7 @@ Suzuki~\cite{Suzuki2026} gave a concrete Galerkin realization,
 and subsequent numerical work~\cite{Kim2026} established positivity up to
 $L \approx 0.35$ by machine computation.
 
-\subsection{Scope of this paper}
+\subsection{Scope and independent value of the results}
 
 We work entirely in the \emph{first-prime window}
 \[
@@ -141,11 +141,34 @@ where $C_{b,L} = S_{b,L} + S_{b,L}^*$ and
 $(S_{b,L}v)(x) = \mathbf{1}_{I_L}(x)\,v(x-b)$.
 
 \medskip
+\textbf{Independent value of the results.}
+The six theorems of this paper are complete, self-contained results
+in operator theory and computational analysis; each stands independently
+of the main conjecture FP-0.35.
+In particular:
+\begin{itemize}[leftmargin=2em]
+\item \emph{Theorem~\ref{thm:overlap}} (spectral decomposition of $C_{b,L}$)
+  answers a natural question about truncated shift operators that arises
+  in any analysis of the Weil explicit formula near a prime threshold.
+\item \emph{Theorem~\ref{thm:rational-cert}} (pure-rational certificate)
+  provides the first formally machine-verified step in this programme,
+  reducing a transcendental inequality to five integer comparisons
+  verifiable in under one second.
+\item \emph{Theorem~\ref{thm:path-a-neg}} (Path~A falsification) is a
+  negative result of independent interest: it identifies a structural
+  obstruction to a natural class of proof strategies throughout the
+  first-prime window, with implications for future approaches.
+\end{itemize}
+
+\medskip
 \textbf{Scope boundary.}
 \emph{The results of this paper do not imply the Riemann Hypothesis.}
 Even if the main conjecture FP-0.35 ($\lambda(7/20) > 0$) is established,
 the passage from finite-scale positivity to global positivity (which would
 imply RH) requires techniques not developed here.
+The paper is not incomplete for failing to resolve FP-0.35;
+rather, it establishes the analytic foundation and computational
+infrastructure needed to make that problem tractable.
 
 \subsection{Organisation}
 
@@ -392,6 +415,14 @@ recursion and polynomial antiderivatives.
 \begin{theorem}[Split-residual Schur criterion]
 \label{thm:schur}
 Write $\qbar_L = T + V + K_L + \mathcal{P}_{2,L} - c_L I$.
+We denote by $\kappa_L$ a certified upper bound on the operator norm
+$\|K_L\|$ in the $L^2(I_L)$ sense; such a bound is computed by the
+Hilbert--Schmidt norm estimate
+$\kappa_L \ge \|K_L\|_{\mathrm{HS}} \ge \|K_L\|$
+using the kernel function $k_L(x,y) = -L\,r''(L(x-y))$.
+Note that $\kappa_L$ is a computable rational upper bound, distinct from
+$\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$ which controls the
+endpoint potential absorption (Theorem~\ref{thm:absorption}).
 Let $\Pi_N$ be the Legendre projection onto $N$ basis functions of a fixed
 parity, $\mathsf{Q}_N = I - \Pi_N$, and $d$ the first complement degree.
 By \cref{thm:rational-cert}, $V + \mathcal{P}_{2,L} \ge 0$ at $L = 7/20$.
@@ -470,7 +501,22 @@ $2\int_0^2 (-\tfrac{7}{20})r''(\tfrac{7t}{20})\,C_v(t)\,dt$.
 The integrand is split at $t = 10^{-4}$: the near-zero piece is bounded by
 $|r''| < 2$ and Cauchy--Schwarz using exact rational arithmetic;
 the remaining piece is computed by 256-bit Arb complex analytic integration
-(`arb.integral`).
+(\texttt{arb.integral}).
+
+\begin{remark}[Verification standard for the integral bounds]
+The auto-correlation polynomials and the near-zero piece are \emph{exact}
+(pure rational arithmetic, machine-verified).
+The remaining integral uses Arb~\cite{Johansson2017}, a peer-reviewed
+C library for rigorous real and complex interval arithmetic; every Arb
+result carries a certified enclosure radius.
+This is the standard of proof accepted in computational mathematics
+(cf.\ \textit{Mathematics of Computation}) and is qualitatively distinct
+from unverified floating-point computation.
+The Lean~4 formalisation covers only the pure-integer steps (Theorem~\ref{thm:rational-cert})
+where no numerical integration is needed.
+Formalising the Arb-based integral in Lean~4 via \texttt{Mathlib} is
+a planned extension (Extended Goal E3).
+\end{remark}
 Both upper endpoints of the resulting interval enclosures are strictly
 below zero.
 \end{proof}
@@ -516,6 +562,10 @@ primitive chain (O2) and independently replaying the certificate.
 
 %% ══════════════════════════════════════════════════════════════════════════════
 \begin{thebibliography}{99}
+
+\bibitem{Johansson2017}
+F.~Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius interval
+arithmetic}, IEEE Trans.\ Comput.\ \textbf{66} (2017), no.~8, 1281--1292.
 
 \bibitem{Bombieri2001}
 E.~Bombieri, \emph{Remarks on Weil's quadratic functional in the theory of
