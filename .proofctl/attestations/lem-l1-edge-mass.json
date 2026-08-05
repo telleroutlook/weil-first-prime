@@ -4,33 +4,44 @@
   "dependency_digests": null,
   "evidence": null,
   "checker": {
-    "id": "",
-    "protocol_version": 0,
-    "checker_digest": "",
-    "schema_digest": "",
+    "id": "fp035-ir-checker",
+    "protocol_version": 2,
+    "checker_digest": "sha256:f1a4be9281d5ab9c491142869450c7d9d7d56d6a2bd34235f817408f1ea05a3b",
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": ""
+      "kind": "scripted",
+      "cmd": [
+        "python3",
+        "checker/independent_review/check_ir_wrapper.py"
+      ],
+      "dependency_manifest_path": "environment.lock"
     },
-    "network": ""
+    "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "independent-review",
+  "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 0,
+    "wall_millis": 24,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:cf7c5d09b770328033477cf5572b4615bf23ad9e090f8d6ba4f0dbcb0d1801f6",
+  "self_digest": "sha256:7df292eaba587f2498115f8e5620feca273f20b156c20227efabc3b0a7f7bd4d",
   "metadata": {
-    "note": "Reviewed analytic proof in paper/main.tex; all steps verified correct",
-    "review_date": "2026-08-06",
-    "reviewer": "claude-code-assistant"
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:0fb839e30ec7e7b3e754de98b5a5f305df80a6a70f320ed8e2e8135fe59cba50",
+    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/lem-l1-edge-mass.json', '{cert}')\"",
+    "semantic_replay": "true"
   },
-  "signature": {
-    "pubkey_fingerprint": "5d1e35db6e7f8cc9",
-    "algorithm": "ed25519",
-    "value": "iqqFcBiwYp1gokS99TDfYVkTrFaM5wb4M3pqNk/QgPUwWZBXGUhHv7e0aqtCRXw149XdDvd1Rg3WFqQCANX/Cg=="
-  }
+  "replay_mode": "from_scratch",
+  "obligation_results": [
+    {
+      "id": "independent-review.accepted",
+      "verdict": "pass"
+    }
+  ]
 }
