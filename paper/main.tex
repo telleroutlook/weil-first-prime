@@ -317,11 +317,16 @@ and therefore
 The certificate reduces to five integer comparisons, all of which
 are independently machine-verified in Lean~4:
 \begin{enumerate}
-\item $23581 \times 10 < 34020 \times 7$ \quad (\,$\log 2 < 7/10$\,)
-\item $34 \times 41 < 1701$ \quad (\,$\varepsilon < 1/41$\,)
-\item $87^{16} \cdot 68^5 < 1701^5 \cdot 32^{16}$ \quad (\,$\kappae > 8/5$\,, \textbf{key step})
-\item $7^2 < 2 \times 5^2$ \quad (\,$\sqrt2 > 7/5$\,)
-\item $62 \times 5 \times 100 = 31 \times 8 \times 125$ \quad (\,ratio $= 31/100$\,)
+\item $23581 \times 10 < 34020 \times 7$
+      \hfill(\,$\log 2 < 7/10$\,)
+\item $34 \times 41 < 1701$
+      \hfill(\,$\varepsilon < 1/41$\,)
+\item $87^{16} \cdot 68^{5} < 1701^{5} \cdot 32^{16}$
+      \hfill(\,$\kappae(7/20) > 8/5$\,, \textbf{key step})
+\item $7^2 < 2 \times 5^2$
+      \hfill(\,$\sqrt{2} > 7/5$\,)
+\item $62 \times 5 \times 100 = 31 \times 8 \times 125$
+      \hfill(\,ratio $= 31/100$\,)
 \end{enumerate}
 Each comparison is a closed proposition over $\mathbb{N}$ and is
 discharged by Lean~4's \texttt{native\_decide} tactic in under one second.
