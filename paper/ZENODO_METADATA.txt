@@ -1,0 +1,73 @@
+# Zenodo submission metadata for paper/main.tex
+# Copy-paste these values into the Zenodo upload form.
+# Last updated: 2026-08-05
+
+## Upload type
+Publication
+
+## Publication type
+Preprint
+
+## Title
+Structural Lemmas for the First-Prime Window of the Weil Quadratic Form
+
+## Authors
+[your name here]
+
+## Description (paste as-is into the Abstract field)
+We establish six structural results for the local Weil quadratic form
+Q_W^L on L^2(-L,L) in the first-prime window (½log2 < L < ½log3),
+the minimal interval where only the prime n=2 contributes to the
+Weil explicit formula.
+
+Our main contribution (Theorem 3) is a pure-rational absorption
+certificate showing that at L = 7/20 the log endpoint potential V
+absorbs the first-prime layer: V + P_{2,7/20} ≥ (69/100)V ≥ 0.
+The certificate reduces to five integer comparisons, including the key
+step 87^16 * 68^5 < 1701^5 * 32^16 (39-digit integers), independently
+machine-verified by Lean 4's native_decide tactic.
+
+We also give an exact spectral description of the truncated shift
+operator C_{b,L} (Theorem 1), prove that Path A (potential
+redistribution) is strictly falsified by two explicit negative
+witnesses (Theorem 6), and provide the algebraic and analytic
+framework for the Path B Schur criterion (Theorems 4–5).
+
+All results are supported by a certificate-first proof infrastructure:
+fail-closed JSON schemas, dual-path interval arithmetic (Path A ∩
+Path B verified for all basis entries), and 123 automated tests.
+The supporting code and Lean 4 formalisation are available at
+https://github.com/telleroutlook/weil-first-prime
+
+These results are independent of the main conjecture FP-0.35
+(λ(7/20) > 0) and do not imply the Riemann Hypothesis.
+
+## Keywords (enter each on a separate line)
+Weil quadratic form
+Riemann Hypothesis
+Weil explicit formula
+first prime window
+interval arithmetic
+Lean 4 formalisation
+certificate-first proof
+Schur criterion
+truncated shift operator
+
+## License
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+## Related/alternate identifiers
+URL: https://github.com/telleroutlook/weil-first-prime
+Relation: is supplemented by
+
+## Additional notes (paste into Notes field)
+2020 Mathematics Subject Classification: 11M26, 47B32, 65G20
+
+Companion papers:
+- Suzuki, M. "Weil's quadratic form via the screw function"
+  arXiv:2606.09096 (2026)
+- Kim, T. et al. "A numerical realization of Suzuki's
+  Weil-quadratic-form operator" arXiv:2607.24830 (2026)
+- Groskin, A. "A finite Guinand-Weil dictionary and archimedean
+  tail order for the truncated Weil quadratic form"
+  arXiv:2607.02828 (2026)

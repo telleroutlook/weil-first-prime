@@ -1,0 +1,10 @@
+main.pdf
+e1-path-a-obstruction.pdf
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.bbl
+*.blg
+_minted*/
