@@ -1,0 +1,67 @@
+{
+  "claim_id": "thm-6-path-a-negative-witness",
+  "statement_digest": "",
+  "dependency_digests": null,
+  "evidence": null,
+  "checker": {
+    "id": "thm6-checker",
+    "protocol_version": 2,
+    "checker_digest": "sha256:becc121ddaa329bdf4cf77ff9a44e1440a2d428915f12077445e0c5b8dca48ca",
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "runtime": {
+      "kind": "scripted",
+      "cmd": [
+        "python3",
+        "checker/thm6/check_thm6.py"
+      ],
+      "dependency_manifest_path": "environment.lock"
+    },
+    "network": "none"
+  },
+  "outcome": "accepted",
+  "assurance": "reproducible-computation",
+  "resources": {
+    "wall_millis": 132,
+    "cpu_millis": 0,
+    "mem_bytes": 0
+  },
+  "start_freshness": "2026-08-05",
+  "end_freshness": "2026-08-05",
+  "self_digest": "sha256:a07909e13b018dda329a1a14785f2bf073cb3a0eeea14e738d6cf4694e6383b5",
+  "metadata": {
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:1487e8f85718ab3fb5eb3333b0340ab73397ce8507b71b6049ffe135dd02f27e",
+    "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector even --out {cert}",
+    "semantic_replay": "true"
+  },
+  "replay_mode": "from_scratch",
+  "obligation_results": [
+    {
+      "id": "thm6.autocorrelation-even-exact",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm6.autocorrelation-odd-exact",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm6.kernel-integral-even-certified",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm6.kernel-integral-odd-certified",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm6.path-a-falsified-even",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm6.path-a-falsified-odd",
+      "verdict": "pass"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "format_version": "2",
+  "root_claim": "thm-fp-035",
+  "graph_root_digest": "sha256:bbbccb2e7a2b039435a9a4639036a1e9919f23f1db367d71b2faf0fbff2c295a",
+  "policy_digest": "sha256:d6e51ffbe3ef2a82f0ba6b566f83fc72c545d0f900d835d01c7d003c5aa0a534",
+  "state_derivation_version": "v2.0-M29",
+  "members": [
+    {
+      "path": "graph.json",
+      "digest": "sha256:bbbccb2e7a2b039435a9a4639036a1e9919f23f1db367d71b2faf0fbff2c295a"
+    },
+    {
+      "path": "policy.json",
+      "digest": "sha256:d6e51ffbe3ef2a82f0ba6b566f83fc72c545d0f900d835d01c7d003c5aa0a534"
+    },
+    {
+      "path": "attestations/cor-1-first-prime-spectrum.json",
+      "digest": "sha256:a64d6df4a2c5c132c5b566140aabe34a6257c38ee9d62f6ebd8dbf8587a8b3ae"
+    },
+    {
+      "path": "attestations/cor-2-no-small-perturbation.json",
+      "digest": "sha256:d4a67ec552ba76567893d040c906f50ef11950c6d64335dac50989504e794bd0"
+    },
+    {
+      "path": "attestations/cor-3-1-potential-redistribution.json",
+      "digest": "sha256:7d3b8ddce0edbfe6d07e96a1336e23c0d677d70a611f84f760f80c6a4a64aa84"
+    },
+    {
+      "path": "attestations/def-frozen-model-fp.json",
+      "digest": "sha256:2dcf22111e2ed6b164739b83ff42ec199b9fb22b589d990a4a7c82f8b0277821"
+    },
+    {
+      "path": "attestations/lem-l1-edge-mass.json",
+      "digest": "sha256:54d7961a951bbaa0868eb16672e186f0f5f6d67747678cdc232126456a029c3a"
+    },
+    {
+      "path": "attestations/lem-l2-h01-boundary.json",
+      "digest": "sha256:6e79c1af8c1d732611879b49240f8202f38ab4c14d62f08300524b1632229abd"
+    },
+    {
+      "path": "attestations/lem-l3-log-absorption.json",
+      "digest": "sha256:c4e6e4ee3d121257b8fcd303aef544b0aebefed67409e59bade5df1533ee5276"
+    },
+    {
+      "path": "attestations/lem-o1b-even.json",
+      "digest": "sha256:4be51ffdc9f76118012db6ea647d0030d28e427b73fd85289df1a35105f42374"
+    },
+    {
+      "path": "attestations/lem-o1b-odd.json",
+      "digest": "sha256:4b1964ac4fd1e6b45d1bc98ba4cb94dd2e77b67368098e5c9c0a89eb580d1e17"
+    },
+    {
+      "path": "attestations/lem-path-a-rejected.json",
+      "digest": "sha256:2779d2bbd7fa8d03cfe7b645a7449c01ca2298f24b82775af0f9c0a24b26abe3"
+    },
+    {
+      "path": "attestations/thm-1-single-step-overlap.json",
+      "digest": "sha256:84cbcff530f8f5dbbd216efd1dcec8b7b2be99c243264bac89063a44b5deb652"
+    },
+    {
+      "path": "attestations/thm-2-endpoint-potential-absorption.json",
+      "digest": "sha256:619542674e46c9e0793be5c7dfeac32e2a94abf13fba67fcd39118c688862845"
+    },
+    {
+      "path": "attestations/thm-3-rational-absorption-certificate.json",
+      "digest": "sha256:85199f7ba2d89f60992b21b5d8863723e3ab35f09a1b60b3a8dd195e3a93df64"
+    },
+    {
+      "path": "attestations/thm-4-prime-legendre-matrix.json",
+      "digest": "sha256:f6706755ee24f9d402fcbdc8b8d9e01b8441de96d6161c233933dc78b11350f8"
+    },
+    {
+      "path": "attestations/thm-5-split-residual-schur.json",
+      "digest": "sha256:e66716acf7472c28569039f12bfc3254959c72ecf618075c42e1018543aa99a1"
+    },
+    {
+      "path": "attestations/thm-6-path-a-negative-witness.json",
+      "digest": "sha256:ebe44c0570312499e47cabfe59bd45e86d276c2955acfb2ead1941de9647c13a"
+    },
+    {
+      "path": "attestations/thm-fp-035.json",
+      "digest": "sha256:f27e347cac8aa673ac3f091c39158ae239af430b43fe3b1aac9fd41b10e55545"
+    }
+  ],
+  "release_authority": {
+    "key_fingerprint": "",
+    "algorithm": "",
+    "signature_value": ""
+  },
+  "generated_at": "2026-08-05T21:38:07Z"
+}

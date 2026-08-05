@@ -1,0 +1,47 @@
+{
+  "claim_id": "cor-3-1-potential-redistribution",
+  "statement_digest": "",
+  "dependency_digests": null,
+  "evidence": null,
+  "checker": {
+    "id": "fp035-ir-checker",
+    "protocol_version": 2,
+    "checker_digest": "sha256:f1a4be9281d5ab9c491142869450c7d9d7d56d6a2bd34235f817408f1ea05a3b",
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "runtime": {
+      "kind": "scripted",
+      "cmd": [
+        "python3",
+        "checker/independent_review/check_ir_wrapper.py"
+      ],
+      "dependency_manifest_path": "environment.lock"
+    },
+    "network": "none"
+  },
+  "outcome": "accepted",
+  "assurance": "reproducible-computation",
+  "resources": {
+    "wall_millis": 24,
+    "cpu_millis": 0,
+    "mem_bytes": 0
+  },
+  "start_freshness": "2026-08-05",
+  "end_freshness": "2026-08-05",
+  "self_digest": "sha256:cf0e87ed9ba3c55b6aef74bf0bbcc9b6de11f4a2b87437337ac2ab326ba671f1",
+  "metadata": {
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:0eb1fd7a293d7bbbee7f86b384126fd9e5863003ba82cc2b3708609f1b3c20ed",
+    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/cor-3-1-potential-redistribution.json', '{cert}')\"",
+    "semantic_replay": "true"
+  },
+  "replay_mode": "from_scratch",
+  "obligation_results": [
+    {
+      "id": "independent-review.accepted",
+      "verdict": "pass"
+    }
+  ]
+}

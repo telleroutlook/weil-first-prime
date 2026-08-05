@@ -1,0 +1,47 @@
+{
+  "claim_id": "def-frozen-model-fp",
+  "statement_digest": "",
+  "dependency_digests": null,
+  "evidence": null,
+  "checker": {
+    "id": "fp035-ir-checker",
+    "protocol_version": 2,
+    "checker_digest": "sha256:f1a4be9281d5ab9c491142869450c7d9d7d56d6a2bd34235f817408f1ea05a3b",
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "runtime": {
+      "kind": "scripted",
+      "cmd": [
+        "python3",
+        "checker/independent_review/check_ir_wrapper.py"
+      ],
+      "dependency_manifest_path": "environment.lock"
+    },
+    "network": "none"
+  },
+  "outcome": "accepted",
+  "assurance": "reproducible-computation",
+  "resources": {
+    "wall_millis": 34,
+    "cpu_millis": 0,
+    "mem_bytes": 0
+  },
+  "start_freshness": "2026-08-05",
+  "end_freshness": "2026-08-05",
+  "self_digest": "sha256:17eacb9b577675808a441d91dbaf9aaa12f53ada4cfff456f9adcd834fd5fa20",
+  "metadata": {
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:78d2d62960d9cec82396b14ab5f5e07d7de6e5522576cf88f148c15cbd650488",
+    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/def-frozen-model-fp.json', '{cert}')\"",
+    "semantic_replay": "true"
+  },
+  "replay_mode": "from_scratch",
+  "obligation_results": [
+    {
+      "id": "independent-review.accepted",
+      "verdict": "pass"
+    }
+  ]
+}
