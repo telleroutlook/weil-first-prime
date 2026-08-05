@@ -1,0 +1,40 @@
+{
+  "contract_version": "2",
+  "claim_id": "lem-o1b-even",
+  "statement_text": "O1-B even sector gate (conjecture): For L=7/20, N_even=8, tail_degree=16, eta=1/2, with frozen window log2 <= 2L < log3 verified, there exist interval-certified matrices M^(0), S^(0), M^(2), S^(2) and b_L > 0, b_L*F_even - R_eta_even > 0 (positive definite). Discovery pilot Schur margin ~8.81e-4.",
+  "statement_digest": "sha256:2799daa23ac914ec3ed31c41928333284a2eae49173035862eff62b8b2ac44d7",
+  "dependencies": [
+    {
+      "claim_id": "thm-5-split-residual-schur",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:948775b1492182a38b8a7dc96223c692e31dc0d0da569591e61e14c6728965b6"
+    },
+    {
+      "claim_id": "thm-3-rational-absorption-certificate",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:8eb81a6808077e2e565b59a5877d8b72ad8c1264eeda1a0c5e64b14d33824239"
+    }
+  ],
+  "evidence": {
+    "mode": "joint",
+    "required": ["archimedean_base_certificate", "first_prime_certificate_even"]
+  },
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000011",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000011"
+  },
+  "runtime": {"class": "native-dev", "network": "none"},
+  "obligations": [
+    "o1b-even.window-verified",
+    "o1b-even.archimedean-base-certified",
+    "o1b-even.J-E-matrices-exact",
+    "o1b-even.b_L-positive",
+    "o1b-even.F-matrix-assembled",
+    "o1b-even.R-eta-assembled",
+    "o1b-even.ldlt-all-pivots-positive"
+  ],
+  "assurance": {"required": ["deterministic-cap"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "independence": {}
+}

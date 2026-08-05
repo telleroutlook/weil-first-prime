@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "certificate-archimedean-v1",
+  "title": "Archimedean primitives certificate",
+  "description": "Dual-path certificate for M_V, M_K, S_VV, S_VK, S_KK at L=7/20. Carries only frozen identities and parameter hashes. All matrix values are recomputed by the checker; self-reported numeric fields are rejected as unknown.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "obligation",
+    "radius",
+    "path_a",
+    "path_b",
+    "theorem_contract_sha256"
+  ],
+  "properties": {
+    "format_version": {
+      "type": "string",
+      "const": "archimedean-1.0"
+    },
+    "obligation": {
+      "type": "string",
+      "const": "archimedean_primitives_o2_v1"
+    },
+    "radius": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": {"type": "integer", "const": 7},
+        "denominator": {"type": "integer", "const": 20}
+      }
+    },
+    "path_a": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "quadrature_rule",
+        "remainder_method",
+        "integrand_source_sha256"
+      ],
+      "properties": {
+        "method": {"type": "string", "const": "GL_with_certified_remainder"},
+        "quadrature_rule": {"type": "string", "enum": ["GL8", "GL14", "GL16"]},
+        "remainder_method": {
+          "type": "string",
+          "const": "bernstein_ellipse_analytic"
+        },
+        "integrand_source_sha256": {"$ref": "#/definitions/sha256"}
+      }
+    },
+    "path_b": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "taylor_cutoff",
+        "taylor_cubic_coefficient",
+        "remainder_method",
+        "integrand_source_sha256"
+      ],
+      "properties": {
+        "method": {"type": "string", "const": "taylor_plus_GL_with_certified_remainder"},
+        "taylor_cutoff": {"type": "string"},
+        "taylor_cubic_coefficient": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["numerator", "denominator"],
+          "properties": {
+            "numerator": {"type": "integer", "const": 7},
+            "denominator": {"type": "integer", "const": 11520}
+          },
+          "description": "Correct coefficient 7/11520 for the s^3 term. NOT 1/2880."
+        },
+        "remainder_method": {
+          "type": "string",
+          "const": "bernstein_ellipse_analytic"
+        },
+        "integrand_source_sha256": {"$ref": "#/definitions/sha256"}
+      }
+    },
+    "theorem_contract_sha256": {"$ref": "#/definitions/sha256"}
+  },
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "contract_version": "2",
+  "claim_id": "thm-fp-035",
+  "statement_text": "FP-0.35 (main conjecture): lambda(7/20) = inf_{v != 0 in D(Q_W^{7/20})} Q_W^{7/20}(v) / ||v||^2 > 0. Equivalently, the local Weil quadratic form on L^2(-7/20, 7/20) is strictly positive. This is a finite-scale positivity statement and does not imply RH.",
+  "statement_digest": "sha256:2ef1007dcf698ead66cc72912e1c8824cbe4014ad79da4237e3a5d5260512ad8",
+  "dependencies": [
+    {
+      "claim_id": "lem-o1b-even",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:2799daa23ac914ec3ed31c41928333284a2eae49173035862eff62b8b2ac44d7"
+    },
+    {
+      "claim_id": "lem-o1b-odd",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:f353f2b9271e7fa2a8cad64db02abcab1e1fd87162341b510921498653a2292b"
+    },
+    {
+      "claim_id": "thm-5-split-residual-schur",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:948775b1492182a38b8a7dc96223c692e31dc0d0da569591e61e14c6728965b6"
+    },
+    {
+      "claim_id": "thm-3-rational-absorption-certificate",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:8eb81a6808077e2e565b59a5877d8b72ad8c1264eeda1a0c5e64b14d33824239"
+    }
+  ],
+  "evidence": {
+    "mode": "joint",
+    "required": [
+      "archimedean_base_certificate",
+      "first_prime_certificate_even",
+      "first_prime_certificate_odd"
+    ]
+  },
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000018",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000018"
+  },
+  "runtime": {"class": "wasi", "network": "none"},
+  "obligations": [
+    "fp035.both-sectors-certified",
+    "fp035.theorem5-conclusion-holds",
+    "fp035.c-star-positive",
+    "fp035.conclusion-bounded-to-finite-scale",
+    "fp035.no-rh-claimed"
+  ],
+  "assurance": {"required": ["deterministic-cap", "exact-replay"]},
+  "replay": {"semantic": "required", "byte_exact": "required"},
+  "independence": {}
+}

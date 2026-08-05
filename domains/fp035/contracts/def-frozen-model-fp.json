@@ -1,0 +1,18 @@
+{
+  "contract_version": "2",
+  "claim_id": "def-frozen-model-fp",
+  "statement_text": "Frozen model for FP-0.35: Weil quadratic form Q_W on L^2(-L,L) with L=7/20, Suzuki convention (2.5)/(2.11), Archimedean kernel r, and first prime layer P_{2,L} = -(log2/sqrt(2)) C_{log2,L}.",
+  "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d",
+  "dependencies": [],
+  "evidence": {"mode": "joint", "required": []},
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000001",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000001"
+  },
+  "runtime": {"class": "native-dev", "network": "none"},
+  "obligations": ["frozen-model.conventions-fixed", "frozen-model.prime-free-bound-certified"],
+  "assurance": {"required": ["independent-review"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "independence": {}
+}

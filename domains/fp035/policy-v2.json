@@ -1,0 +1,47 @@
+{
+  "version": "2",
+  "target": "thm-fp-035",
+  "allowed_assurances": [
+    "formal-kernel",
+    "deterministic-cap",
+    "exact-replay",
+    "reproducible-computation",
+    "independent-review"
+  ],
+  "forbidden_assurances": [
+    "ai-review",
+    "assumption",
+    "shadow-review"
+  ],
+  "forbidden_runtimes": [
+    "shadow",
+    "native-dev"
+  ],
+  "required_claims": [
+    "def-frozen-model-fp",
+    "thm-1-single-step-overlap",
+    "cor-1-first-prime-spectrum",
+    "cor-2-no-small-perturbation",
+    "thm-2-endpoint-potential-absorption",
+    "thm-3-rational-absorption-certificate",
+    "cor-3-1-potential-redistribution",
+    "thm-4-prime-legendre-matrix",
+    "thm-5-split-residual-schur",
+    "thm-6-path-a-negative-witness",
+    "lem-l1-edge-mass",
+    "lem-l2-h01-boundary",
+    "lem-l3-log-absorption",
+    "lem-path-a-rejected",
+    "lem-o1b-even",
+    "lem-o1b-odd",
+    "thm-fp-035"
+  ],
+  "required_metadata_keys": [
+    "format_version",
+    "method",
+    "sector",
+    "pivot_count",
+    "window_verified",
+    "archimedean_obligation"
+  ]
+}

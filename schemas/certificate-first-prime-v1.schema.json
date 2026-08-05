@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "certificate-first-prime-v1",
+  "title": "Weil first-prime exact split certificate contract",
+  "description": "Certificate-first contract for L=7/20. The certificate carries identities and frozen parameters only. Matrices, eigenvalues, pivots, conclusions, theta discounts and arithmetic overrides are deliberately absent and therefore rejected as unknown fields.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version",
+    "method",
+    "radius",
+    "window",
+    "sector",
+    "N",
+    "tail_degree",
+    "index_set",
+    "eta",
+    "archimedean_base",
+    "theorem_contract_sha256"
+  ],
+  "properties": {
+    "format_version": {
+      "type": "string",
+      "const": "first-prime-1.0"
+    },
+    "method": {
+      "type": "string",
+      "const": "exact_prime_split_v1"
+    },
+    "radius": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": {"type": "integer", "const": 7},
+        "denominator": {"type": "integer", "const": 20}
+      }
+    },
+    "window": {
+      "type": "string",
+      "const": "log2_le_2L_lt_log3"
+    },
+    "sector": {
+      "type": "string",
+      "enum": ["even", "odd"]
+    },
+    "N": {
+      "type": "integer"
+    },
+    "tail_degree": {
+      "type": "integer"
+    },
+    "index_set": {
+      "type": "array",
+      "items": {"type": "integer", "minimum": 0},
+      "uniqueItems": true
+    },
+    "eta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": {"type": "integer", "const": 1},
+        "denominator": {"type": "integer", "const": 2}
+      }
+    },
+    "archimedean_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "certificate_sha256",
+        "checker_sha256",
+        "schema_sha256",
+        "obligation"
+      ],
+      "properties": {
+        "certificate_sha256": {"$ref": "#/definitions/sha256"},
+        "checker_sha256": {"$ref": "#/definitions/sha256"},
+        "schema_sha256": {"$ref": "#/definitions/sha256"},
+        "obligation": {
+          "type": "string",
+          "const": "archimedean_primitives_o2_v1"
+        }
+      }
+    },
+    "theorem_contract_sha256": {"$ref": "#/definitions/sha256"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"sector": {"const": "even"}},
+        "required": ["sector"]
+      },
+      "then": {
+        "properties": {
+          "N": {"const": 8},
+          "tail_degree": {"const": 16},
+          "index_set": {"const": [0, 2, 4, 6, 8, 10, 12, 14]}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"sector": {"const": "odd"}},
+        "required": ["sector"]
+      },
+      "then": {
+        "properties": {
+          "N": {"const": 6},
+          "tail_degree": {"const": 13},
+          "index_set": {"const": [1, 3, 5, 7, 9, 11]}
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

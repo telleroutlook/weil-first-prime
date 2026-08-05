@@ -1,0 +1,31 @@
+{
+  "contract_version": "2",
+  "claim_id": "thm-6-path-a-negative-witness",
+  "statement_text": "Path A strict negative witnesses (Theorem 6): The rational Legendre vectors v_even = P_0 - P_2 and v_odd = P_1 - (1/2)P_3 certify (tilde_q - L_0*I)[v_even] in [-0.053384, -0.052711] and (tilde_q - L_0*I)[v_odd] in [-0.032327, -0.032119] with L_0 = 2^{-30} and theta=69/100. Path A is strictly falsified. This does not falsify FP-0.35.",
+  "statement_digest": "sha256:aee3b04e9f0fed57786a276a9eeabb4363c6cdb24447c158b4890e046f46bf95",
+  "dependencies": [
+    {
+      "claim_id": "cor-3-1-potential-redistribution",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:05e591b284b8ab74a83903d3ab28b30c4b25cfa37aac0803f1257bbf94d5a3a9"
+    }
+  ],
+  "evidence": {"mode": "joint", "required": []},
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000006",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000006"
+  },
+  "runtime": {"class": "native-dev", "network": "none"},
+  "obligations": [
+    "thm6.autocorrelation-even-exact",
+    "thm6.autocorrelation-odd-exact",
+    "thm6.kernel-integral-even-certified",
+    "thm6.kernel-integral-odd-certified",
+    "thm6.path-a-falsified-even",
+    "thm6.path-a-falsified-odd"
+  ],
+  "assurance": {"required": ["deterministic-cap"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "independence": {}
+}
