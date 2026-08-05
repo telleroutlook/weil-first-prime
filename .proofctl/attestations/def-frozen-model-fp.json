@@ -6,28 +6,27 @@
   "checker": {
     "id": "fp035-ir-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:f1a4be9281d5ab9c491142869450c7d9d7d56d6a2bd34235f817408f1ea05a3b",
+    "checker_digest": "sha256:19871b810fa1a6d59ab249ba3f021882cc04b51301538a4c9d9e6cc7754c59b2",
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/independent_review/check_ir_wrapper.py"
-      ],
-      "dependency_manifest_path": "environment.lock"
+      ]
     },
     "network": "none"
   },
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 34,
+    "wall_millis": 29,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:17eacb9b577675808a441d91dbaf9aaa12f53ada4cfff456f9adcd834fd5fa20",
+  "self_digest": "sha256:50e20a8bd7fd3a918bd85332dadc25d7f0fb743e93646e10908d2d2c5f2b693d",
   "metadata": {
     "checker_exit": "0",
     "cold_replay_date": "2026-08-05",
@@ -40,7 +39,11 @@
   "replay_mode": "from_scratch",
   "obligation_results": [
     {
-      "id": "independent-review.accepted",
+      "id": "frozen-model.conventions-fixed",
+      "verdict": "pass"
+    },
+    {
+      "id": "frozen-model.prime-free-bound-certified",
       "verdict": "pass"
     }
   ]

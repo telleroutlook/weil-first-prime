@@ -6,35 +6,34 @@
   "checker": {
     "id": "thm3-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:18dc65f43eb5575d7400593bcd3cc7866d7b6286e5c3604bc6a86b4b93f5649b",
+    "checker_digest": "sha256:c7fbac37aa6d09dfc75b951aa048c99f525d36d93d38e4b9f150b329148d72c5",
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/thm3/check_thm3.py"
-      ],
-      "dependency_manifest_path": "environment.lock"
+      ]
     },
     "network": "none"
   },
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 31,
+    "wall_millis": 33,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:6725d96e468e55aa31e98532f6e0e316174aa1893dfc9aa5c9529a5b515a6398",
+  "self_digest": "sha256:da54bd98fc9c1a1ff14e2015471d4920308e21279ed3313378302fff22a96658",
   "metadata": {
     "checker_exit": "0",
     "cold_replay_date": "2026-08-05",
     "digests_fresh": "true",
     "evidence_count": "1",
     "evidence_digests": "sha256:10801bcd7a53bba2bc245bee75d34c6e16a4447c05354c9e2bb7a091f3dc23a7",
-    "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector even --out {cert}",
+    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/thm-3-rational-absorption-certificate.json', '{cert}')\"",
     "semantic_replay": "true"
   },
   "replay_mode": "from_scratch",

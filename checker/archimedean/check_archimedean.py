@@ -139,6 +139,7 @@ def check(args: argparse.Namespace) -> int:
 
     output = {
         "protocol_version": 2,
+        "claim_id": "",
         "obligation_results": [
             {"id": "archimedean_primitives_o2_v1", "verdict": "pass"}
         ],

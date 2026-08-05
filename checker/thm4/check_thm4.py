@@ -25,6 +25,8 @@ OBLIGATION_IDS = [
     "thm4.E-integral-formula",
     "thm4.in-Q-tau",
     "thm4.sample-J00",
+    "thm4.sample-J11",
+    "thm4.sample-J02",
 ]
 
 # Frozen: tau = log2/L, L=7/20. Use rational bounds.
@@ -77,17 +79,34 @@ def verify() -> tuple[bool, str]:
             if not isinstance(E_e[i][j], Fraction):
                 return False, f"E[{i},{j}] not in Q"
 
-    # 5. Sample check: J[0,0] at tau=TAU_MID has correct sign
-    #    tau = log2/L ≈ 1.98..., so J[0,0] = 2*(1-tau) < 0 would be wrong.
-    #    Actually tau in (1,2) so 1-tau in (-1,0), J[0,0] = 2*(1-tau) < 0.
-    #    Let's just confirm the value is in the expected range.
+    # 5. Sample J[0,0]: should be in (0, 2) since tau ∈ (1,2) → 2*(2-tau) ∈ (0,2)
     if not (Fraction(0) < J_e[0][0] < Fraction(2, 1)):
-        return False, f"J[0,0] = {J_e[0][0]} not in (-2, 0)"
+        return False, f"J[0,0] = {J_e[0][0]} not in (0, 2)"
+
+    # 6. Sample J[1,1] (odd sector, n_i=n_j=1): verify it's a nonzero Fraction in Q[tau]
+    indices_o = list(range(1, 12, 2))
+    J_o, E_o = prime_legendre_matrices(indices_o, TAU_MID)
+    if not isinstance(J_o[0][0], Fraction):
+        return False, f"J[1,1] not a Fraction: {type(J_o[0][0])}"
+    # J_{11}(tau) = 2*integral_{-1}^{1-tau} x*(x+tau) dx ≈ -0.039 at tau≈1.98 — nonzero
+    if J_o[0][0] == Fraction(0):
+        return False, "J[1,1] unexpectedly zero"
+
+    # 7. Sample J[0,2] (even sector, positional i=0,j=1 → n_i=0, n_j=2): nonzero Fraction
+    if not isinstance(J_e[0][1], Fraction):
+        return False, f"J[0,2] not a Fraction: {type(J_e[0][1])}"
+    if J_e[0][1] == Fraction(0):
+        return False, "J[0,2] unexpectedly zero"
 
     return True, "all thm-4 rational checks verified"
 
 
 def main() -> int:
+    from checker._protocol import resolve_cert_and_claim
+    _cert_path, claim_id = resolve_cert_and_claim()
+    if not claim_id:
+        claim_id = "thm-4-prime-legendre-matrix"
+
     try:
         passed, explanation = verify()
     except Exception as exc:
@@ -98,6 +117,7 @@ def main() -> int:
         print(f"THM4 CHECKER FAIL: {explanation}", file=sys.stderr)
         result = {
             "protocol_version": 2,
+            "claim_id": claim_id,
             "obligation_results": [{"id": oid, "verdict": "fail"} for oid in OBLIGATION_IDS],
             "status": "UNCERTIFIED", "explanation": explanation,
         }
@@ -106,6 +126,7 @@ def main() -> int:
 
     result = {
         "protocol_version": 2,
+        "claim_id": claim_id,
         "obligation_results": [{"id": oid, "verdict": "pass"} for oid in OBLIGATION_IDS],
         "status": "CERTIFIED", "method": "pure_rational",
     }

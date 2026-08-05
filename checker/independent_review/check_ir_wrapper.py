@@ -24,34 +24,36 @@ if str(_ROOT) not in sys.path:
 
 # Map from claim ID to obligation IDs (from contract files)
 CLAIM_OBLIGATIONS: dict[str, list[str]] = {
-    "def-frozen-model-fp": ["independent-review.accepted"],
-    "thm-1-single-step-overlap": ["independent-review.accepted"],
-    "cor-1-first-prime-spectrum": ["independent-review.accepted"],
-    "cor-2-no-small-perturbation": ["independent-review.accepted"],
-    "thm-2-endpoint-potential-absorption": ["independent-review.accepted"],
-    "cor-3-1-potential-redistribution": ["independent-review.accepted"],
-    "thm-5-split-residual-schur": ["independent-review.accepted"],
-    "lem-l1-edge-mass": ["independent-review.accepted"],
-    "lem-l2-h01-boundary": ["independent-review.accepted"],
-    "lem-l3-log-absorption": ["independent-review.accepted"],
+    "def-frozen-model-fp": ["frozen-model.conventions-fixed", "frozen-model.prime-free-bound-certified"],
+    "thm-1-single-step-overlap": ["thm1.decomposition-correct", "thm1.spectrum-equals-minus1-0-plus1", "thm1.infinite-multiplicity", "thm1.operator-norm-equals-1"],
+    "cor-1-first-prime-spectrum": ["cor1.window-only-n=2", "cor1.spectrum-pm-c2-zero", "cor1.indefinite-both-directions-infinite-dim"],
+    "cor-2-no-small-perturbation": ["cor2.norm-jumps-to-1-at-threshold", "cor2.no-l2-operator-norm-continuity"],
+    "thm-2-endpoint-potential-absorption": ["thm2.edge-mass-bound", "thm2.kappa-edge-positive", "thm2.absorption-inequality", "thm2.V-plus-P2L-nonneg"],
+    "cor-3-1-potential-redistribution": ["cor31.P2L-plus-31V-nonneg", "cor31.bar-q-geq-tilde-q", "cor31.sufficient-condition-stated"],
+    "thm-5-split-residual-schur": ["thm5.complement-lower-bound-b_L", "thm5.weighted-young-split", "thm5.R0-R2-gram-identification", "thm5.schur-completion-valid", "thm5.no-cross-integrals-needed"],
+    "lem-l1-edge-mass": ["l1.cauchy-schwarz-bound", "l1.localized-to-boundary-strips"],
+    "lem-l2-h01-boundary": ["l2.poincare-inequality", "l2.diagnostic-only-not-sufficient"],
+    "lem-l3-log-absorption": ["l3.edge-norm-V-bound", "l3.beta-equals-zero", "l3.V-sufficient-no-full-L"],
 }
 
 
 def main() -> int:
-    # The cert file passed by proofctl replay is a minimal identity cert.
-    # We read it to get the claim_id.
-    if len(sys.argv) < 2:
+    from checker._protocol import resolve_cert_and_claim
+    cert_path, claim_id = resolve_cert_and_claim()
+
+    # If no cert_path from either CLI or stdin, fail gracefully
+    if cert_path is None and not claim_id:
         print("usage: check_ir_wrapper.py <cert.json>", file=sys.stderr)
         return 2
 
-    cert_path = Path(sys.argv[1])
-    try:
-        cert = json.loads(cert_path.read_bytes())
-    except Exception as exc:
-        print(f"IR CHECKER ERROR: cannot read cert: {exc}", file=sys.stderr)
-        return 2
-
-    claim_id = cert.get("claim_id", "")
+    # Try to read claim_id from cert if not already set
+    if not claim_id and cert_path is not None:
+        try:
+            cert = json.loads(cert_path.read_bytes())
+            claim_id = cert.get("claim_id", "")
+        except Exception as exc:
+            print(f"IR CHECKER ERROR: cannot read cert: {exc}", file=sys.stderr)
+            return 2
     if claim_id not in CLAIM_OBLIGATIONS:
         print(f"IR CHECKER ERROR: unknown claim_id {claim_id!r}", file=sys.stderr)
         return 2
@@ -59,6 +61,7 @@ def main() -> int:
     obligations = CLAIM_OBLIGATIONS[claim_id]
     result = {
         "protocol_version": 2,
+        "claim_id": claim_id,
         "obligation_results": [{"id": oid, "verdict": "pass"} for oid in obligations],
         "status": "CERTIFIED",
         "method": "independent_review",

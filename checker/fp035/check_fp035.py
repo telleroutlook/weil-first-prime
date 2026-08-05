@@ -74,10 +74,16 @@ def verify() -> tuple[bool, str]:
 
 
 def main() -> int:
+    from checker._protocol import resolve_cert_and_claim
+    _cert_path, claim_id = resolve_cert_and_claim()
+    if not claim_id:
+        claim_id = "thm-fp-035"
+
     passed, explanation = verify()
     verdict = "pass" if passed else "fail"
     result = {
         "protocol_version": 2,
+        "claim_id": claim_id,
         "obligation_results": [{"id": oid, "verdict": verdict} for oid in OBLIGATION_IDS],
         "status": "CERTIFIED" if passed else "UNCERTIFIED",
         "explanation": explanation,

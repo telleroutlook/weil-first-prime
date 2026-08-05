@@ -52,14 +52,19 @@ def verify() -> tuple[bool, str]:
 
 
 def main() -> int:
+    from checker._protocol import resolve_cert_and_claim, make_output
+    _cert_path, claim_id = resolve_cert_and_claim()
+    if not claim_id:
+        claim_id = "lem-path-a-rejected"
+
     passed, explanation = verify()
     verdict = "pass" if passed else "fail"
-    result = {
-        "protocol_version": 2,
-        "obligation_results": [{"id": oid, "verdict": verdict} for oid in OBLIGATION_IDS],
-        "status": "CERTIFIED" if passed else "UNCERTIFIED",
-        "explanation": explanation,
-    }
+    result = make_output(
+        claim_id,
+        [{"id": oid, "verdict": verdict} for oid in OBLIGATION_IDS],
+        status="CERTIFIED" if passed else "UNCERTIFIED",
+        explanation=explanation,
+    )
     if not passed:
         print(f"LEM-PATH-A CHECKER FAIL: {explanation}", file=sys.stderr)
     print(json.dumps(result, sort_keys=True))

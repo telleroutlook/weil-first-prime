@@ -109,11 +109,17 @@ def verify() -> tuple[bool, str]:
 
 
 def main() -> int:
+    from checker._protocol import resolve_cert_and_claim
+    _cert_path, claim_id = resolve_cert_and_claim()
+    if not claim_id:
+        claim_id = "thm-3-rational-absorption-certificate"
+
     passed, explanation = verify()
     if not passed:
         print(f"THM3 CHECKER FAIL: {explanation}", file=sys.stderr)
         result = {
             "protocol_version": 2,
+            "claim_id": claim_id,
             "obligation_results": [{"id": oid, "verdict": "fail"} for oid in OBLIGATION_IDS],
             "status": "UNCERTIFIED",
             "explanation": explanation,
@@ -123,6 +129,7 @@ def main() -> int:
 
     result = {
         "protocol_version": 2,
+        "claim_id": claim_id,
         "obligation_results": [{"id": oid, "verdict": "pass"} for oid in OBLIGATION_IDS],
         "status": "CERTIFIED",
         "method": "pure_rational",

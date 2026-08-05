@@ -1,43 +1,36 @@
 {
   "claim_id": "thm-6-path-a-negative-witness",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:aee3b04e9f0fed57786a276a9eeabb4363c6cdb24447c158b4890e046f46bf95",
+  "dependency_digests": [
+    "sha256:05e591b284b8ab74a83903d3ab28b30c4b25cfa37aac0803f1257bbf94d5a3a9"
+  ],
   "evidence": null,
   "checker": {
     "id": "thm6-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:becc121ddaa329bdf4cf77ff9a44e1440a2d428915f12077445e0c5b8dca48ca",
+    "checker_digest": "sha256:76b36707800da36a9a46edf5cc68de0434fd7510f9f0d19b6e1afe1c8428b767",
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/thm6/check_thm6.py"
-      ],
-      "dependency_manifest_path": "environment.lock"
+      ]
     },
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 132,
+    "wall_millis": 125,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:a07909e13b018dda329a1a14785f2bf073cb3a0eeea14e738d6cf4694e6383b5",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:1487e8f85718ab3fb5eb3333b0340ab73397ce8507b71b6049ffe135dd02f27e",
-    "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector even --out {cert}",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "self_digest": "sha256:519c8e0016197089bd2de6097a1962dc2235d7beed2177b8686fd31b06b32cc7",
+  "cache_key": "30659d3a0fcfc23ccdb3ebc58d8f5188dec672937c6ece2b871424f3a86cd4d5",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "thm6.autocorrelation-even-exact",

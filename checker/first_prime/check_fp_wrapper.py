@@ -21,11 +21,26 @@ _ROOT = Path(__file__).parent.parent.parent
 
 
 def main() -> int:
-    if len(sys.argv) < 2:
-        print("usage: check_fp_wrapper.py <cert.json>", file=sys.stderr)
-        return 2
+    sys.path.insert(0, str(_ROOT))
+    from checker._protocol import resolve_cert_and_claim
+    cert_path, claim_id = resolve_cert_and_claim()
 
-    cert_path = Path(sys.argv[1])
+    if cert_path is None:
+        # proofctl check with no evidence: run verification using default cert paths
+        # determined by the claim_id
+        sector_map = {
+            "lem-o1b-even": "even",
+            "lem-o1b-odd": "odd",
+        }
+        sector = sector_map.get(claim_id)
+        if sector is None:
+            print(f"WRAPPER ERROR: no cert and unknown claim_id {claim_id!r}", file=sys.stderr)
+            return 2
+        cert_path = _ROOT / "certs" / f"first-prime-{sector}.json"
+        if not cert_path.exists():
+            print(f"WRAPPER ERROR: default cert not found: {cert_path}", file=sys.stderr)
+            return 2
+
     try:
         cert = json.loads(cert_path.read_bytes())
     except (OSError, json.JSONDecodeError) as exc:

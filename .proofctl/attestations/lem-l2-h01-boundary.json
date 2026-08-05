@@ -6,28 +6,27 @@
   "checker": {
     "id": "fp035-ir-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:f1a4be9281d5ab9c491142869450c7d9d7d56d6a2bd34235f817408f1ea05a3b",
+    "checker_digest": "sha256:19871b810fa1a6d59ab249ba3f021882cc04b51301538a4c9d9e6cc7754c59b2",
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/independent_review/check_ir_wrapper.py"
-      ],
-      "dependency_manifest_path": "environment.lock"
+      ]
     },
     "network": "none"
   },
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 24,
+    "wall_millis": 25,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:8d4a586fb152489cea6992a7a331626729b9cda18eb4c661daf510b670fd7af8",
+  "self_digest": "sha256:52bf5f8805a55dc4e2a6a3aad155e9175e57890263d76f5e9d51bd7d77c387c4",
   "metadata": {
     "checker_exit": "0",
     "cold_replay_date": "2026-08-05",
@@ -40,7 +39,11 @@
   "replay_mode": "from_scratch",
   "obligation_results": [
     {
-      "id": "independent-review.accepted",
+      "id": "l2.poincare-inequality",
+      "verdict": "pass"
+    },
+    {
+      "id": "l2.diagnostic-only-not-sufficient",
       "verdict": "pass"
     }
   ]

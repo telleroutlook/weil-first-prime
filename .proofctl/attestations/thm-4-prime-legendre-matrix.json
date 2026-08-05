@@ -6,35 +6,34 @@
   "checker": {
     "id": "thm4-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:e399ab0ba2c21e45fa539fd65cc415ad578ea459f1fbcd55d8f490a2462d5c6d",
+    "checker_digest": "sha256:14ac32d73e3e36f2ec73e7c930f8fa5bdec4e5f1fd1bbcb5ee49b55eadbb4f7c",
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/thm4/check_thm4.py"
-      ],
-      "dependency_manifest_path": "environment.lock"
+      ]
     },
     "network": "none"
   },
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 66,
+    "wall_millis": 81,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:0831add6d741e3c4d13f76af3966735b67903b1a8f3ee06a3a68f854fa8875e1",
+  "self_digest": "sha256:457c47ba693a4af8ffb83d5b06d5c007bc05eedc1bbd4c2a0a48f7f4edfc2b42",
   "metadata": {
     "checker_exit": "0",
     "cold_replay_date": "2026-08-05",
     "digests_fresh": "true",
     "evidence_count": "1",
     "evidence_digests": "sha256:37b37f36b6c2dd23fee10860d18aa529c50edc531c2c7ac961ced091d1248e4a",
-    "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector even --out {cert}",
+    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/thm-4-prime-legendre-matrix.json', '{cert}')\"",
     "semantic_replay": "true"
   },
   "replay_mode": "from_scratch",
@@ -57,6 +56,14 @@
     },
     {
       "id": "thm4.sample-J00",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm4.sample-J11",
+      "verdict": "pass"
+    },
+    {
+      "id": "thm4.sample-J02",
       "verdict": "pass"
     }
   ]

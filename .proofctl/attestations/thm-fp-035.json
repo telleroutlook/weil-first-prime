@@ -6,28 +6,27 @@
   "checker": {
     "id": "fp035-main-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:e7a8129d492ceeef07054bedc56f4e19f430d879d90bf78f7a815804ffffbc44",
+    "checker_digest": "sha256:dacbb7525b58357bc59f8d2909aa2770cab13703f08ebd541acf3a5a862e81da",
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/fp035/check_fp035.py"
-      ],
-      "dependency_manifest_path": "environment.lock"
+      ]
     },
     "network": "none"
   },
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 30,
+    "wall_millis": 29,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:9a3a4dfa7dd336cb155130076973986946a4abb233c46f7f6fbb7bb875e98234",
+  "self_digest": "sha256:dffda56c29f740e7241264c442ab184afad7b3bd24b02a3681f1b7f2173a13c1",
   "metadata": {
     "archimedean_obligation": "archimedean_primitives_o2_v1",
     "checker_exit": "0",
