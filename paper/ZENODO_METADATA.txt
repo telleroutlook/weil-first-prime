@@ -12,7 +12,7 @@ Preprint
 Structural Lemmas for the First-Prime Window of the Weil Quadratic Form
 
 ## Authors
-[your name here]
+Lin Tao
 
 ## Description (paste as-is into the Abstract field)
 We establish six structural results for the local Weil quadratic form
