@@ -21,7 +21,8 @@ from typing import Any
 from src.archimedean.interval import Interval, add, intersect, point
 from src.archimedean.integrator_a import (
     integrate_M_K as _a_mk,
-    integrate_full_S as _a_S,
+    integrate_S_VK,
+    integrate_S_KK,
     PathAResult,
 )
 from src.archimedean.log_moments import V_matrix_entry, V2_matrix_entry
@@ -86,20 +87,12 @@ def compute_all_primitives_path_a(
         for j, nj in enumerate(index_set):
             S_VV[(i, j)] = V2_matrix_entry(ni, nj, precision)
 
-    # S_VK, S_KV, S_KK via full assembly
-    s_result = _a_S(index_set, A_NUM, A_DEN, depth_2d=4, depth_3d=3, prec=precision)
-    S_full = s_result["S"]
-    s_witnesses = s_result["witnesses"]
-
-    # Extract S_VK, S_KV, S_KK from full S
-    # Full S = S_VV + S_VK + S_KV + S_KK; we need the breakdown.
-    # _a_S returns the sum already — store the full S and the components separately.
+    # S_VK, S_KV, S_KK: compute directly per entry (Path A, depth=4/3)
     S_VK: dict[tuple[int, int], Interval] = {}
     S_KV: dict[tuple[int, int], Interval] = {}
     S_KK: dict[tuple[int, int], Interval] = {}
     for i, ni in enumerate(index_set):
         for j, nj in enumerate(index_set):
-            from src.archimedean.integrator_a import integrate_S_VK, integrate_S_KK
             svk = integrate_S_VK(ni, nj, A_NUM, A_DEN, depth=4, prec=precision)
             skv = integrate_S_VK(nj, ni, A_NUM, A_DEN, depth=4, prec=precision)
             skk = integrate_S_KK(ni, nj, A_NUM, A_DEN, depth=3, prec=precision)
@@ -114,7 +107,7 @@ def compute_all_primitives_path_a(
         "S_VK": S_VK,
         "S_KV": S_KV,
         "S_KK": S_KK,
-        "witnesses": mk_witnesses + s_witnesses,
+        "witnesses": mk_witnesses,
     }
 
 

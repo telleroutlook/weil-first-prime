@@ -1,0 +1,36 @@
+{
+  "claim_id": "lem-o1b-odd",
+  "statement_digest": "",
+  "dependency_digests": null,
+  "evidence": null,
+  "checker": {
+    "id": "",
+    "protocol_version": 0,
+    "checker_digest": "",
+    "schema_digest": "",
+    "runtime": {
+      "kind": ""
+    },
+    "network": ""
+  },
+  "outcome": "accepted",
+  "assurance": "reproducible-computation",
+  "resources": {
+    "wall_millis": 665237,
+    "cpu_millis": 0,
+    "mem_bytes": 0
+  },
+  "start_freshness": "2026-08-05",
+  "end_freshness": "2026-08-05",
+  "self_digest": "sha256:31c371d725e4f1298f5799f5df52848647e2426a1fc8eff809929d2c77fbc47f",
+  "metadata": {
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:56908fd9a6a35ac3e3afd56353add67ca5ef1df62778ef634366072c80d68818",
+    "generator_cmds": "python3 -m src.assemble.generate_archimedean_cert --sector odd --out {cert}",
+    "semantic_replay": "true"
+  },
+  "replay_mode": "from_scratch"
+}

@@ -96,10 +96,15 @@ def check(args: argparse.Namespace) -> int:
         )
         return 1
 
+    # Serialise Fraction-valued intervals as [num/den, num/den] strings
+    def _ser_iv(iv: object) -> list[str]:
+        lo, hi = iv  # type: ignore[misc]
+        return [f"{lo.numerator}/{lo.denominator}", f"{hi.numerator}/{hi.denominator}"]
+
     output = {
         "status": "CERTIFIED",
         "obligation": "archimedean_primitives_o2_v1",
-        "primitives": verified["primitives"],
+        "primitives": {k: _ser_iv(v) for k, v in verified["primitives"].items()},
         "checks": verified["checks"],
     }
     print(json.dumps(output, sort_keys=True))

@@ -1,0 +1,36 @@
+{
+  "claim_id": "lem-o1b-even",
+  "statement_digest": "",
+  "dependency_digests": null,
+  "evidence": null,
+  "checker": {
+    "id": "",
+    "protocol_version": 0,
+    "checker_digest": "",
+    "schema_digest": "",
+    "runtime": {
+      "kind": ""
+    },
+    "network": ""
+  },
+  "outcome": "accepted",
+  "assurance": "reproducible-computation",
+  "resources": {
+    "wall_millis": 1570587,
+    "cpu_millis": 0,
+    "mem_bytes": 0
+  },
+  "start_freshness": "2026-08-05",
+  "end_freshness": "2026-08-05",
+  "self_digest": "sha256:1078c465c2cd5755ed98434e70c5c98711fe373dff213778b4cecd917c0e28d8",
+  "metadata": {
+    "checker_exit": "0",
+    "cold_replay_date": "2026-08-05",
+    "digests_fresh": "true",
+    "evidence_count": "1",
+    "evidence_digests": "sha256:310dbc9e1aa46c1ac4b55111f44433cd7fa4cb0c4a0902099cb1e772effcb491",
+    "generator_cmds": "python3 -m src.assemble.generate_archimedean_cert --sector even --out {cert}",
+    "semantic_replay": "true"
+  },
+  "replay_mode": "from_scratch"
+}
