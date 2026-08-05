@@ -63,47 +63,13 @@ def _geom_decay_upper_bound(a_num: int, a_den: int) -> Fraction:
 def _gl_discretization_bound(half_width_frac: Fraction,
                               a_num: int, a_den: int,
                               n_gl: int, M_f: Fraction) -> Fraction:
+    """Certified GL discretization bound — delegates to bernstein.bernstein_gl_bound.
+
+    Retained for backward compatibility. Uses the shared Bernstein ellipse
+    formula from src.archimedean.bernstein (more precise pi lower bound).
     """
-    Certified upper bound on the Gauss-Legendre discretization error for
-    one strip of half-width h = half_width_frac, integrating r''(a*(x-y)).
-
-    The GL error on a strip of half-width h with n_gl points satisfies:
-        |E_n| <= 4 * M_f * rho^{-2*n_gl} / (rho^2 - 1)
-    where rho is the Bernstein ellipse parameter and M_f is the sup-norm
-    of the integrand on the Bernstein ellipse. The nearest singularity of
-    r''(a*t) in the complex plane is at Im(t) = pi/a, giving:
-        rho_safe = min(pi/(a*h), 10)   (cap at 10 for numerical stability)
-
-    We use the conservative bound rho = max(1.5, rho_safe) and
-    M_f = a certified upper bound on |r''| on the integration domain,
-    passed in by the caller (e.g., 2 for |r''(s)| <= 2 when s <= 69/100).
-
-    This replaces the fixed 1e-15 margin in _mp_to_interval with a bound
-    that depends on the actual geometry and is formally derivable.
-    """
-    import math
-    a = Fraction(a_num, a_den)
-    # Nearest pole of r'' at Im(t) = pi, so for t = a*(x-y) pole at Im(x-y) = pi/a.
-    # In the Bernstein ellipse parameterization for [-h, h]: rho = exp(arcsinh(pi/(a*h)))
-    # Conservative lower bound: use rho = pi/(a*h) when this is >= 1.5, else 1.5.
-    if half_width_frac == 0:
-        return Fraction(0)
-    ah = a * half_width_frac
-    # rho_safe: use Fraction arithmetic to avoid float
-    # pi > 314159/100000; use 314159/100000 as rational lower bound on pi
-    pi_lo = Fraction(314159, 100000)
-    if ah > 0:
-        rho_candidate = pi_lo / ah
-        rho = min(rho_candidate, Fraction(10))
-        rho = max(rho, Fraction(3, 2))  # must be > 1
-    else:
-        rho = Fraction(3, 2)
-    # Bound: 4 * M_f * rho^{-2n} / (rho^2 - 1)
-    # Use Python's exact integer arithmetic: rho^{2n} as Fraction power
-    rho_2n = rho ** (2 * n_gl)
-    denom = rho_2n * (rho * rho - 1)
-    bound = Fraction(4) * M_f / denom
-    return bound
+    from src.archimedean.bernstein import bernstein_gl_bound
+    return bernstein_gl_bound(half_width_frac, a_num, a_den, n_gl, M_f)
 
 
 def _mp_to_interval(x, dps: int = 50, extra_margin: Fraction = Fraction(0)) -> Interval:
