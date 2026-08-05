@@ -159,10 +159,13 @@ In particular:
   and underlies the Path~B Schur criterion (Theorem~\ref{thm:schur}).
 \item \emph{Theorem~\ref{thm:rational-cert}} (pure-rational certificate)
   provides a pure-rational certificate for $V + P_{2,7/20} \ge (69/100)V$
-  whose integer-arithmetic steps are machine-verified in Lean~4 using
-  \texttt{native\_decide}. The five verified comparisons are the
-  computationally non-trivial core of the argument; the algebraic
-  reductions leading to them are carried out by hand in the proof.
+  whose key steps are machine-verified in Lean~4 via Mathlib. Specifically,
+  the five integer comparisons (including $87^{16} \cdot 68^5 < 1701^5 \cdot 32^{16}$)
+  are verified by \texttt{native\_decide}, and the transcendental bounds
+  $\log 2 < 7/10$ and $\sqrt{2} > 7/5$ are verified using
+  \texttt{Real.sum\_le\_exp\_of\_nonneg} and \texttt{Real.sqrt\_lt\_sqrt}
+  from Mathlib's analysis library. The algebraic reductions connecting these
+  bounds are carried out by hand in the proof.
 \item \emph{Theorem~\ref{thm:overlap}} (spectral decomposition of $C_{b,L}$)
   gives a complete, elementary description of the first-prime layer as an
   operator: its spectrum is $\{-1,0,1\}$ with all eigenvalues of infinite
@@ -557,10 +560,12 @@ result carries a certified enclosure radius.
 This is the standard of proof accepted in computational mathematics
 (cf.\ \textit{Mathematics of Computation}) and is qualitatively distinct
 from unverified floating-point computation.
-The Lean~4 formalisation covers only the pure-integer steps (Theorem~\ref{thm:rational-cert})
-where no numerical integration is needed.
-Formalising the Arb-based integral in Lean~4 via \texttt{Mathlib} is
-a planned extension (Extended Goal E3).
+The Lean~4 formalisation (available at the supporting repository)
+covers the integer comparisons via \texttt{native\_decide} and
+additionally verifies $\log 2 < 7/10$ and $\sqrt{2} > 7/5$ using
+Mathlib's \texttt{Real.sum\_le\_exp\_of\_nonneg} and
+\texttt{Real.sqrt\_lt\_sqrt}. Formalising the Arb-based integral
+in Lean~4 is a planned extension (Extended Goal~E3).
 \end{remark}
 Both upper endpoints of the resulting interval enclosures are strictly
 below zero.
