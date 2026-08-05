@@ -1,6 +1,6 @@
 {
   "domain": "fp035",
-  "proofctl_min_version": "0.3.6",
+  "proofctl_min_version": "0.3.7",
   "graph_source": ".proofctl/graph.json",
   "policy": "policies/fp035-release-v1.json",
   "release_target": "thm-fp-035",

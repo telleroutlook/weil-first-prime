@@ -114,7 +114,13 @@ independent review. Do not conflate proofctl attestation with mathematical proof
 The `scripted` runtime means the trust anchor is `evidence_digest + checker_digest`
 (same as a pinned binary, interpreted rather than compiled). Cross-machine
 deterministic replay requires container isolation (OCI), which is not yet
-implemented. Current `proofctl replay` is same-environment replay only.
+active. Current `proofctl replay` is same-environment replay only.
+
+`proofctl doctor` (v0.3.7+) will show a `⚠ scripted-runtime` warning — this
+is expected and informational. Migrate to `isolated-oci` before external
+publication (see `docs/OCI_MIGRATION.md`). The `Dockerfile` at repo root
+pins all dependencies; after O1-B+O2 close, build, push, and update
+`runtime.kind` and `runtime.digest` in graph.json.
 
 ## Architecture
 
