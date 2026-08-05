@@ -1,6 +1,7 @@
 \documentclass[12pt,a4paper]{amsart}
 \usepackage{verbatim}
-\usepackage{hyperref,cleveref}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\usepackage{cleveref}
 \usepackage[margin=2.5cm]{geometry}
 
 \theoremstyle{plain}
@@ -17,7 +18,6 @@
 \date{\today}
 
 \begin{document}
-\maketitle
 
 \begin{abstract}
 We describe \texttt{proofctl}, a proof orchestration layer for computational
@@ -33,6 +33,8 @@ Key design decisions — fail-closed schema validation, identity-closure
 propagation, and the \texttt{scripted} runtime class — are motivated by
 concrete failure modes encountered during development.
 \end{abstract}
+
+\maketitle
 
 \section{Introduction}
 
