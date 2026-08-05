@@ -1,0 +1,15 @@
+{
+  "claim_id": "lem-o1b-even",
+  "outcome": "partial",
+  "date": "2026-08-05",
+  "note": "debug record only — not a valid attestation; claim remains OPEN",
+  "evidence": [
+    {
+      "digest": "sha256:4d5363af4d8ead0b11f96b26a29857a8e5acff25fbe086743f7dde2fba19f58e",
+      "pass": false,
+      "digest_match": true,
+      "checker_exit": 2,
+      "fail_reason": "checker exited 2\n  checker output:\n    ARCHIMEDEAN CHECKER REJECT: \u003croot\u003e: Additional properties are not allowed ('elapsed_s', 'intersection_verified', 'mk_entries', 'sector', 'window' were unexpected); \u003croot\u003e: 'theorem_contract_sha256' is a required property; path_a: Additional properties are not allowed ('depth', 'prec' were unexpected); path_a: 'integrand_source_sha256' is a required property; path_a/method: 'GL_with_certified_remainder' was expected; path_b: Additional properties are not allowed ('dps' was unexpected); path_b: 'taylor_cutoff' is a required property; path_b: 'remainder_method' is a required property; path_b: 'integrand_source_sha256' is a required property; path_b/method: 'taylor_plus_GL_with_certified_remainder' was expected"
+    }
+  ]
+}

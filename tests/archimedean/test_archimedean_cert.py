@@ -24,6 +24,8 @@ class TestCertificateSchema:
             "format_version": "archimedean-1.0",
             "obligation": "archimedean_primitives_o2_v1",
             "radius": {"numerator": 7, "denominator": 20},
+            "sector": sector,
+            "index_set": [0, 2, 4, 6, 8, 10, 12, 14] if sector == "even" else [1, 3, 5, 7, 9, 11],
             "path_a": {
                 "method": "GL_with_certified_remainder",
                 "quadrature_rule": "GL8",

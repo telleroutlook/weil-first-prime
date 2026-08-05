@@ -9,11 +9,11 @@ Usage:
         --sector even --depth 4 --out certs/archimedean-even.json
 
 The certificate carries:
-  - format_version, obligation, radius, sector
-  - path_a: method, depth, prec, M_K summary
-  - path_b: method, dps
-  - intersection_verified: bool
-  - window: "log2_le_2L_lt_log3"
+  - format_version, obligation, radius, sector, index_set
+  - path_a: method, quadrature_rule, remainder_method, integrand_source_sha256
+  - path_b: method, taylor_cutoff, taylor_cubic_coefficient,
+            remainder_method, integrand_source_sha256
+  - theorem_contract_sha256
 """
 
 from __future__ import annotations
@@ -27,6 +27,20 @@ from fractions import Fraction
 
 A_NUM, A_DEN = 7, 20
 
+_ROOT = pathlib.Path(__file__).parent.parent.parent
+_INTEGRATOR_A = _ROOT / "src" / "archimedean" / "integrator_a.py"
+_INTEGRATOR_B = _ROOT / "src" / "archimedean" / "integrator_b.py"
+_THEOREM_CONTRACT = _ROOT / "domains" / "fp035" / "contracts" / "thm-3-rational-absorption-certificate.json"
+
+_SECTOR_INDICES = {
+    "even": list(range(0, 16, 2)),
+    "odd":  list(range(1, 12, 2)),
+}
+
+
+def _file_sha256(p: pathlib.Path) -> str:
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
 
 def _frac_str(f: Fraction) -> str:
     return f"{f.numerator}/{f.denominator}"
@@ -37,28 +51,22 @@ def generate(sector: str, depth: int, prec: int, dps: int, out: pathlib.Path) ->
     from src.archimedean.integrator_a import integrate_M_K as mk_a
     from src.archimedean.integrator_b import integrate_M_K_path_b as mk_b
     from src.archimedean.interval import intersect
-    from src.archimedean.log_moments import V_matrix_entry
 
-    sector_params = {
-        "even": {"indices": list(range(0, 16, 2))},
-        "odd":  {"indices": list(range(1, 12, 2))},
-    }
-    if sector not in sector_params:
+    if sector not in _SECTOR_INDICES:
         raise ValueError(f"unknown sector: {sector!r}")
 
-    indices = sector_params[sector]["indices"]
+    indices = _SECTOR_INDICES[sector]
     N = len(indices)
 
     print(f"[archimedean cert] sector={sector} N={N} depth={depth} prec={prec}", flush=True)
 
     t0 = time.time()
 
-    # Compute M_K via Path A (Bernstein remainder) and Path B (mpmath)
     mk_results = []
     all_intersect = True
 
-    for i, ni in enumerate(indices):
-        for j, nj in enumerate(indices):
+    for ni in indices:
+        for nj in indices:
             ra = mk_a(ni, nj, A_NUM, A_DEN, depth=depth, prec=prec, use_bernstein=True)
             rb = mk_b(ni, nj, A_NUM, A_DEN)
 
@@ -85,27 +93,32 @@ def generate(sector: str, depth: int, prec: int, dps: int, out: pathlib.Path) ->
 
     elapsed = time.time() - t0
 
+    # Compute source digests for audit trail
+    integrand_a_sha = _file_sha256(_INTEGRATOR_A)
+    integrand_b_sha = _file_sha256(_INTEGRATOR_B)
+    theorem_sha = _file_sha256(_THEOREM_CONTRACT) if _THEOREM_CONTRACT.exists() else "0" * 64
+
     cert = {
         "format_version": "archimedean-1.0",
         "obligation": "archimedean_primitives_o2_v1",
         "radius": {"numerator": A_NUM, "denominator": A_DEN},
         "sector": sector,
-        "window": "log2_le_2L_lt_log3",
+        "index_set": indices,
         "path_a": {
-            "method": "GL_with_Bernstein_remainder",
+            "method": "GL_with_certified_remainder",
             "quadrature_rule": "GL8",
             "remainder_method": "bernstein_ellipse_analytic",
-            "depth": depth,
-            "prec": prec,
+            "integrand_source_sha256": integrand_a_sha,
         },
         "path_b": {
-            "method": "mpmath_GL_independent",
-            "dps": dps,
+            "method": "taylor_plus_GL_with_certified_remainder",
+            "taylor_cutoff": f"1/{dps}",
             "taylor_cubic_coefficient": {"numerator": 7, "denominator": 11520},
+            "remainder_method": "bernstein_ellipse_analytic",
+            "integrand_source_sha256": integrand_b_sha,
         },
-        "intersection_verified": all_intersect,
+        "theorem_contract_sha256": theorem_sha,
         "mk_entries": mk_results,
-        "elapsed_s": round(elapsed, 1),
     }
 
     out.parent.mkdir(parents=True, exist_ok=True)

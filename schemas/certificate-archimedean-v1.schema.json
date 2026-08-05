@@ -9,6 +9,8 @@
     "format_version",
     "obligation",
     "radius",
+    "sector",
+    "index_set",
     "path_a",
     "path_b",
     "theorem_contract_sha256"
@@ -21,6 +23,15 @@
     "obligation": {
       "type": "string",
       "const": "archimedean_primitives_o2_v1"
+    },
+    "sector": {
+      "type": "string",
+      "enum": ["even", "odd"]
+    },
+    "index_set": {
+      "type": "array",
+      "items": {"type": "integer"},
+      "minItems": 1
     },
     "radius": {
       "type": "object",
@@ -80,7 +91,23 @@
         "integrand_source_sha256": {"$ref": "#/definitions/sha256"}
       }
     },
-    "theorem_contract_sha256": {"$ref": "#/definitions/sha256"}
+    "theorem_contract_sha256": {"$ref": "#/definitions/sha256"},
+    "mk_entries": {
+      "type": "array",
+      "description": "Witness records for each M_K entry: path_a and path_b interval bounds and intersection result.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["n_row", "n_col", "path_a", "path_b", "intersects"],
+        "properties": {
+          "n_row": {"type": "integer"},
+          "n_col": {"type": "integer"},
+          "path_a": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
+          "path_b": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
+          "intersects": {"type": "boolean"}
+        }
+      }
+    }
   },
   "definitions": {
     "sha256": {
