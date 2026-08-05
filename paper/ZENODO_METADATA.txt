@@ -1,6 +1,7 @@
 # Zenodo submission metadata for paper/main.tex
-# Copy-paste these values into the Zenodo upload form.
-# Last updated: 2026-08-05
+# Published: 2026-08-05
+# DOI: 10.5281/zenodo.21807498
+# URL: https://zenodo.org/records/21807498
 
 ## Upload type
 Publication
