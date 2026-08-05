@@ -10,13 +10,19 @@
       "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"
     }
   ],
-  "evidence": {"mode": "joint", "required": []},
+  "evidence": {
+    "mode": "joint",
+    "required": []
+  },
   "checker": {
     "protocol": "proofctl-checker/v2",
     "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000003",
-    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000003"
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000003"
   },
-  "runtime": {"class": "native-dev", "network": "none"},
+  "runtime": {
+    "class": "wasi",
+    "network": "none"
+  },
   "obligations": [
     "thm3.log2-bounds-verified",
     "thm3.epsilon-bound-verified",
@@ -24,7 +30,15 @@
     "thm3.c2-upper-bound",
     "thm3.ratio-less-than-31-over-100"
   ],
-  "assurance": {"required": ["deterministic-cap"]},
-  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "assurance": {
+    "required": [
+      "deterministic-cap"
+    ]
+  },
+  "replay": {
+    "semantic": "required",
+    "byte_exact": "not_required"
+  },
+  "replay_profile": "semantic",
   "independence": {}
 }

@@ -1,0 +1,24 @@
+{
+  "contract_version": "2",
+  "claim_id": "lem-l2-h01-boundary",
+  "statement_digest": "sha256:28dd870e516c478b305b6af5635d15f908db5ad285a966a8f671157fb5e07b3b",
+  "dependencies": [
+    {"claim_id": "lem-l1-edge-mass", "required_state": "GLOBALLY_VERIFIED",
+     "statement_digest": "sha256:86d9f57668d8b779c76c3aa3a3558af680d46cc94e13c8086c703853804a80aa"}
+  ],
+  "evidence": {"mode": "joint", "required": []},
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000109",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000109"
+  },
+  "runtime": {"class": "wasi", "network": "none"},
+  "obligations": [
+    "l2.poincare-inequality",
+    "l2.diagnostic-only-not-sufficient"
+  ],
+  "assurance": {"required": ["independent-review"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "replay_profile": "semantic",
+  "independence": {}
+}

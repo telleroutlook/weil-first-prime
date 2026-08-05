@@ -23,6 +23,60 @@ the first-prime layer. Do not resume work in weil-lower-bound.
 - **Window check mandatory.** Any certificate claiming the first-prime window must
   carry `log2 ≤ 2L < log3` verified by certified rational bounds, not enumeration.
 
+## proofctl v0.3.4 security invariants (INV-01–INV-12)
+
+These are enforced by proofctl's kernel layer. Violations produce hard errors,
+not warnings. Every PR that touches checker, runtime, or attestation code must
+identify which INV it affects and provide a covering test.
+
+| INV | Enforcement point in this project |
+|---|---|
+| INV-01 | Checker output has no `outcome`/`assurance` field — `obligation_results` only |
+| INV-02 | Attestation binds full identity closure (statement + dep digests + checker digest) |
+| INV-03 | `self_digest` recomputed on load; tampered attestations rejected at load time |
+| INV-04 | Ed25519 signature verified against `.proofctl/keys/*.pub` (C05 condition) |
+| INV-05 | Assurance derived from `ObligationResults` by proofctl; checker cannot assert it |
+| INV-06 | Obligation exact-set: OBLIGATION_MISSING / EXTRA / DUPLICATE all → hard reject |
+| INV-07 | Any evidence item failure → whole claim fails; no partial-pass masking |
+| INV-08 | Dep not at required state → LOCALLY_VERIFIED (not GLOBALLY_VERIFIED) |
+| INV-09 | Identity closure change → downstream claims go STALE automatically |
+| INV-10 | `runtime.class: "wasi"` required for any claim that must reach GLOBALLY_VERIFIED. `native-dev` or `native` is permanently capped at LOCALLY_VERIFIED — cannot reach release |
+| INV-11 | `proofverify` never reads STATUS.json; derives state from v2 bundle files only |
+| INV-12 | Release bundle is self-verifiable offline; all member digests checked |
+
+**INV-10 is the most critical for this project.** All contracts use `wasi` runtime.
+Never change `runtime.class` to `native` or `native-dev` in any contract or graph.json.
+
+## v0.3.4 behavioral changes vs v0.2.8
+
+- **v1 attestations rejected at release gate** (`LEGACY_ATTESTATION_NOT_RELEASABLE`)
+- **`proofverify --trust-root` is now required**; omitting it → exit 1
+- **`obligation_ids` in CheckerInputV2 is authoritative**; bridge reads from Contract,
+  not from certificate self-report (which can no longer shrink the set)
+- **Empty ObligationResults → `OBLIGATION_EMPTY` hard error** (was silently true before)
+- **`replay_profile` field required** in all ContractV2 JSON files
+
+## proofctl usage in this project
+
+See `docs/PROOFCTL_INTEGRATION.md` for full command reference.
+
+Required env vars (auto-loaded from `.proofctl/env.json`):
+```
+BRIDGE_CHECKER=python3 checker/first_prime/check_first_prime_certificate.py
+PROOFCTL_ADAPTERS=<path-to-proofctl-checkout>/adapters
+```
+
+Key commands:
+```bash
+proofctl doctor                    # must pass before any other command
+proofctl status                    # current claim states
+proofctl graph --mermaid           # dependency diagram
+proofctl frontier thm-fp-035       # what directly blocks release
+proofctl release --dry-run         # evaluate all conditions without writing STATUS.json
+proofctl check --all               # run all checkers (pytest-style summary)
+proofctl pin checker --cmd "..."   # run after any checker script change
+```
+
 ## Architecture
 
 ```

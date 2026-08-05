@@ -1,0 +1,29 @@
+{
+  "contract_version": "2",
+  "claim_id": "thm-5-split-residual-schur",
+  "statement_digest": "sha256:948775b1492182a38b8a7dc96223c692e31dc0d0da569591e61e14c6728965b6",
+  "dependencies": [
+    {"claim_id": "thm-3-rational-absorption-certificate", "required_state": "GLOBALLY_VERIFIED",
+     "statement_digest": "sha256:8eb81a6808077e2e565b59a5877d8b72ad8c1264eeda1a0c5e64b14d33824239"},
+    {"claim_id": "thm-4-prime-legendre-matrix", "required_state": "GLOBALLY_VERIFIED",
+     "statement_digest": "sha256:6403ea3ae66293fe313e496554332a8594fd1797bc67f83dd2a04a2c7ebec839"}
+  ],
+  "evidence": {"mode": "joint", "required": []},
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000107",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000107"
+  },
+  "runtime": {"class": "wasi", "network": "none"},
+  "obligations": [
+    "thm5.complement-lower-bound-b_L",
+    "thm5.weighted-young-split",
+    "thm5.R0-R2-gram-identification",
+    "thm5.schur-completion-valid",
+    "thm5.no-cross-integrals-needed"
+  ],
+  "assurance": {"required": ["independent-review"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "replay_profile": "semantic",
+  "independence": {}
+}

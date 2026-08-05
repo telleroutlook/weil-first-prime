@@ -1,0 +1,28 @@
+{
+  "contract_version": "2",
+  "claim_id": "thm-2-endpoint-potential-absorption",
+  "statement_digest": "sha256:76d3851e98c9b586438674d37aed726f26a2e5e5cc3eb0a7f7d8868c059aae7a",
+  "dependencies": [
+    {"claim_id": "def-frozen-model-fp", "required_state": "GLOBALLY_VERIFIED",
+     "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"},
+    {"claim_id": "thm-1-single-step-overlap", "required_state": "GLOBALLY_VERIFIED",
+     "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"}
+  ],
+  "evidence": {"mode": "joint", "required": []},
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000104",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000104"
+  },
+  "runtime": {"class": "wasi", "network": "none"},
+  "obligations": [
+    "thm2.edge-mass-bound",
+    "thm2.kappa-edge-positive",
+    "thm2.absorption-inequality",
+    "thm2.V-plus-P2L-nonneg"
+  ],
+  "assurance": {"required": ["independent-review"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "replay_profile": "semantic",
+  "independence": {}
+}

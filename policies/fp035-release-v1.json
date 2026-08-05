@@ -1,5 +1,5 @@
 {
-  "version": "1",
+  "version": "2",
   "target": "thm-fp-035",
   "allowed_assurances": [
     "formal-kernel",
@@ -12,6 +12,11 @@
     "ai-review",
     "assumption",
     "shadow-review"
+  ],
+  "forbidden_runtimes": [
+    "shadow",
+    "native-dev",
+    "native"
   ],
   "required_claims": [
     "def-frozen-model-fp",

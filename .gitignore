@@ -18,10 +18,18 @@ env/
 htmlcov/
 coverage.xml
 
-# Certificates (never committed without independent replay)
-.proofctl/attestations/*.json
+# proofctl — never commit private keys or CAS blobs
+.proofctl/keys/*.priv
 .proofctl/cas/
 .proofctl/bundle/
+.proofctl/snapshots/
+.proofctl/env.json
+
+# proofctl — commit these (attestations, graph, config, STATUS)
+# .proofctl/attestations/ — tracked (signed attestations are proof artifacts)
+# .proofctl/graph.json    — tracked
+# .proofctl/config.json   — tracked
+# .proofctl/STATUS.json   — tracked when written by proofctl release
 
 # OS
 .DS_Store

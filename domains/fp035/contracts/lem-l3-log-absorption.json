@@ -1,0 +1,25 @@
+{
+  "contract_version": "2",
+  "claim_id": "lem-l3-log-absorption",
+  "statement_digest": "sha256:8a127c3c2cc7eb3ed894f83f2d48513d9fd9fb1f9da0f4f7eb5e21ec8c082232",
+  "dependencies": [
+    {"claim_id": "thm-2-endpoint-potential-absorption", "required_state": "GLOBALLY_VERIFIED",
+     "statement_digest": "sha256:76d3851e98c9b586438674d37aed726f26a2e5e5cc3eb0a7f7d8868c059aae7a"}
+  ],
+  "evidence": {"mode": "joint", "required": []},
+  "checker": {
+    "protocol": "proofctl-checker/v2",
+    "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000110",
+    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000110"
+  },
+  "runtime": {"class": "wasi", "network": "none"},
+  "obligations": [
+    "l3.edge-norm-V-bound",
+    "l3.beta-equals-zero",
+    "l3.V-sufficient-no-full-L"
+  ],
+  "assurance": {"required": ["independent-review"]},
+  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "replay_profile": "semantic",
+  "independence": {}
+}

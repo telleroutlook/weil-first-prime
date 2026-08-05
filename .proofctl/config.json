@@ -1,19 +1,9 @@
 {
   "domain": "fp035",
-  "proofctl_min_version": "0.2.9",
-  "graph": "domains/fp035/contracts",
+  "proofctl_min_version": "0.3.4",
+  "graph_source": ".proofctl/graph.json",
   "policy": "policies/fp035-release-v1.json",
-  "bridge": {
-    "archimedean": {
-      "checker": "checker/archimedean/check_archimedean.py",
-      "schema":  "schemas/certificate-archimedean-v1.schema.json"
-    },
-    "first_prime": {
-      "checker": "checker/first_prime/check_first_prime_certificate.py",
-      "schema":  "schemas/certificate-first-prime-v1.schema.json"
-    }
-  },
   "release_target": "thm-fp-035",
   "shadow_mode": true,
-  "note": "shadow_mode remains true until O1-B and O2 are both closed"
+  "_shadow_note": "shadow_mode=true is documentation only; run 'proofctl release --dry-run' to evaluate conditions without committing STATUS.json"
 }

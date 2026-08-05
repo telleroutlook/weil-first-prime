@@ -15,6 +15,11 @@
   ],
   "forbidden_runtimes": [
     "shadow",
+    "native-dev",
+    "native"
+  ],
+  "forbidden_runtimes": [
+    "shadow",
     "native-dev"
   ],
   "required_claims": [

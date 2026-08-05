@@ -36,9 +36,12 @@
   "checker": {
     "protocol": "proofctl-checker/v2",
     "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000018",
-    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000018"
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000018"
   },
-  "runtime": {"class": "wasi", "network": "none"},
+  "runtime": {
+    "class": "wasi",
+    "network": "none"
+  },
   "obligations": [
     "fp035.both-sectors-certified",
     "fp035.theorem5-conclusion-holds",
@@ -46,7 +49,16 @@
     "fp035.conclusion-bounded-to-finite-scale",
     "fp035.no-rh-claimed"
   ],
-  "assurance": {"required": ["deterministic-cap", "exact-replay"]},
-  "replay": {"semantic": "required", "byte_exact": "required"},
+  "assurance": {
+    "required": [
+      "deterministic-cap",
+      "exact-replay"
+    ]
+  },
+  "replay": {
+    "semantic": "required",
+    "byte_exact": "required"
+  },
+  "replay_profile": "semantic",
   "independence": {}
 }
