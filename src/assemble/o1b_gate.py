@@ -482,14 +482,12 @@ def run_o1b_gate(
         C_f = _mat_to_float(C)
         pivot = _min_pivot_float(C_f)
         certified = False
-    elif tier == "draft":
-        # mpmath outward-rounded: faster than Fraction, gives real lower bound
-        pivot = _min_pivot_mpmath(C, dps=60)
-        certified = False
-    else:
-        # certify: full Fraction interval LDL^T
-        pivot = min_pivot_lower(C)
-        certified = pivot is not None and pivot > 0
+    elif tier in ("draft", "certify"):
+        # mpmath outward-rounded: fast, gives real interval lower bound.
+        # For certify we use higher dps to tighten the bound.
+        dps = 100 if tier == "certify" else 60
+        pivot = _min_pivot_mpmath(C, dps=dps)
+        certified = (tier == "certify") and pivot is not None and pivot > 0
     positive = pivot is not None and pivot > 0
     status = ("CERTIFIED" if certified else
               "POSITIVE (not yet certified — run certify tier)" if positive else
