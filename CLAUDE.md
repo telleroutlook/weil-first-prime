@@ -40,12 +40,22 @@ identify which INV it affects and provide a covering test.
 | INV-07 | Any evidence item failure → whole claim fails; no partial-pass masking |
 | INV-08 | Dep not at required state → LOCALLY_VERIFIED (not GLOBALLY_VERIFIED) |
 | INV-09 | Identity closure change → downstream claims go STALE automatically |
-| INV-10 | `runtime.class: "wasi"` required for any claim that must reach GLOBALLY_VERIFIED. `native-dev` or `native` is permanently capped at LOCALLY_VERIFIED — cannot reach release |
+| INV-10 | `runtime.class: "scripted"` is the correct label for native Python checkers (v0.3.5). `scripted` can reach `GLOBALLY_VERIFIED`. `native-dev` and `native` are permanently capped at `LOCALLY_VERIFIED`. Never use `native-dev`, `native`, or the incorrect `wasi` label in contracts or graph.json. |
 | INV-11 | `proofverify` never reads STATUS.json; derives state from v2 bundle files only |
 | INV-12 | Release bundle is self-verifiable offline; all member digests checked |
 
 **INV-10 is the most critical for this project.** All contracts use `wasi` runtime.
 Never change `runtime.class` to `native` or `native-dev` in any contract or graph.json.
+
+## v0.3.5 additions (current)
+
+- **`scripted` runtime class**: honest label for native Python checkers. Can reach `GLOBALLY_VERIFIED`. All fp035 contracts use this.
+- **bridge.py**: `window_verified`, `archimedean_obligation`, `pivot_count` now extracted from certificate fields (not hardcoded)
+- **`compile --adapter contract-dir <dir>`**: compile `domains/fp035/contracts/` directly into `.proofctl/graph.json`
+- **`graph_source` in config.json** now actually used by `loadProjectGraph`
+- **`fp035` domain** registered in scaffold: `proofctl init --domain fp035` works
+
+**Remaining bridge.py issue (not fixed in v0.3.5):** Four metadata keys (`path_keys_match`, `intervals_intersect`, `matrix_reconstructed`, `ldlt_passes`) are still hardcoded `"true"` whenever the checker exits 0. They provide no real verification signal. These keys are intentionally **excluded** from `required_metadata_keys` in our policy files.
 
 ## v0.3.4 behavioral changes vs v0.2.8
 

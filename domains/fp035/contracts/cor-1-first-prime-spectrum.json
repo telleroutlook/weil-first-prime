@@ -3,23 +3,39 @@
   "claim_id": "cor-1-first-prime-spectrum",
   "statement_digest": "sha256:48d75a8f29325adf9e6adbd106f4d46501ee21fa055ac1df71bc7301d4b5199d",
   "dependencies": [
-    {"claim_id": "thm-1-single-step-overlap", "required_state": "GLOBALLY_VERIFIED",
-     "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"}
+    {
+      "claim_id": "thm-1-single-step-overlap",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
+    }
   ],
-  "evidence": {"mode": "joint", "required": []},
+  "evidence": {
+    "mode": "joint",
+    "required": []
+  },
   "checker": {
     "protocol": "proofctl-checker/v2",
     "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000102",
-    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000102"
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000102"
   },
-  "runtime": {"class": "wasi", "network": "none"},
+  "runtime": {
+    "class": "scripted",
+    "network": "none"
+  },
   "obligations": [
     "cor1.window-only-n=2",
     "cor1.spectrum-pm-c2-zero",
     "cor1.indefinite-both-directions-infinite-dim"
   ],
-  "assurance": {"required": ["independent-review"]},
-  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "assurance": {
+    "required": [
+      "independent-review"
+    ]
+  },
+  "replay": {
+    "semantic": "required",
+    "byte_exact": "not_required"
+  },
   "replay_profile": "semantic",
   "independence": {}
 }

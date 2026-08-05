@@ -20,7 +20,7 @@
     "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000003"
   },
   "runtime": {
-    "class": "wasi",
+    "class": "scripted",
     "network": "none"
   },
   "obligations": [

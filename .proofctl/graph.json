@@ -8,7 +8,9 @@
         "digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"
       },
       "depends_on": [],
-      "required_assurance": ["independent-review"],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -19,8 +21,12 @@
         "text": "Single-step overlap decomposition (Theorem 1): For b/2 < L < b, the operator C_{b,L} = S_{b,L} + S_{b,L}* decomposes as the exchange matrix on L^2(I_-) oplus L^2(I_+) plus zero on L^2(I_0), with spectrum {-1,0,1} all of infinite multiplicity and operator norm 1.",
         "digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
       },
-      "depends_on": ["def-frozen-model-fp"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "def-frozen-model-fp"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -31,8 +37,12 @@
         "text": "Corollary 1 (first prime layer exact sign): In the window (log2/2, log3/2), the first prime operator -(log2/sqrt(2)) C_{log2,L} has spectrum {-c_2, 0, +c_2} with c_2 = log2/sqrt(2), all of infinite multiplicity. The layer is indefinite and non-compact.",
         "digest": "sha256:48d75a8f29325adf9e6adbd106f4d46501ee21fa055ac1df71bc7301d4b5199d"
       },
-      "depends_on": ["thm-1-single-step-overlap"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "thm-1-single-step-overlap"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -43,8 +53,12 @@
         "text": "Corollary 2 (no L^2 small perturbation at threshold): For any L in (log2/2, log2), ||C_{log2,L}|| = 1 regardless of the support length 2L-log2, so the first prime layer is not an operator-norm small perturbation even as its support shrinks to measure zero.",
         "digest": "sha256:0acfa851d8ae3d1201350d7b84bf12ce994de6788bfbf0f0c00d0107c8c6d686"
       },
-      "depends_on": ["thm-1-single-step-overlap"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "thm-1-single-step-overlap"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -55,8 +69,13 @@
         "text": "Endpoint potential absorption (Theorem 2): For L=7/20, the log endpoint potential V(x) = -(1/2)log(1-x^2) satisfies |<C_{tau,1}w,w>| <= ||w||^2_{E_- union E_+} <= kappa_edge(L)^{-1} <Vw,w>, where kappa_edge(L) = (1/2)log(1/(2*epsilon)) > 0, epsilon = 2 - log2/L. Hence V + P_{2,L} >= (1 - c_2/kappa_edge(L)) V >= 0.",
         "digest": "sha256:76d3851e98c9b586438674d37aed726f26a2e5e5cc3eb0a7f7d8868c059aae7a"
       },
-      "depends_on": ["def-frozen-model-fp", "thm-1-single-step-overlap"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "def-frozen-model-fp",
+        "thm-1-single-step-overlap"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -67,8 +86,12 @@
         "text": "Pure rational absorption certificate (Theorem 3): At L=7/20, c_2/kappa_edge(7/20) < 31/100, hence V + P_{2,7/20} >= (69/100) V >= 0. Certificate: log2 in (842/1215, 23581/34020), epsilon < 34/1701 < 1/41, e^16 < (87/32)^16 < (1701/68)^5 < (1/(2*epsilon))^5, giving kappa_edge > 8/5; c_2 < 23581/47628 < 62/125; ratio 62/125 divided by 8/5 = 31/100.",
         "digest": "sha256:8eb81a6808077e2e565b59a5877d8b72ad8c1264eeda1a0c5e64b14d33824239"
       },
-      "depends_on": ["thm-2-endpoint-potential-absorption"],
-      "required_assurance": ["deterministic-cap"],
+      "depends_on": [
+        "thm-2-endpoint-potential-absorption"
+      ],
+      "required_assurance": [
+        "deterministic-cap"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     },
@@ -79,8 +102,12 @@
         "text": "Potential redistribution (Corollary 3.1): The full scaled form satisfies bar_q_{7/20} >= tilde_q_{7/20} := T + (69/100)V + K_{7/20} - c_{7/20}I in the closed-form ordering. Proving tilde_q >= L_0*I with L_0 > 0 is sufficient for FP-0.35.",
         "digest": "sha256:05e591b284b8ab74a83903d3ab28b30c4b25cfa37aac0803f1257bbf94d5a3a9"
       },
-      "depends_on": ["thm-3-rational-absorption-certificate"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "thm-3-rational-absorption-certificate"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -91,8 +118,13 @@
         "text": "First-prime Legendre matrix algebraization (Theorem 4): The matrices J_{ij}(tau) = <C_{tau,1}P_j, P_i> and E_{ij}(tau) = <C_{tau,1}P_j, C_{tau,1}P_i> vanish when i+j is odd, and for i+j even satisfy J_{ij}(tau) = 2*integral_{-1}^{1-tau} P_i(x)P_j(x+tau) dx and E_{ij}(tau) = 2*integral_{-1}^{1-tau} P_i(x)P_j(x) dx, both in Q[tau], computable by Legendre recurrence and exact polynomial arithmetic without quadrature.",
         "digest": "sha256:6403ea3ae66293fe313e496554332a8594fd1797bc67f83dd2a04a2c7ebec839"
       },
-      "depends_on": ["def-frozen-model-fp", "thm-1-single-step-overlap"],
-      "required_assurance": ["deterministic-cap"],
+      "depends_on": [
+        "def-frozen-model-fp",
+        "thm-1-single-step-overlap"
+      ],
+      "required_assurance": [
+        "deterministic-cap"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     },
@@ -103,8 +135,13 @@
         "text": "Split residual Schur criterion (Theorem 5): For L=7/20, N_even=8 (d=16) or N_odd=6 (d=13), eta=1/2, if b_L = H_d - c_L - L_0 - kappa_L > 0 and b_L*F - R_eta is positive definite with R_eta = (1+eta)R_0 + (1+1/eta)R_2, then bar_q_{7/20}[w] >= L_0 ||w||^2 on the full closed-form domain of the parity sector.",
         "digest": "sha256:948775b1492182a38b8a7dc96223c692e31dc0d0da569591e61e14c6728965b6"
       },
-      "depends_on": ["thm-3-rational-absorption-certificate", "thm-4-prime-legendre-matrix"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "thm-3-rational-absorption-certificate",
+        "thm-4-prime-legendre-matrix"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -115,8 +152,12 @@
         "text": "Path A strict negative witnesses (Theorem 6): The rational Legendre vectors v_even = P_0 - P_2 and v_odd = P_1 - (1/2)P_3 certify (tilde_q - L_0*I)[v_even] in [-0.053384, -0.052711] and (tilde_q - L_0*I)[v_odd] in [-0.032327, -0.032119] with L_0 = 2^{-30} and theta=69/100. Path A is strictly falsified. This does not falsify FP-0.35.",
         "digest": "sha256:aee3b04e9f0fed57786a276a9eeabb4363c6cdb24447c158b4890e046f46bf95"
       },
-      "depends_on": ["cor-3-1-potential-redistribution"],
-      "required_assurance": ["deterministic-cap"],
+      "depends_on": [
+        "cor-3-1-potential-redistribution"
+      ],
+      "required_assurance": [
+        "deterministic-cap"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     },
@@ -127,8 +168,12 @@
         "text": "Edge mass localization (L1): By Cauchy-Schwarz, |<C_{log2,L}v,v>| <= ||v||^2_{L^2(I_-)} + ||v||^2_{L^2(I_+)}, strictly localizing the prime danger term to boundary strips of total length 2*delta = 2*(2L - log2).",
         "digest": "sha256:86d9f57668d8b779c76c3aa3a3558af680d46cc94e13c8086c703853804a80aa"
       },
-      "depends_on": ["thm-1-single-step-overlap"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "thm-1-single-step-overlap"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -139,8 +184,12 @@
         "text": "H^1_0 boundary layer rough bound (L2): For v in H^1_0(-L,L), the edge norm satisfies ||v||^2_{E_- union E_+} <= (4*delta^2/pi^2)(||v_prime||^2_{E_-} + ||v_prime||^2_{E_+}). This is a diagnostic lemma; the Weil form has only log-order coercivity and cannot directly absorb this bound.",
         "digest": "sha256:28dd870e516c478b305b6af5635d15f908db5ad285a966a8f671157fb5e07b3b"
       },
-      "depends_on": ["lem-l1-edge-mass"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "lem-l1-edge-mass"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -151,8 +200,12 @@
         "text": "Log endpoint absorption (L3): In the scaled model, ||w||^2_{L^2(E_- union E_+)} <= kappa_edge(L)^{-1} <Vw,w> with beta=0. Control of the edge strip requires only the endpoint potential V, not the full operator L = T + V.",
         "digest": "sha256:8a127c3c2cc7eb3ed894f83f2d48513d9fd9fb1f9da0f4f7eb5e21ec8c082232"
       },
-      "depends_on": ["thm-2-endpoint-potential-absorption"],
-      "required_assurance": ["independent-review"],
+      "depends_on": [
+        "thm-2-endpoint-potential-absorption"
+      ],
+      "required_assurance": [
+        "independent-review"
+      ],
       "evidence": [],
       "checker_policy": "fp035-independent-review"
     },
@@ -163,8 +216,12 @@
         "text": "PATH_A_REJECTED (meta-proposition): The weakened sufficient condition tilde_q_{7/20} >= L_0*I for theta=69/100 (potential redistribution without prime layer) is strictly false. Theorem 6 provides two explicit rational negative witnesses with interval-certified Arb values. This is a standalone repayable element; it does not affect the sign of bar_q_{7/20}.",
         "digest": "sha256:c35b1350e80e81e4706545bc36cecf13480ee1fff3b17ae83dbf9582ca8b85ad"
       },
-      "depends_on": ["thm-6-path-a-negative-witness"],
-      "required_assurance": ["deterministic-cap"],
+      "depends_on": [
+        "thm-6-path-a-negative-witness"
+      ],
+      "required_assurance": [
+        "deterministic-cap"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     },
@@ -175,8 +232,13 @@
         "text": "O1-B even sector gate (conjecture): For L=7/20, N_even=8, tail_degree=16, eta=1/2, with frozen window log2 <= 2L < log3 verified, there exist interval-certified matrices M^(0), S^(0), M^(2), S^(2) and b_L > 0, b_L*F_even - R_eta_even > 0 (positive definite). Discovery pilot Schur margin ~8.81e-4.",
         "digest": "sha256:2799daa23ac914ec3ed31c41928333284a2eae49173035862eff62b8b2ac44d7"
       },
-      "depends_on": ["thm-5-split-residual-schur", "thm-3-rational-absorption-certificate"],
-      "required_assurance": ["deterministic-cap"],
+      "depends_on": [
+        "thm-5-split-residual-schur",
+        "thm-3-rational-absorption-certificate"
+      ],
+      "required_assurance": [
+        "deterministic-cap"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     },
@@ -187,8 +249,13 @@
         "text": "O1-B odd sector gate (conjecture): For L=7/20, N_odd=6, tail_degree=13, eta=1/2, with frozen window log2 <= 2L < log3 verified, there exist interval-certified matrices M^(0), S^(0), M^(2), S^(2) and b_L > 0, b_L*F_odd - R_eta_odd > 0 (positive definite). Discovery pilot Schur margin ~3.44e-2.",
         "digest": "sha256:f353f2b9271e7fa2a8cad64db02abcab1e1fd87162341b510921498653a2292b"
       },
-      "depends_on": ["thm-5-split-residual-schur", "thm-3-rational-absorption-certificate"],
-      "required_assurance": ["deterministic-cap"],
+      "depends_on": [
+        "thm-5-split-residual-schur",
+        "thm-3-rational-absorption-certificate"
+      ],
+      "required_assurance": [
+        "deterministic-cap"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     },
@@ -205,7 +272,10 @@
         "thm-5-split-residual-schur",
         "thm-3-rational-absorption-certificate"
       ],
-      "required_assurance": ["deterministic-cap", "exact-replay"],
+      "required_assurance": [
+        "deterministic-cap",
+        "exact-replay"
+      ],
       "evidence": [],
       "checker_policy": "fp035-cap-checker"
     }
@@ -217,8 +287,11 @@
       "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "runtime": {
-        "kind": "wasi",
-        "cmd": ["python3", "${PROOFCTL_ADAPTERS}/cap/bridge.py"],
+        "kind": "scripted",
+        "cmd": [
+          "python3",
+          "${PROOFCTL_ADAPTERS}/cap/bridge.py"
+        ],
         "dependency_manifest_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
         "dependency_manifest_path": "environment.lock",
         "schema_path": "schemas/certificate-first-prime-v1.schema.json"
@@ -231,8 +304,11 @@
       "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
       "runtime": {
-        "kind": "wasi",
-        "cmd": ["python3", "${PROOFCTL_ADAPTERS}/cap/bridge.py"],
+        "kind": "scripted",
+        "cmd": [
+          "python3",
+          "${PROOFCTL_ADAPTERS}/cap/bridge.py"
+        ],
         "dependency_manifest_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
         "dependency_manifest_path": "environment.lock",
         "schema_path": "schemas/certificate-first-prime-v1.schema.json"

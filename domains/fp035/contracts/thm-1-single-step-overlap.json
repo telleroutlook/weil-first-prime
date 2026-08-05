@@ -3,24 +3,40 @@
   "claim_id": "thm-1-single-step-overlap",
   "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e",
   "dependencies": [
-    {"claim_id": "def-frozen-model-fp", "required_state": "GLOBALLY_VERIFIED",
-     "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"}
+    {
+      "claim_id": "def-frozen-model-fp",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"
+    }
   ],
-  "evidence": {"mode": "joint", "required": []},
+  "evidence": {
+    "mode": "joint",
+    "required": []
+  },
   "checker": {
     "protocol": "proofctl-checker/v2",
     "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000101",
-    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000101"
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000101"
   },
-  "runtime": {"class": "wasi", "network": "none"},
+  "runtime": {
+    "class": "scripted",
+    "network": "none"
+  },
   "obligations": [
     "thm1.decomposition-correct",
     "thm1.spectrum-equals-minus1-0-plus1",
     "thm1.infinite-multiplicity",
     "thm1.operator-norm-equals-1"
   ],
-  "assurance": {"required": ["independent-review"]},
-  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "assurance": {
+    "required": [
+      "independent-review"
+    ]
+  },
+  "replay": {
+    "semantic": "required",
+    "byte_exact": "not_required"
+  },
   "replay_profile": "semantic",
   "independence": {}
 }

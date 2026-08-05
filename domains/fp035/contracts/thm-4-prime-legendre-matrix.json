@@ -3,18 +3,30 @@
   "claim_id": "thm-4-prime-legendre-matrix",
   "statement_digest": "sha256:6403ea3ae66293fe313e496554332a8594fd1797bc67f83dd2a04a2c7ebec839",
   "dependencies": [
-    {"claim_id": "def-frozen-model-fp", "required_state": "GLOBALLY_VERIFIED",
-     "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"},
-    {"claim_id": "thm-1-single-step-overlap", "required_state": "GLOBALLY_VERIFIED",
-     "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"}
+    {
+      "claim_id": "def-frozen-model-fp",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"
+    },
+    {
+      "claim_id": "thm-1-single-step-overlap",
+      "required_state": "GLOBALLY_VERIFIED",
+      "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
+    }
   ],
-  "evidence": {"mode": "joint", "required": []},
+  "evidence": {
+    "mode": "joint",
+    "required": []
+  },
   "checker": {
     "protocol": "proofctl-checker/v2",
     "checker_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000106",
-    "schema_digest":  "sha256:0000000000000000000000000000000000000000000000000000000000000106"
+    "schema_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000106"
   },
-  "runtime": {"class": "wasi", "network": "none"},
+  "runtime": {
+    "class": "scripted",
+    "network": "none"
+  },
   "obligations": [
     "thm4.parity-vanishing",
     "thm4.J-integral-formula",
@@ -24,8 +36,15 @@
     "thm4.sample-J11",
     "thm4.sample-J02"
   ],
-  "assurance": {"required": ["deterministic-cap"]},
-  "replay": {"semantic": "required", "byte_exact": "not_required"},
+  "assurance": {
+    "required": [
+      "deterministic-cap"
+    ]
+  },
+  "replay": {
+    "semantic": "required",
+    "byte_exact": "not_required"
+  },
   "replay_profile": "semantic",
   "independence": {}
 }
