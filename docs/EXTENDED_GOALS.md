@@ -265,20 +265,52 @@ survives contact with a finer grid.
 
 ### Directions 6 & 7 (post-mortem "wasteland" candidates): adjudication
 
-**Direction 6 — Spin glass / Parisi free-energy bound: SUSPENDED at a theory
-gate (NOT executed numerically).** Proposal: map $\mathcal H_L$ to the zero-temp
-Hessian of a disordered spin system; prime off-diagonals = quenched disorder
-$J_{ij}$; borrow Talagrand's proven Parisi lower bound. **Refused to run the DOS
-(density-of-states) test at N=12-16**: random-matrix universality (semicircle /
-Marchenko-Pastur) is an $N\to\infty$ statement; a histogram of 12-16 eigenvalues
-is noise, and fitting it would be exactly the "narrative over data" failure this
-log exists to prevent. **Theory gate instead**: the Parisi machine needs quenched
-i.i.d. disorder, but $P_{ij}$ is DETERMINISTIC with exact arithmetic structure
-($\log p$), not random. Pre-gate (for proposers): prove the deterministic prime
-coupling is statistically equivalent to i.i.d. quenched disorder — this touches
-Sarnak-conjecture-level pseudorandomness of arithmetic functions. Unproven =>
-Parisi cannot start. Status: alive only in principle, blocked on a hard theory
-gate; no numerical execution attempted (deliberately).
+**Direction 6 — Spin glass / Parisi free-energy bound: REJECTED at the theory
+gate via the ENSEMBLE-vs-SINGLE-INSTANCE short circuit (2026-08-06).**
+Proposal: map $\mathcal H_L$ to the zero-temp Hessian of a disordered spin
+system; prime off-diagonals = quenched disorder $J_{ij}$; borrow Talagrand's
+proven Parisi lower bound. **Refused to run the DOS test at N=12-16** (random-
+matrix universality is $N\to\infty$; 12-16 eigenvalues = noise; fitting it would
+be the "narrative over data" failure this log prevents).
+
+**The fatal short circuit** (this is the derandomization barrier): the Parisi
+bound is an ENSEMBLE / probability-1 statement — "a TYPICAL random $J$ gives
+ground-state energy $\ge$ Parisi value." But $P_{ij}$ is ONE specific
+deterministic instance (fixed by $\log p$). "Typical instance satisfies the
+bound" does NOT imply "this instance satisfies it"; sample-to-sample fluctuation
+is precisely the hardest, unsolved part of spin-glass theory. Proving
+$\lambda(L)$ has a uniform bound is a DETERMINISTIC single-instance problem;
+swapping it for "a deterministic instance lands on the ensemble's good side" is
+not easier — it is the derandomization barrier (cf. explicit RIP matrices,
+explicit Ramanujan graphs: almost every random object is good, yet certifying
+any named one is open).
+
+Three proposed bridges to "prime coupling ~ random disorder" — ALL avoid the
+GUE/Montgomery-Odlyzko circularity (good), but ALL hit the short circuit:
+- **Kronecker-Weyl ergodicity**: gives equidistribution along the PARAMETER $t$,
+  not independence across INDICES $(i,j)$. Wrong axis — ergodicity in $t$ is not
+  disorder in $(i,j)$.
+- **Lindeberg universality**: a universality theorem is itself ENSEMBLE-level
+  ("two random ensembles share a free energy"); a deterministic instance has no
+  intrinsic variance — one must IMPOSE an ensemble to define it, i.e. smuggle in
+  the randomness = assume the conclusion.
+- **Weak/log-Chowla decorrelation**: unconditional and real (Tao et al.), but
+  gives only DE-CORRELATION (a necessary, not sufficient, spin-glass premise);
+  it does not reach a ground-state-energy lower bound.
+
+**Salvaged seed (independent, unconditional, RH-free)**: bridge 3's tool —
+unconditional logarithmic Chowla / Möbius decorrelation — does NOT deliver a
+Parisi bound, but it CAN plausibly establish a standalone structural theorem:
+> In the thermodynamic limit $L\to\infty$, the topological frustration of the
+> off-diagonal interference network of $\mathcal P_L$ is ASYMPTOTICALLY
+> IRREDUCIBLE — no basis change or renormalization removes the odd sign-cycles,
+> because Möbius/prime fluctuations carry no systematic low-order correlation to
+> conspire them away.
+This is unconditional, RH-independent, and upgrades Direction 3's Lee-Yang death
+certificate from "frustrated at finite L (numerical)" to "asymptotically
+irreducibly frustrated (analytic)". Candidate for a short standalone paper, same
+genre as E1 (an honest structural negative result). Tool: unconditional weak
+Chowla only — NOT GUE, NOT RH.
 
 **Direction 7 — Quasi-periodic / Anderson localization / KAM: REJECTED
 (2026-08-06).** Proposal: treat $\mathcal H_L$ as a quasi-periodic operator
@@ -320,20 +352,40 @@ needed. Dead, with the death mechanism (real-space localization) understood.
   bosonic->fermionic statistics switch unsupported.
 - **Dir 5** Ruelle/hyperbolic: DEAD — quasi-periodic (zero Lyapunov); shares
   Dir 1's rigid-gap-vs-decrease refutation.
-- **Dir 6** spin glass/Parisi: SUSPENDED at theory gate — deterministic prime
-  coupling != quenched i.i.d. disorder (Sarnak-level). Not executed numerically
-  (small-N DOS would be noise).
+- **Dir 6** spin glass/Parisi: DEAD at theory gate — ensemble-vs-single-instance
+  short circuit (derandomization barrier). All 3 bridges (Kronecker-Weyl,
+  Lindeberg, weak-Chowla) avoid GUE circularity but cannot cross ensemble ->
+  single deterministic instance. SALVAGED SEED: unconditional log-Chowla gives a
+  standalone theorem that frustration is asymptotically irreducible (upgrades
+  Dir 3's death certificate; short-paper candidate).
 - **Dir 7** quasi-periodic/KAM: DEAD — ground state localized (IPR >> 1/N);
   real-space localization removes KAM protection.
 
 None died of circularity or mere rewriting. Each died on the target theorem's
-structural precondition failing under measurement — or was honestly suspended
-rather than executed on statistically meaningless data. The infinite formula
-$(\star)$ (Weil criterion) already exists; the scarce object is its PROOF, which
-equals RH. Any uniform-in-L argument must characterise the FULL spectrum: no
-counting invariant, no single-direction geometry, and none of these 7 tempting
-structural shortcuts captures the sign of $\lambda(L)$. This file is a verified
-minefield map — the path is not in these directions.
+structural precondition failing under measurement, on the ensemble-vs-single-
+instance derandomization barrier, or was honestly refused execution on
+statistically meaningless data. The infinite formula $(\star)$ (Weil criterion)
+already exists; the scarce object is its PROOF, which equals RH. Any uniform-in-L
+argument must characterise the FULL spectrum: no counting invariant, no single-
+direction geometry, and none of these 7 tempting structural shortcuts captures
+the sign of $\lambda(L)$. This file is a verified minefield map — the path is not
+in these directions.
+
+**Two salvaged assets from the campaign (both unconditional, RH-free):**
+1. Ground-state node transition as a *lead indicator* of the sign flip (precursor,
+   not mechanism; needs second-window data to calibrate the lead gap).
+2. Asymptotic irreducibility of prime-network frustration via unconditional
+   log-Chowla (Dir-6 salvage) — a standalone structural negative result,
+   E1-genre, and the analytic capstone of Dir-3's Lee-Yang death.
+
+**Quantified mechanism picture** (why $\lambda(L)$ crashes): the indefinite prime
+"spear" grows +84% while the positive reserve "shield" grows +16% (5x asymmetry,
+widening). The object is a number-theoretic beast whose disorder is rooted in the
+arithmetic axioms (unique factorization -> rationally-independent $\log p$ ->
+irreducible frustration); it admits no rigid / ferromagnetic / bosonic / hyperbolic
+/ low-rank temperate structure. The only logically-closed route to RH remains a
+full-spectrum uniform-in-L argument with no structural shortcut — hard, possibly
+nonexistent, but not yet falsified.
 
 **Decision**: Defer to after Route 1 Effect B measurement. If Effect B is polynomial, uniform-in-L is worth pursuing; if exponential, computational approach to second window takes priority.
 
