@@ -128,7 +128,12 @@ import Mathlib.Data.Real.Sqrt
 
 **graph.json fix**: `proofctl pin checker` wrote `runtime.kind: "native"` (pre-scripted proofctl). Fixed to `"scripted"` after rebuild.
 
-## v0.3.12 additions (current)
+## v0.3.13 fixes (current)
+
+- **MaxWallClock raised to 60m**: `--timeout 20m` in v0.3.12 was silently capped at 10m.
+  Now `proofctl check --timeout 20m --all` works correctly for archimedean checkers.
+
+## v0.3.12 additions
 
 - **`proofctl check --timeout <duration>`**: override per-checker wall-clock timeout.
   Archimedean checker needs ~600s for even sector — use `--timeout 20m` when running
