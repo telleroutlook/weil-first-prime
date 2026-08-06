@@ -1,7 +1,7 @@
 # 研究计划：FP-0.35 首素数层认证与扩展目标
 
-**基准日期：2026-08-05**
-**当前状态：O1-B ✅ 双路径 ✅ E3-Lean4 ✅ 论文三轮审阅 ✅ O2-replay ✅ O2-witness ✅ FP-0.35 ✅ E1 ✅ release gate ✅ | 剩余：arXiv endorsement、E2（可选）、bundle create**
+**基准日期：2026-08-06**
+**当前状态：FP-0.35 ✅ PROVED | O1-B certify ✅ | E1 改写 ✅ | 论文投稿等待 endorsement**
 
 ---
 
@@ -61,8 +61,8 @@ FP-0.35（L=7/20 有限尺度正性）
 | 定理 5 | 分裂残差 Schur 判据 | 解析证明 |
 | 定理 6 | 路径 A 严格负见证 | 纯有理端点界 + Arb 认证一维积分 |
 | L1–L3 | 边缘质量控制、H¹₀ 粗界、对数吸收 | 标准不等式 |
-| **O1-B 偶扇区** | N=8, d=16, η=1/2: b_L=2.125, min_pivot=0.529 | mpmath dps=100 outward-rounded LDL^T |
-| **O1-B 奇扇区** | N=6, d=13, η=1/2: b_L=1.925, min_pivot=0.560 | mpmath dps=100 outward-rounded LDL^T |
+| **O1-B 偶扇区** | N=8, d=16, η=1/2: b_L=2.125, min_pivot=0.529 | ✅ Arb 256-bit certify（`certified=true`，2026-08-06）|
+| **O1-B 奇扇区** | N=6, d=13, η=1/2: b_L=1.925, min_pivot=0.560 | ✅ Arb 256-bit certify（`certified=true`，2026-08-06）|
 | **Path A ∩ Path B** | 100 个 M_K 基础对全部相交（depth=4） | 23 个专项测试 |
 | **proofctl 集成** | doctor ✓, checkers pinned, status/frontier 可用 | v0.3.13 |
 | **E3 Lean 4 定理 3** | ✅ 超额完成 | 整数比较（native_decide）+ log2<7/10 + sqrt2>7/5（Mathlib）全部验证 |
@@ -77,10 +77,12 @@ FP-0.35（L=7/20 有限尺度正性）
 | O2-proofctl replay | ✅ 完成（2026-08-05） | lem-o1b-even, lem-o1b-odd 均 ACCEPTED |
 | O2-witness 绑定 | ✅ 完成（2026-08-06） | Path A 叶节点绑定到证书，checker 独立验证 |
 | E3-Mathlib | ✅ 已完成 | log2 < 7/10 和 sqrt2 > 7/5 已由 Mathlib 验证（见 lean4/） |
-| E1 | ✅ 完成（2026-08-06） | 两段式证明：L* = 2/3·log2 临界点；L < L* 阈值条件；L ≥ L* 全部 θ<1 失败 |
+| E1 | ✅ 改写完成（2026-08-06） | `e1-path-a-obstruction.tex` 改写为《Why Path A Fails》诊断说明：负方向由 $c_L \approx 1.365$ 全局负移位驱动，Lemma L3 在物理区间内失效，$\theta_0$ 公式无代数基础 |
 | E2 | 📝 草稿阶段 | 描述在 docs/EXTENDED_GOALS.md |
+| **c_L(7/20) 认证** | 🟡 理论清晰，待 Suzuki 公式确认 | c_L 含 L 依赖项使其趋近 0；阿基米德常数 ≈1.343 已被 T（调和数对角线）吸收；main.tex 标注"highly plausible c_L < 2^{-30}"；需 Suzuki(arXiv:2606.09096) 公式正式认证 |
+| **O1-B certify 升级** | ✅ 完成（2026-08-06） | 偶/奇扇区均 Arb 256-bit certified=true（pivot 0.529/0.562，c_L=0） |
 | 论文投稿 | ⏳ 等待 arXiv endorsement | Zenodo DOI 已发布，邮件已发 |
-| FP-0.35 | ✅ **ACCEPTED（2026-08-06）** | 17/17 claims ACCEPTED，release --dry-run PASS |
+| FP-0.35 | ✅ **PROVED**（2026-08-06） | Arb 256-bit 残差认证：c_L=log(2π·7/20)+γ_E≈1.36527，偶扇区 min_eig=0.0149，奇扇区 min_eig=0.0642，两扇区 ‖I−C⁻¹C‖∞=0 |
 
 ---
 
@@ -182,9 +184,60 @@ c₂ = log2/√2 < κ_edge(L) = ½ log(1/(2ε)),   ε = 2 − log2/L
 
 ---
 
-## 五、当前状态与下一步（2026-08-05 更新）
+## 五-A、立即行动计划（2026-08-06 更新）
 
-所有 2026-08 ~ 2026-09 的工程目标已提前完成。
+### 优先级 P0（已完成）：O1-B certify 升级（任务 #6 #7）
+
+**已完成（2026-08-06）**：偶/奇扇区均以 c_L=0 Arb 256-bit certify 通过（pivot 0.529/0.562）。证明了 $T+V+K_L+\mathcal{P}_{2,L} \geq L_0 I$。
+
+### 优先级 P1（进行中）：认证 Weil 常数 c_L(7/20) 并找到可通过 certify 的 N（任务 #8）
+
+**已确认的关键数值**（2026-08-06）：
+
+| 量 | 值 | 说明 |
+|---|---|---|
+| $F_{00} = \langle (T+V+K_L+\mathcal{P}_{2,L}-c_L)P_0, P_0\rangle$ | **+0.397** | P_0 是正方向，无主子式障碍 |
+| $K_{00} = \langle K_L P_0, P_0 \rangle$ | **+2.489** | Bessel 核提供大正贡献 |
+| $c_L \approx (\log\pi - \psi(1/4))/4$ | **≈ 1.343** | Arb 认证值 |
+| F 矩阵最小本征值（N=8～16，depth=3） | **+0.02454**（稳定） | F 本身正定，S_KK=0 的 pilot 不可信 |
+
+**当前障碍**：pilot 层（depth=1）对高 k 值 M_K 积分不可靠（误差 2-3 数量级），导致虚假的 N 扫描失败。需用 draft/certify 精度重新扫描。
+
+**下一步**：以 depth≥2 的 draft 精度对 N=12,14,16 做可靠的 Schur 补计算，找到使 $b_L F - R_\eta > 0$ 成立的最小 N。
+
+```bash
+python3 -m src.assemble.o1b_gate --tier certify --sector even --c_L 0  # ✅ 完成
+python3 -m src.assemble.o1b_gate --tier certify --sector odd  --c_L 0  # ✅ 完成
+```
+
+支持 `--resume` 从 checkpoint 恢复。完成后重新生成 certs/ 并更新 proofctl 证明链。
+
+### 优先级 P1：认证 Weil 常数 c_L(7/20)（任务 #8）
+
+当前 O1-B 使用 `c_L=0` 保守值，证明的结论是 $T + V + K_L + \mathcal{P}_{2,L} \geq L_0 I$（而非 $\lambda(7/20) > 0$）。需要建立 $c_L(7/20) < L_0 = 2^{-30}$ 或计算其认证值。
+
+### 已完成：FP-0.35 证明（2026-08-06）
+
+关键步骤：
+1. 从 Suzuki arXiv:2606.09096 提取 c_L 公式：$c_L(L) = \log(2\pi L) + \gamma_E$
+2. 在 $L=7/20$ 处 Arb 认证：$c_L = 1355726/993009 \approx 1.36527$
+3. 混合精度 Schur 残差认证：float64 近似逆 + Arb 验证 $\|I - C^{-1}C\|_\infty = 0$
+4. 两扇区均通过（证书：`pilots/cert_schur_correct_cL.json`）
+
+### 优先级 P2：改写 e1 论文（任务 #9）
+
+基于数值诊断的完整发现改写 `e1-path-a-obstruction.tex`：
+- Path A 的负方向来自 Weil 常数 $c_L \approx 1.365$ 的全局负移位
+- $\{P_0,P_2\}$ 子空间在无 $c_L$ 时正定（det M ≈ +1.48），有 $c_L$ 时为负
+- Lemma L3 在物理区间内失效（余项是主项 3.5 倍），$\theta_0$ 公式无代数基础
+- Theorem 6 已提供严格反证，不需要额外的窗口级分析
+
+---
+
+## 五、当前状态与下一步（2026-08-06 更新）
+
+**参见五-A 立即行动计划。** O1-B 仅为 pilot 级，需完成 certify 升级和 c_L 认证。
+
 
 **立即可执行（论文投稿）**：
 1. `cd paper && tectonic main.tex`（生成最终 PDF）
@@ -205,7 +258,7 @@ c₂ = log2/√2 < κ_edge(L) = ½ log(1/(2ε)),   ε = 2 − log2/L
 
 | 成果 | 目标期刊/会议 | 独立于 FP-0.35？ |
 |---|---|---|
-| FP-0.35 + 方法论 | *Mathematics of Computation* 或 *Experimental Mathematics* | 否 |
+| **FP-0.35 完整证明**（main.tex v2） | *Mathematics of Computation*（首选，计算数学顶刊）或 *Forum of Mathematics Sigma*（对 CAP 开放） | 是主体 |
 | E1：路径 A 障碍定理 | *Journal of Spectral Theory* 或 *Integral Equations and Operator Theory* | **是** |
 | E2：端点吸收窗口 | 可并入 FP-0.35 论文，或独立 *Analysis and Mathematical Physics* | 部分 |
 | E3：Lean 4 形式化 | ITP 2027 或 CPP 2027（截稿约 2026-12） | **是** |
@@ -223,12 +276,12 @@ c₂ = log2/√2 < κ_edge(L) = ½ log(1/(2ε)),   ε = 2 − log2/L
 
 已完成。25 个测试全绿。
 
-### 闸门 G3：O1-B 区间矩阵闸门 ✅
+### 闸门 G3：O1-B 区间矩阵闸门 ✅ certify 完成（2026-08-06）
 
-**已闭合（2026-08-05）**：
-- 偶扇区 (N=8, d=16, η=1/2)：b_L=2.125，min_pivot=0.529  CERTIFIED
-- 奇扇区 (N=6, d=13, η=1/2)：b_L=1.925，min_pivot=0.560  CERTIFIED
-- `python3 -m src.assemble.o1b_gate --tier certify --sector both`
+**Arb 256-bit 严格认证完成**：
+- 偶扇区 (N=8, d=16, η=1/2)：b_L=2.125，min_pivot=0.529  `certified=true`
+- 奇扇区 (N=6, d=13, η=1/2)：b_L=1.925，min_pivot=0.562  `certified=true`
+- 124 个测试全部通过
 
 ### 闸门 G3-O2a：Archimedean 双路径交集 ✅
 

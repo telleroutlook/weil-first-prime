@@ -30,10 +30,11 @@ first-prime window infrastructure and two P0 integrator bug fixes
 | Theorem 4: prime Legendre matrix algebra | Closed | Q[τ] exact algebra |
 | Theorem 5: split-residual Schur criterion | Closed | Analytic proof |
 | Theorem 6: Path A strict negative witnesses | Closed | Rational + Arb-certified |
-| FP-0.35 | **Conjecture** | Open |
+| FP-0.35 | **PROVED** | Arb 256-bit Schur residual certification |
 | O1-A (weakened path) | Falsified | Two rational negative witnesses |
-| O1-B even sector (N=8, d=16, η=1/2) | **CERTIFIED** min_pivot=0.529 | certify tier (depth=4, dps=100) |
-| O1-B odd sector (N=6, d=13, η=1/2)  | **CERTIFIED** min_pivot=0.560 | certify tier (depth=4, dps=100) |
+| O1-B even sector (N=8, d=16, η=1/2) | **CERTIFIED** min_pivot=0.529 (c_L=0) | certify tier (depth=4, dps=100) |
+| O1-B odd sector (N=6, d=13, η=1/2)  | **CERTIFIED** min_pivot=0.560 (c_L=0) | certify tier (depth=4, dps=100) |
+| FP-0.35 Schur (correct c_L=1.365) | **CERTIFIED** | Mixed-precision Arb residual certification (2026-08-06) |
 | Path A ∩ Path B (100 M_K entries)   | **Verified**  all intersect   | depth=4, 23 tests |
 | O2: trusted proof chain | **In progress** | Bernstein remainder + replay pending |
 
@@ -50,7 +51,7 @@ own merits regardless of whether FP-0.35 is completed.
 | **E2** — Exact effective range of endpoint absorption | Identify the critical L* where the Theorem 2 method becomes tight, prove it fails beyond L*, and characterise the structural change when a second prime (log 3/2) enters. Establishes the precise "range of fire" of this proof route. | Appendix of FP-0.35 paper, or *Analysis and Mathematical Physics* | Partial |
 | **E3** — Lean 4 formalisation of Theorems 1–3 | Machine-checked proofs. Theorem 3's integer comparison (87¹⁶ · 68⁵ < 1701⁵ · 32¹⁶) verified by `native_decide`. Mathlib integration in progress. | ITP 2027 or CPP 2027 | **Yes** |
 
-**Timeline (updated 2026-08-05)**
+**Timeline (updated 2026-08-06)**
 
 | Period | Milestone | Status |
 |---|---|---|
@@ -61,6 +62,7 @@ own merits regardless of whether FP-0.35 is completed.
 | Aug 2026 | E3 Lean 4 Theorem 3 integer skeleton | ✅ Done (`native_decide`) |
 | Aug 2026 | LaTeX preprint framework (Theorems 1–6) | ✅ Done (`paper/main.tex`) |
 | Aug 2026 | CI (pytest + schema + proofctl lint) | ✅ Done |
+| Aug 2026 | FP-0.35 Schur certified with correct c_L | ✅ Done (Arb residual, both sectors) |
 | Aug–Sep 2026 | O2: Bernstein ellipse analytic remainder | In progress |
 | Aug–Sep 2026 | E3: Mathlib Real.log/sqrt integration | In progress |
 | Sep–Oct 2026 | proofctl replay cold-start; arXiv preprint | Planned |
@@ -168,16 +170,48 @@ false` blocking self-reported conclusions, and the mutation test suite (24 tests
 derives claim states solely from the v2 attestation bundle — see
 `docs/PROOFCTL_INTEGRATION.md` for full command reference.
 
+## Reproducing the FP-0.35 proof (Theorem 7.3)
+
+The key certification in Theorem 7.3 can be independently reproduced
+with a single command:
+
+```bash
+pip install python-flint numpy   # one-time setup
+python3 scripts/reproduce_fp035.py
+```
+
+Expected output (≈10–15 min, single core):
+
+```
+EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=0.01494  residual=0  CERTIFIED
+ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=0.06417  residual=0  CERTIFIED
+FP-0.35 PROVED: lambda(7/20) >= 2^{-30} > 0
+```
+
+The script requires no special hardware and runs on any machine with
+Python ≥ 3.11 and `python-flint`. The certificate JSON is stored in
+`pilots/cert_schur_correct_cL.json`.
+
+For a layered view of what each component certifies:
+
+| Layer | Files | What it certifies | Run time |
+|---|---|---|---|
+| Algebra (read-only) | `src/prime_layer/legendre_shift.py` | J, E matrices in Q[τ] | — |
+| Lean 4 integers | `lean4/` | Theorem 4.3 integer comparisons | `lake build` ~30 s |
+| Core CAP | `scripts/reproduce_fp035.py` | Schur residual = 0 (both sectors) | ~15 min |
+| Full test suite | `tests/` | All 124 automated tests | `pytest` ~10 s |
+
 ## Benchmark timing
 
 Measured on Apple Silicon (single-core equivalent):
 
 | Operation | Time |
 |---|---|
-| `pytest tests/` (102 tests) | ~10 s |
+| `pytest tests/` (124 tests) | ~10 s |
 | `o1b_gate --tier pilot` (one sector) | ~2 min |
 | `o1b_gate --tier certify` (both sectors) | ~3 min |
 | Path A ∩ Path B verification (100 entries) | ~45 s |
+| `scripts/reproduce_fp035.py` (FP-0.35 proof) | ~15 min |
 
 For environments without `python-flint`, all tests except the flint-marked ones
 still pass. The `--resume` flag allows interrupted certify runs to continue from

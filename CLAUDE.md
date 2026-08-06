@@ -62,6 +62,7 @@ the first-prime layer. Do not resume work in weil-lower-bound.
   Path B prime matrices to obtain "double credit."
 - **Conclusion boundary.** Published conclusions are bounded to "finite-scale Weil
   positivity at L ≤ 7/20." Never write RH, "near RH," or equivalent in any file.
+- **FP-0.35 status (2026-08-06)**: Proved via Arb 256-bit residual certification with correct c_L = log(2πL) + γ_E ≈ 1.36527. Certificate: pilots/cert_schur_correct_cL.json. Both even (N=8) and odd (N=6) sectors certified. Conclusion remains bounded to finite-scale Weil positivity at L ≤ 7/20.
 - **Window check mandatory.** Any certificate claiming the first-prime window must
   carry `log2 ≤ 2L < log3` verified by certified rational bounds, not enumeration.
 

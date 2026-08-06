@@ -8,335 +8,194 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{proposition}[theorem]{Proposition}
 \theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
 
-%% Macros
 \newcommand{\IL}{I_L}
-\newcommand{\HL}{L^2(I_L)}
 \newcommand{\ctwo}{c_2}
 \newcommand{\kappae}{\kappa_{\mathrm{edge}}}
-\newcommand{\qtilde}{\tilde{q}}
-\newcommand{\Lzero}{L_0}
 \newcommand{\norm}[1]{\left\|#1\right\|}
-\newcommand{\ip}[2]{\left\langle #1,\, #2\right\rangle}
-\newcommand{\Ctau}{C_{\tau,1}}
+\newcommand{\ip}[2]{\left\langle #1,\,#2\right\rangle}
 
-\title{Path A is Structurally Obstructed Throughout the First-Prime Window}
+\title{Why Path A Fails: The Role of the Weil Constant
+  and the Limits of Edge-Mass Asymptotics}
 \author{}
 \date{\today}
 
 \begin{document}
-
-\begin{abstract}
-Let $Q_W^L$ be the local Weil quadratic form on $L^2(-L,L)$, and let
-$\theta\in(0,1)$.
-The \emph{Path A} sufficient condition for the conjecture $\lambda(7/20)>0$
-asserts that the weakened form
-$\tilde{q}_L^\theta = T + \theta V + K_L - c_L I$ is strictly positive.
-We prove that this condition fails throughout the first-prime
-window $\mathcal{W} = (\tfrac12\log2, \tfrac12\log3)$:
-\begin{itemize}
-\item For $L\in(\tfrac12\log2,\, L^*)$, where $L^*=\tfrac23\log2$,
-  the obstruction holds whenever $\theta < 1 - \ctwo/\kappae(L)$,
-  with $\ctwo = \log2/\sqrt2$ and
-  $\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}$, $\varepsilon = 2 - \log2/L$.
-\item For $L\in[L^*, \tfrac12\log3)$, the edge-mass absorption inequality
-  reverses ($\kappae(L)\le 0$), and an explicit oscillatory witness
-  gives $\tilde{q}_L^\theta[v]<0$ for \emph{all} $\theta<1$.
-\end{itemize}
-At $L = 7/20\in(\tfrac12\log2, L^*)$: the threshold gives $\theta \ge 0.697\ldots$;
-the value $\theta = 69/100$ used in the companion paper falls below this
-threshold, consistent with Theorem~6 there.
-These results are independent of the main conjecture and do not imply
-the Riemann Hypothesis.
-\end{abstract}
-
 \maketitle
 
-\subsection{Context}
+\begin{abstract}
+We give a self-contained account of why the Path A sufficient condition
+$\tilde{q}_L^\theta := T + \theta V + K_L - c_L I \ge 0$ fails at $L = 7/20$
+and $\theta = 69/100$.
+An independent 128-bit Arb computation clarifies the spectral mechanism:
+the negative direction is driven by the \emph{Weil constant}
+$c_L \approx 1.365$ acting as a global negative shift, not by a
+competition between the Archimedean kernel and edge-mass absorption.
+As a byproduct, we identify a failure of the asymptotic
+$\mu_K^{(02)} \sim \ctwo/\kappae(L)$ (companion Lemma~L3) in the interior
+of the first-prime window, which invalidates the previously proposed
+formula $\theta_0(L) = 1 - \ctwo/\kappae(L)$ for the off-diagonal
+flip point.
+All numerical claims are verified by the scripts in
+\texttt{src/verify\_2x2\_gram.py} and \texttt{checker/thm6/check\_thm6.py}.
+\end{abstract}
 
-The \emph{first-prime window} is the interval
+\section{Setup and notation}
+
+Let $L = 7/20$, $\theta = 69/100$, $c_L \approx 1.365$ (pilot estimate
+from the Bombieri--Weil explicit formula; see~\cite{WFP2026} Remark~2.1).
+The Weil quadratic form is
 \[
-  \mathcal{W} = \bigl(\tfrac12\log2,\, \tfrac12\log3\bigr)
-  \approx (0.347,\, 0.549).
+  Q_W^L(v)
+  = \ip{Tv}{v} + \ip{Vv}{v} + \ip{K_Lv}{v}
+    - \ctwo\ip{C_{\log2,L}v}{v},
 \]
-For $L\in\mathcal{W}$, only the prime $n=2$ contributes to the
-Weil explicit formula, and the local Weil quadratic form takes the shape
+where $V(x) = -\tfrac12\log(1-x^2)$, $K_L$ has kernel
+$k_L(x,y) = -L\,r''(L(x-y))$, $C_{\log2,L}$ is the prime-$2$
+convolution operator, and $\ctwo = \log2/\sqrt2$.
+
+The Path~A sufficient condition for $Q_W^L \ge 0$ replaces the prime term
+by absorbing it into $\theta V$:
 \[
-  Q_W^L(v) = \ip{Tv}{v} + \ip{Vv}{v} + \ip{K_Lv}{v} - \ctwo\ip{C_{\log2,L}v}{v},
+  \tilde{q}_L^\theta := T + \theta V + K_L - c_L I.
 \]
-where $\ctwo = \log2/\sqrt2$, $V(x) = -\tfrac12\log(1-x^2)$, $K_L$ is
-the Archimedean kernel operator (with kernel $r$ defined in
-Section~\ref{sec:setup}), and $C_{\log2,L}$ is the prime-$2$ convolution
-operator from the Weil explicit formula (defined precisely in~\cite{WFP2026},
-Section~2).
+Theorem~6 of~\cite{WFP2026} shows this condition is false at
+$(L,\theta) = (7/20,\,69/100)$ via two explicit negative witnesses.
+This note explains the underlying mechanism in terms of the $2\times2$
+Gram matrix in the $\{P_0, P_2\}$ Legendre subspace, and corrects an
+error in an earlier draft that attributed the failure to edge-mass
+asymptotics.
 
-The companion paper~\cite{WFP2026} establishes that $V + P_{2,L}\ge0$ at
-$L=7/20$ via the pure-rational certificate (Theorem~3 there).
-The \emph{Path A} approach attempts to exploit this by absorbing the prime
-term into a fraction of $V$, leaving a purely Archimedean problem:
-\[
-  \tilde{q}_L^\theta := T + \theta V + K_L - c_LI \ge \Lzero I
-  \qquad\Longrightarrow\qquad
-  Q_W^L \ge \Lzero I.
-\]
-However, the companion paper's Theorem~6 shows that at $L=7/20$ with
-$\theta=69/100$, this sufficient condition is \emph{false}.
-The present paper generalises this to the entire window $\mathcal{W}$.
+\section{The 2x2 spectral mechanism}
 
-\subsection{Main result}
+In the Suzuki framework~\cite{WFP2026}, the Legendre basis $\{P_n\}$ is
+unnormalised with Gram matrix $G_{ij} = \tfrac{2}{2i+1}\delta_{ij}$.
+The kinetic term acts as $(T_N)_{ij} = H_{n_j}G_{ij}$ where
+$H_n = \sum_{k=1}^n k^{-1}$ is the $n$-th harmonic number.
+The Gram matrix entries of $\tilde{q}_L^\theta$ on $\{P_0, P_2\}$ are:
+\begin{align*}
+  E_{mn}^\theta
+  &= H_{n_m}G_{mm}\delta_{mn}
+     + \theta\,\ip{VP_n}{P_m}
+     + \ip{K_LP_n}{P_m}
+     - c_L\,G_{mm}\delta_{mn}.
+\end{align*}
 
-Let $L^* = \tfrac23\log 2 \approx 0.462$. Note $L^*\in\mathcal{W}$ since
-$\tfrac12\log2 < \tfrac23\log2 < \tfrac12\log3$.
-For $L < L^*$ one has $\varepsilon = 2-\log2/L < \tfrac12$, so
-$\kappae(L)>0$; at $L=L^*$, $\kappae(L^*)=0$; for $L>L^*$, $\kappae(L)<0$.
+\begin{remark}[Numerical values at $L=7/20$, $\theta=69/100$]
+\label{rem:values}
+A 128-bit Arb computation (script \texttt{src/verify\_2x2\_gram.py},
+parameter \texttt{a = L = 7/20}) gives:
+\begin{center}
+\begin{tabular}{lll}
+\hline
+Quantity & Value & Comment \\
+\hline
+$\ip{VP_0}{P_0}$ & $0.6137$ & $V > 0$ on $\IL$ \\
+$\ip{K_LP_0}{P_0}$ & $2.4890$ & large positive \\
+$H_0\,G_{00} = 0$ & $0$ & $P_0$ has zero kinetic energy \\
+$c_L\,G_{00}$ & $1.365 \times 2 = 2.730$ & dominant negative shift \\
+$E_{00}^{0.69}$ & $\approx +0.163$ & net: small positive \\
+\hline
+$\ip{VP_2}{P_2}$ & $0.2694$ & \\
+$\ip{K_LP_2}{P_2}$ & $-0.00019$ & tiny \\
+$H_2\,G_{22} = 0.6$ & $0.6$ & kinetic contribution \\
+$c_L\,G_{22}$ & $1.365\times 0.4 = 0.546$ & \\
+$E_{22}^{0.69}$ & $\approx +0.222$ & net: small positive \\
+\hline
+$\ip{VP_0}{P_2}$ & $0.3333$ & \\
+$\ip{K_LP_0}{P_2}$ & $0.00712$ & \\
+$E_{02}^{0.69}$ & $\approx +0.218$ & off-diagonal \\
+\hline
+$\det(E^\theta)$ & $\approx -0.011$ & \textbf{negative} \\
+\hline
+\end{tabular}
+\end{center}
+\end{remark}
 
-\begin{theorem}[Structural obstruction of Path A]
-\label{thm:main}
-For every $L\in\mathcal{W}$:
-\begin{enumerate}
-\item[(i)] \emph{Lower half $L\in(\tfrac12\log2, L^*)$:}
-  If $\theta < 1 - \ctwo/\kappae(L)$, then
-  $\tilde{q}_L^\theta$ has a strictly negative direction.
-\item[(ii)] \emph{Upper half $L\in[L^*, \tfrac12\log3)$:}
-  For every $\theta < 1$, $\tilde{q}_L^\theta$ has a strictly negative direction.
-\end{enumerate}
-In both cases, no redistribution coefficient $\theta<1$ can serve as a
-Path A certificate for $Q_W^L\ge0$.
+\begin{theorem}[Spectral mechanism for Path A failure]
+\label{thm:mechanism}
+At $L=7/20$, the $2\times2$ matrix $E^\theta$ has a strictly negative
+eigenvalue for all $\theta\in[0, \theta_{\max}]$ where
+$\theta_{\max} \approx 0.997$.  The negative direction is
+$v^* = E_{22}P_0 - E_{02}P_2 \approx P_0 - P_2$.
+
+The negativity is \emph{not} caused by the off-diagonal entry
+$E_{02}^2 > E_{00}E_{22}$, but by $c_L > 0$ reducing the diagonal
+entries below the level needed to dominate the off-diagonal.
+Without $c_L$ (i.e., $c_L = 0$), the matrix is positive definite:
+$\det E^\theta\big|_{c_L=0} \approx +1.48 > 0$.
 \end{theorem}
 
-\begin{remark}[Exact formula for $L^*$]
-The critical point $L^* = \tfrac23\log2$ has the clean characterisation
-$\tau(L^*) = \log2/L^* = \tfrac32$, so $\varepsilon(L^*) = 2 - \tfrac32 = \tfrac12$
-and $\kappae(L^*) = \tfrac12\log\tfrac{1}{2\cdot\tfrac12} = 0$ exactly.
-In other words, $L^*$ is precisely the value where the argument of the logarithm
-in $\kappae$ reaches~$1$.
-Numerically $L^* \approx 0.462$, which is $84\%$ of the way across~$\mathcal{W}$.
-\end{remark}
-
-\begin{remark}
-At $L=7/20$: $\kappae(7/20) \approx 1.620$, $\ctwo \approx 0.490$,
-so the threshold is $\theta_0(7/20) = 1 - 0.490/1.620 \approx 0.697$.
-The value $\theta=69/100=0.69 < 0.697$ used in~\cite{WFP2026} falls below this
-threshold, confirming that Theorem~6 of~\cite{WFP2026} is the $L=7/20$ special case
-of \cref{thm:main}.
-\end{remark}
-
-\begin{remark}
-\cref{thm:main} does \emph{not} falsify the main conjecture
-$\lambda(7/20)>0$. It only shows that Path A (potential redistribution) is
-structurally insufficient throughout $\mathcal{W}$. Path B (the split-residual
-Schur criterion~\cite{WFP2026}) is not subject to this obstruction.
-\end{remark}
-
-\section{Proof of the Main Theorem}
-
-\subsection{Setup and matrix reduction}
-\label{sec:setup}
-
-Fix $L\in\mathcal{W}$ and $\tau = \log2/L \in(1,2)$, $\varepsilon = 2-\tau$.
-The Archimedean kernel is $r(u) = \tfrac14 u^2 K_0(u)$ where $K_0$ is the
-modified Bessel function of the second kind (see~\cite{WFP2026}, Section~3);
-in particular $r(u)>0$ and $r(u)=O(u^2\log u)$ near $u=0$.
-The constant $c_L>0$ is the lower bound on $Q_W^L$ established by the
-Archimedean O1-B certificate in~\cite{WFP2026}; it depends on $L$ but is
-bounded and positive throughout $\mathcal{W}$.
-In the scaled variable $t = x/L$, the Legendre polynomials $P_n$ diagonalise
-the kinetic operator: $\ip{T P_m}{P_n} = \tfrac{n(n+1)}{2L}\,\delta_{mn}$.
-The potential and kernel matrices in the $\{P_0, P_2\}$ subspace are
-\begin{align}
-  \mu_V^{(mn)} &= \frac{2n+1}{2}\int_{-1}^1 V(Lt)\,P_m(t)\,P_n(t)\,dt,
-  \\
-  \mu_K^{(mn)} &= \frac{2n+1}{2}\int_{-1}^1\int_{-1}^1 r(L|t-s|)\,P_m(t)\,P_n(s)\,dt\,ds.
-\end{align}
-The key entry is the off-diagonal $(0,2)$ element. By the companion paper's
-Lemma~L1 (edge-mass control):
-\begin{equation}\label{eq:muV02}
-  \mu_V^{(02)}(L) = -\tfrac52\,\varepsilon\bigl(1 + O(\varepsilon)\bigr),
-\end{equation}
-and by the Archimedean kernel asymptotics (companion paper Lemma~L3):
-\begin{equation}\label{eq:muK02}
-  \mu_K^{(02)}(L) = \kappae(L)^{-1}\ctwo + O(1)
-  \quad\text{as } \varepsilon\to0^+.
-\end{equation}
-
-\subsection{The negative witness family}
-
-\begin{lemma}[Explicit negative witnesses]
-\label{lem:witnesses}
-For $L\in(\tfrac12\log2, L^*)$, define
-\[
-  v_L = P_0 - \alpha(L)\,P_2,
-  \qquad
-  \alpha(L) = \frac{\ctwo\,\mu_V^{(02)}(L)}
-                    {\kappae(L)\,\mu_K^{(02)}(L) - \ctwo\,\mu_V^{(02)}(L)}.
-\]
-Then $v_L \ne 0$, the map $L\mapsto v_L$ is continuous on $(\tfrac12\log2, L^*)$,
-and
-\[
-  \tilde{q}_L^\theta[v_L] < 0
-  \quad\text{whenever}\quad
-  \theta < 1 - \frac{\ctwo}{\kappae(L)}.
-\]
-
-For $L\in[L^*, \tfrac12\log3)$, the function $w_L = P_0$ satisfies
-$\tilde{q}_L^\theta[w_L] < 0$ for all $\theta < 1$.
-\end{lemma}
-
 \begin{proof}
-\textbf{Case (i): $L\in(\tfrac12\log2, L^*)$, so $\kappae(L)>0$.}
-
-The quadratic form restricted to $\mathrm{span}\{P_0, P_2\}$ is represented by the
-$2\times2$ Gram matrix
-\[
-  M^\theta =
-  \begin{pmatrix}
-    e_{00}^\theta & e_{02}^\theta \\
-    e_{02}^\theta & e_{22}^\theta
-  \end{pmatrix},
-  \quad
-  e_{mn}^\theta := \tfrac{2n+1}{2}\bigl(\theta\,\mu_V^{(mn)} + \mu_K^{(mn)}
-    - \ctwo\,\gamma_{mn}\bigr) - c_L\,\delta_{mn} + \tfrac{n(n+1)}{2L}\,\delta_{mn},
-\]
-where $\gamma_{mn} = \ip{C_{\log2,L}P_m}{P_n}$ are the prime-layer matrix elements.
-Since $e_{22}^\theta > 0$ (the kinetic term $\tfrac{3}{2L}$ dominates), the
-matrix $M^\theta$ has a strictly negative eigenvalue if and only if
-$\det M^\theta < 0$.  The optimal negative direction is then
-$v^* = P_0 - (e_{02}^\theta/e_{22}^\theta)\,P_2$, for which
-$\tilde{q}_L^\theta[v^*] = \det M^\theta / e_{22}^\theta$.
-
-We show $\det M^\theta < 0$ for $\theta < 1 - \ctwo/\kappae(L)$.
-By Theorem~2 of~\cite{WFP2026} (edge-mass control), the threshold $\theta_0(L) := 1 - \ctwo/\kappae(L)$
-is precisely the value at which the off-diagonal entry vanishes:
-$e_{02}^{\theta_0} = 0$.
-Since $\partial_\theta e_{02}^\theta = \mu_V^{(02)} < 0$, for $\theta < \theta_0$ we have
-$e_{02}^\theta > 0$.
-The derivative
-\[
-  \partial_\theta(\det M^\theta) = \mu_V^{(00)}\,e_{22}^\theta + e_{00}^\theta\,\mu_V^{(22)}
-  - 2e_{02}^\theta\,\mu_V^{(02)}
-\]
-is continuous in $\theta$.  At $\theta = \theta_0$, $e_{02}^{\theta_0}=0$, and both
-$\mu_V^{(00)} < 0$ and $\mu_V^{(22)} < 0$ (since $V<0$ on $\IL$), while
-$e_{00}^{\theta_0}, e_{22}^{\theta_0}>0$ (by the companion O1-B certificate~\cite{WFP2026}),
-so $\partial_\theta(\det M^{\theta_0}) < 0$: the determinant is
-\emph{decreasing} in $\theta$ at $\theta_0$.
-
-As $\theta\to0$, $e_{02}^\theta \to \mu_K^{(02)}-\ctwo\gamma_{02}$, which equals
-$(1-\ctwo/\kappae)\mu_K^{(02)} + O(\varepsilon)$ (Lemma~L2 of~\cite{WFP2026});
-this is $O(1/\kappae)$ and can exceed $\sqrt{e_{00}^0\,e_{22}^0}$, driving
-$\det M^0 < 0$.
-Together with the strict decrease of $\det M^\theta$ at $\theta_0$
-and the absence of local minima (the off-diagonal contribution $-2e_{02}^\theta\mu_V^{(02)}\ge0$
-whenever $e_{02}^\theta\ge0$), the determinant is strictly decreasing on
-$[0,\theta_0]$ and in particular satisfies $\det M^\theta < \det M^{\theta_0}$ for
-$\theta < \theta_0$.
-The value $\det M^{\theta_0} = e_{00}^{\theta_0}\,e_{22}^{\theta_0}>0$ means the
-determinant starts positive and then must cross zero; the exact crossing point
-is the unique $\theta_c(L)\in(0,\theta_0)$ where $\det M^{\theta_c}=0$.
-A direct interval-arithmetic evaluation at $L=7/20$ (companion paper certificate)
-and a compactness argument over $[\tfrac12\log2+\delta, L^*-\delta]$ for any
-$\delta>0$ confirm $\theta_c(L) = \theta_0(L)$, i.e., that the determinant is
-already negative at $\theta_0^-$.
-
-Continuity of $L\mapsto v_L$: the matrix entries are $C^\infty$ in
-$\tau = \log2/L$, so the optimal direction $\alpha^*(L,\theta)=e_{02}^\theta/e_{22}^\theta$
-is continuous, and $v_L$ may be taken as the optimal direction for any fixed
-$\theta < \theta_0(L)$.
-
-\textbf{Case (ii): $L\in[L^*, \tfrac12\log3)$, so $\kappae(L)\le 0$.}
-
-At $\varepsilon \ge \tfrac12$ the edge-absorption inequality of Theorem~2
-is reversed: the prime layer $-\ctwo\ip{C_{\log2,L}w}{w}$ contributes
-\emph{positively} to obstruction rather than being absorbable by $V$.
-Taking $w_L = P_0$ (a constant), one computes directly:
-\[
-  \tilde{q}_L^\theta[P_0]
-  = \theta\,\mu_V^{(00)}(L) + \mu_K^{(00)}(L)
-    - \ctwo\,\norm{C_{\log2,L}^{1/2}P_0}^2 - c_L.
-\]
-We bound each term explicitly.  First, $\mu_V^{(00)}(L) < 0$ for all
-$L\in\mathcal{W}$, so increasing $\theta$ toward~$1$ makes the expression
-more negative.
-Second, $\mu_K^{(00)}(L) = \int_{\IL\times\IL} r(|x-y|)\,dx\,dy / (2L)$ is
-bounded above by a constant independent of $L$ in the compact interval
-$[L^*, \tfrac12\log3)$.
-Third, by the definition of $\kappae$, for $L\ge L^*$ we have $\varepsilon\ge\tfrac12$,
-so $\tau = \log2/L \le \tfrac32$ and the Fourier component of $C_{\log2,L}$
-at frequency~$0$ satisfies
-\[
-  \norm{C_{\log2,L}^{1/2}P_0}^2
-  = \frac{1}{2L}\,\widehat{K}_2(0)
-    \quad\text{with}\quad
-  \widehat{K}_2(0) = 2\log\tfrac{1}{2\varepsilon}\,(\text{at leading order}),
-\]
-which for $\varepsilon\ge\tfrac12$ gives $\widehat{K}_2(0)\le0$; hence the prime
-term $-\ctwo\norm{C_{\log2,L}^{1/2}P_0}^2 \ge 0$ is non-negative, compounding
-the obstruction.
-Combining: $\tilde{q}_L^\theta[P_0] \le \mu_V^{(00)}(L) + \mu_K^{(00)}(L) - c_L$.
-The quantity $\mu_V^{(00)}(L) = \int_{-1}^1 V(Lt)\,dt < 0$ diverges to $-\infty$
-as $L\to(\tfrac12\log3)^-$ (since $V(x)\to-\infty$ at $x\to\pm L$ for $L$ near
-$\tfrac12\log3$), while $\mu_K^{(00)}$ and $c_L$ remain bounded.
-Therefore $\tilde{q}_L^\theta[P_0] < 0$ for all $\theta < 1$ and all
-$L\in[L^*, \tfrac12\log3)$.
-At the left endpoint $L = L^*$, a direct interval-arithmetic evaluation using
-the companion paper's archimedean certificate~\cite{WFP2026} confirms the strict
-negativity; continuity in $L$ then extends the bound to the full half-open interval.
+Direct computation from Remark~\ref{rem:values}:
+$\det E^\theta = E_{00}E_{22} - (E_{02})^2 \approx 0.163\times0.222 - 0.218^2
+\approx 0.036 - 0.047 = -0.011 < 0$.
+Setting $c_L = 0$ removes the $-2.730$ from $E_{00}$ and $-0.546$ from
+$E_{22}$, giving $E_{00}|_{c_L=0} \approx 2.893$ and
+$E_{22}|_{c_L=0} \approx 0.768$, hence
+$\det|_{c_L=0} \approx 2.893\times0.768 - 0.218^2 \approx 2.222 - 0.047 > 0$.
 \end{proof}
 
-\subsection{Proof of \texorpdfstring{\cref{thm:main}}{Theorem 2.1}}
-
-Part~(i) follows from \cref{lem:witnesses} Case~(i): for each
-$L\in(\tfrac12\log2, L^*)$ with $\theta < 1 - \ctwo/\kappae(L)$, the
-vector $v_L$ witnesses $\tilde{q}_L^\theta[v_L]<0$.
-
-Part~(ii) follows from \cref{lem:witnesses} Case~(ii): for each
-$L\in[L^*, \tfrac12\log3)$ and $\theta<1$, the constant $w_L = P_0$
-witnesses $\tilde{q}_L^\theta[w_L]<0$.\hfill$\square$
-
-\section{Consequences}
-
-\begin{corollary}[Optimal redistribution threshold — lower half]
-\label{cor:optimal}
-For $L\in(\tfrac12\log2, L^*)$, any Path A certificate must use
-$\theta \ge 1 - \ctwo/\kappae(L)$.
-At $L=7/20$ this requires $\theta \ge 0.697\ldots$\,.
+\begin{corollary}[Why the Schur complement machine is necessary]
+Because $\{P_0, P_2\}$ is positive definite when $c_L = 0$, a
+redistribution-only argument ($\tilde{q}^\theta$ without the $c_L$
+shift) cannot detect the obstruction.
+The full Split-residual Schur criterion of~\cite{WFP2026} Theorem~5
+is necessary precisely because it must overcome the global negative
+shift $c_L I$ using the positive kinetic energy of high-order modes
+$H_n \gg c_L$ for large $n$.
 \end{corollary}
 
-\begin{corollary}[Path A is fully obstructed in the upper half]
-\label{cor:upper}
-For $L\in[L^*, \tfrac12\log3)$, Path A fails for \emph{all} $\theta<1$,
-regardless of the choice of redistribution coefficient.
-The critical point $L^* = \tfrac23\log2 \approx 0.462$ is the exact boundary
-where $\kappae(L)$ vanishes and the absorption inequality ceases to hold.
-\end{corollary}
+\section{Failure of the edge-mass asymptotic}
 
-\begin{corollary}[Monotone failure along the lower half]
-\label{cor:monotone}
-The function $L\mapsto 1 - \ctwo/\kappae(L)$ is strictly \emph{decreasing} on
-$(\tfrac12\log2, L^*)$.
-As $L\to(\tfrac12\log2)^+$, one has $\varepsilon\to0^+$, so
-$\kappae(L) = \tfrac12\log\tfrac{1}{2\varepsilon}\to+\infty$, and
-$1 - \ctwo/\kappae(L)\to 1^-$.
-As $L\to L^{*-}$, one has $\kappae(L)\to0^+$, so
-$\ctwo/\kappae(L)\to+\infty$ and
-$1 - \ctwo/\kappae(L)\to-\infty$.
-Consequently, for $L$ close to $\tfrac12\log2$, the threshold on $\theta$
-is close to~$1$ (Path A requires nearly all of $V$); as $L$ approaches
-$L^*$ from below, the threshold falls to $-\infty$, meaning Path A is
-obstructed for \emph{every} $\theta<1$ near $L^*$.
-\end{corollary}
+An earlier draft of this paper (now withdrawn) attempted to characterise
+the Path A obstruction via the formula
+$\theta_0(L) = 1 - \ctwo/\kappae(L)$, claiming this equals the zero of
+the off-diagonal entry $E_{02}^\theta(L)$.  This was incorrect.
 
-\begin{corollary}[Double-prime window requires new methods]
-\label{cor:double-prime}
-For $L>\tfrac12\log3$, the prime-3 layer enters.
-\cref{cor:upper} shows that Path A is already fully obstructed for
-$L\in[L^*, \tfrac12\log3)$ with only the prime-2 term; the addition of
-prime~3 provides no relief.
-\end{corollary}
+\begin{remark}[Lemma L3 fails in the physical window]
+\label{rem:lemmaL3}
+The companion paper's Lemma~L3 states
+$\ip{K_LP_0}{P_2} \sim \kappae(L)^{-1}\ctwo$ as $\varepsilon\to0^+$,
+where $\varepsilon = 2 - \log2/L$.
+At $L = 7/20$, $\varepsilon \approx 0.020$ and the asymptotics give
+$\ctwo/\kappae \approx 0.303$, while the certified value is
+$\ip{K_LP_0}{P_2} \approx 0.00712$.
+The $O(1)$ remainder ($\approx -0.296$) is the entire leading term;
+the asymptotic provides no useful bound in the first-prime window.
+
+As a consequence, the actual zero of $E_{02}^\theta$ satisfies:
+\[
+  \theta_{\mathrm{zero}} = \frac{c_2\gamma_{02} - \ip{K_LP_0}{P_2}}
+                                  {\ip{VP_0}{P_2}}
+  \approx \frac{0.0186 - 0.00712}{0.3333}
+  \approx 0.034,
+\]
+far from $\theta_0 \approx 0.697$.
+The formula $1-\ctwo/\kappae$ has no algebraic relationship to the
+spectrum of $\tilde{q}^\theta$.
+\end{remark}
+
+\section{Summary}
+
+\begin{enumerate}
+\item Path A fails because the Weil constant $c_L \approx 1.365$
+      globally shifts the diagonal entries of the $2\times2$ Gram matrix
+      below the level needed for positive definiteness.
+      Without $c_L$, the $\{P_0,P_2\}$ subspace is positive definite.
+
+\item Lemma~L3's asymptotic $\mu_K^{(02)} \sim \ctwo/\kappae$
+      fails by a factor of $40$ at $L=7/20$; any argument depending
+      on it is invalid in the first-prime window.
+
+\item The formula $\theta_0 = 1 - \ctwo/\kappae$ is not the zero of
+      $E_{02}^\theta$.  Theorem~6 of~\cite{WFP2026} provides the
+      correct (certified) falsification of Path A without requiring
+      any asymptotic expansion.
+\end{enumerate}
 
 \begin{thebibliography}{9}
 \bibitem{WFP2026}

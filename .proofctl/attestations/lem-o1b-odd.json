@@ -6,7 +6,7 @@
   "checker": {
     "id": "fp035-cap-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:ffa54ea37837e3d128e727c471b23752db82ce0706f98e31bb398de0fc632534",
+    "checker_digest": "sha256:df6d266088052922c7a43cac37905426eb923eedd65c9fba3ccf4e0120642e49",
     "schema_digest": "sha256:80c53d44b3a0e06b58cfa4c216121622b620b15fe0d663d85b1a0992b81f2b8f",
     "runtime": {
       "kind": "native",
@@ -21,16 +21,16 @@
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 703943,
+    "wall_millis": 716165,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:9a1fcda1a5b2c8b0acab629cf3f9f95c6519c08bc827758201e0ec8b1cb2235f",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:9435e0377152a4c15f8be15f660649dc541c549a3610f1be44d11f6cb98378ff",
   "metadata": {
     "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
+    "cold_replay_date": "2026-08-06",
     "digests_fresh": "true",
     "evidence_count": "1",
     "evidence_digests": "sha256:728292f540a7b69493a3bb6a039d58b4eb84ec61a9c4ee7b534613b2a42b417d",
