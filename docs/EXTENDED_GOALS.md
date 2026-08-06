@@ -69,6 +69,77 @@ Either (A) translate Groskin's $B_T$ to Legendre/Schur framework, or (B) prove a
 
 ---
 
+### Route 3-scoping addendum (2026-08-06): the $A + C - P$ operator reformulation
+
+A first-principles re-derivation of the Weil quadratic form as an operator
+inequality was carried out (independent of this repo's Theorem numbering). It
+expresses $Q_W^L(f) = \langle f, (\mathcal{A}_L + \mathcal{C}_L - \mathcal{P}_L) f\rangle$
+and reduces the RH-equivalent statement to a single-sided operator-norm bound
+
+$$\lambda_{\max}\big(\mathcal{A}_L^{-1/2} \mathcal{P}_L \mathcal{A}_L^{-1/2}\big) \le 1 \quad \forall L.$$
+
+**Status: this is a *reformulation / discovery tool*, NOT a new computational
+engine and NOT a route to RH.** Two honesty nails, both established below.
+
+#### Equivalence dictionary — new framework ↔ existing code
+
+| New-framework object | Existing repo object | Verification status |
+|---|---|---|
+| Prime matrix main integral $I_{ij}(\tau) = \int_{\tau-1}^{1} P_i(s)P_j(s-\tau)\,ds$ | `compute_J(j, i, tau)` in `src/prime_layer/legendre_shift.py:122` | **VERIFIED numerically**: $2\,I_{ij}(\tau) = J_{ji}(\tau)$ at 6 test points incl. $\tau=2$ boundary. They are the same object. |
+| Archimedean multiplier $W_\infty(t) = \operatorname{Re}\psi(\tfrac14 + \tfrac{it}{2}) - \log\pi$ (single merged block) | `V_matrix_entry` (log potential) **+** `integrate_M_K` (Bessel kernel), two *separate* blocks | **DIFFERS in decomposition** — must be reconciled by one integral check before any use. Not yet done. |
+| Pole block $\mathcal{C}_L$ (rank-2, $i_j(L/2)$ modified Bessel) | No explicit counterpart found in current code | **GAP** — either absorbed elsewhere or not separately handled. Must locate before trusting cross-framework numbers. |
+| Computable criterion $\lambda_{\min}(A - P) \ge 0$ | Schur criterion $b_L F - R_\eta \succ 0$ in `scan_lambda_profile.py` | Same *class* of statement (finite-dim generalized eigenvalue); exact algebraic identity NOT yet checked. |
+
+**Consequence of row 1**: the new framework's "$\mathbb{Q}[\tau]$ prime engine"
+already exists as `compute_J`. Writing a fresh SymPy $I_{ij}(\tau)$ engine would
+duplicate Theorem-4 logic already formalised in Lean — forbidden by the
+no-duplicate-logic rule. The reformulation adds an *independent cross-check* of
+Theorem 4, not new capability.
+
+#### Honesty nail 1 — no additive prime budget can be RH-equivalent
+
+Expanding $K_L = \sum_{p^k < e^{2L}} \frac{2\log p}{p^{k/2}} M_{p^k}(L)$ and applying
+the triangle inequality gives a bound growing like $\sum_p \frac{\log p}{\sqrt p}$,
+which diverges. Therefore any honest RH-equivalent inequality **must retain the
+cross terms** $\langle M_p, M_q\rangle$; positivity depends entirely on phase
+cancellation between primes. This *refutes the "reserve pays per prime jump"
+accounting model at the structural level* — not for lack of engineering.
+
+#### Honesty nail 2 — the tail term IS the logical gap, in one writable quantity
+
+The only honest budget inequality is the segmented form (Weyl, keeping head
+cancellation, conceding only the tail):
+
+$$\lambda_{\max}\big(K_L^{\le X}\big) \le 1 - \tau(X,L), \qquad \tau(X,L) := \big\|K_L^{(X, e^{2L}]}\big\|.$$
+
+For any **fixed** $X, L$ this is a true, publishable theorem. But making
+$X, L \to \infty$ while keeping $\tau \to 0$ is *equivalent to RH itself*. The
+tail's summability is the logical chasm, compressed into a single writable
+quantity $\tau(X,L)$.
+
+#### What this means for the programme
+
+- The reformulation produces the SAME per-$L_k$ finite-scale positivity results
+  as the current Legendre/Schur pipeline — it is **not** a ramp toward
+  $L \to \infty$. It cannot be, by nail 2.
+- Its genuine value is as (a) an independent verification of Theorem 4
+  (row 1, done), and (b) a candidate *language* for the uniform-in-L statement
+  and for a possible **obstruction theorem**: "any sign-preserving tail estimate
+  necessarily overshoots." That obstruction, if proved, is itself publishable as
+  a negative result (same venue class as E1).
+- The frequency-side identity (prime block $\leftrightarrow -\zeta'/\zeta(\tfrac12+it)$,
+  dominated by $W_\infty(t) \sim \log|t|$) is the natural signpost for a
+  prolate/PSWF basis change IF (and only if) N=32 shows Legendre is structurally
+  insufficient. It is a signpost, not an engine.
+
+**Action gating**: do NOT write a SymPy $I_{ij}$ engine (duplicates `compute_J`).
+Do NOT switch the certification backend to $A+C-P$ (reintroduces the
+non-truncatable frequency-side problem). Before ANY cross-framework numerics,
+close the two dictionary gaps (rows 2–3): reconcile the $W_\infty$ vs $V+K_L$
+decomposition, and locate the pole block $\mathcal{C}_L$.
+
+---
+
 ---
 
 ## E1: Path A General Obstruction Theorem
