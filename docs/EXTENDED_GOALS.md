@@ -1,8 +1,73 @@
-# Extended Goals — E1, E2, E3
+# Extended Goals — E1, E2, E3, and Post-FP-0.35 Routes
 
-These three goals are pursued in parallel with FP-0.35. Each is mathematically
-self-contained and publishable independently of whether FP-0.35 is completed.
-They do not claim any connection to the Riemann Hypothesis.
+These goals are pursued after FP-0.35 is proved (Theorem 7.3, 2026-08-06).
+E1–E3 are mathematically self-contained; Routes 0–3 are the post-proof programme.
+
+---
+
+## Post-FP-0.35 Research Routes
+
+### Route 0 / Phase 0: λ(L) Lower-Bound Profile (THIS REPO, Task #14)
+
+**Goal**: Replace the fixed $\Lambda_0 = 2^{-30}$ with a free variable, and binary-search the largest certified $\Lambda_0(L)$ for each $L$ in the first-prime window. Produces a true lower-bound profile $\lambda(L) \geq \Lambda_0(L)$.
+
+**Method**: `scripts/scan_lambda_profile.py` — reuse existing Schur residual certification, add `--lambda0` parameter. Binary search per L (about 4-5 iterations × 4 min each = ~20 min per point).
+
+**Important distinction** (from route_recommendation_v2):
+- **Effect A** (algebraic, seconds): minimum N to keep $b_L > 0$ as L increases — scales as $e^{\Delta c_L}$ where $\Delta c_L \approx 0.45$ across window → N grows by ~1.6×
+- **Effect B** (numerical, unknown): Arb interval inflation rate for high-order Legendre integrals — needs measurement, potentially worse than Effect A
+
+**Data requirement**: at least 3 fully-certified points (binary search provides intermediate points). First-prime window data cannot constrain $L \to \infty$ asymptotics.
+
+**Timescale**: 1–2 days once smoke test confirms script correctness.
+
+---
+
+### Route 1 / Phase 1: Effect B Measurement
+
+Run the full Schur certification at 2–3 additional L values ($L = 0.42, 0.46$) and record the actual Arb interval widths. Plot inflation rate vs L. Decision point: if polynomial → Route 3 can wait; if exponential → Route 3 needs to start sooner.
+
+---
+
+### Route 2 / Phase 2: Second Prime Window — NEW REPO `weil-second-prime`
+
+**Window**: $L \in (\frac{1}{2}\log 3,\ \log 2) \approx (0.549, 0.693)$
+
+**Why new repo**: Different schema, different prime coupling ($J_{ij}(\tau_2, \tau_3)$ for both $n=2$ and $n=3$), different proofctl domain, different $c_L$ (≈1.82 at window right edge).
+
+**Optimistic range**: Theorem 3.1's three-interval decomposition holds for $n=2,3$ throughout this window (single-hop regime for both). The $\mathbb{Q}[\tau]$ algebraisation extends, but needs new code for the cross-prime coupling terms.
+
+**Hard boundary**: At $L = \log 2$, prime $n=2$ exits the single-hop regime and $n=4$ enters. The Theorem 3.1 framework needs genuine extension there. **Do not extrapolate beyond this window.**
+
+**Timescale**: 1–2 months after Route 0 is confirmed working.
+
+---
+
+### Route 3 / Phase 2.5: Uniform-in-L Spectral Gap — Scoping (THIS REPO, Task #15)
+
+**Scoping results** (2026-08-06, from full reading of Suzuki + Groskin):
+
+**Suzuki arXiv:2606.09096**:
+- Purely theoretical, no numerical content (confirmed)
+- Theorem 4: $\lambda_a = \log(1/a) + \mu_1 - \log(2\pi) + \psi(2) - 1 + O(a)$ as $a \to 0^+$
+- **$\mu_1 > 0$** is the unknown positive constant — exactly what our Schur certification computes numerically
+- No finite-$a$ lower bound anywhere in the paper
+- Section 7 (de Branges connection) assumes RH throughout — circular for our purposes
+- **Conclusion**: Suzuki provides no shortcut for the finite-$L$ regime
+
+**Groskin arXiv:2607.02828**:
+- Works in frequency space (integer nodes $I_N$), not Legendre position space
+- Dictionary theorem: exact finite Guinand–Weil formula (useful for verification)
+- Tail-order theorem: archimedean tail increment $\Delta_{T_1,T_2}$ is positive definite with budget $B_T \sim (2N+1)\rho \log(T) / (\pi^2 T)$
+- **Potential connection**: Groskin's $B_T$ budget could give a uniform error bound if translated to our Legendre/Schur framework — but the two discretizations are different and the translation is non-trivial
+- **Conclusion**: Complementary framework, not a ready uniform-in-L bound
+
+**Path to uniform-in-L** (if pursued):
+Either (A) translate Groskin's $B_T$ to Legendre/Schur framework, or (B) prove a Poincaré-type inequality for the $\mathcal{L}(w)/\|w\|^2$ operator in Suzuki's framework giving $\inf \mathcal{L}(w)/\|w\|^2 > C$ uniformly. Both require 3–6 months of new theory.
+
+**Decision**: Defer to after Route 1 Effect B measurement. If Effect B is polynomial, uniform-in-L is worth pursuing; if exponential, computational approach to second window takes priority.
+
+---
 
 ---
 
