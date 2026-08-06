@@ -1,0 +1,13 @@
+{
+  "results": [
+    {
+      "L": 0.35,
+      "c_L": 1.3652706068122242,
+      "lambda_lower_bound": 0.03203125033469405,
+      "elapsed_s": 173.4612090587616
+    }
+  ],
+  "total_s": 173.4612159729004,
+  "method": "Arb residual cert, even N=8 d=16",
+  "note": "lambda_lower_bound is certified strict lower bound"
+}
