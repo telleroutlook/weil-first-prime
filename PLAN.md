@@ -64,7 +64,7 @@ FP-0.35（L=7/20 有限尺度正性）
 | **O1-B 偶扇区** | N=8, d=16, η=1/2: b_L=2.125, min_pivot=0.529 | mpmath dps=100 outward-rounded LDL^T |
 | **O1-B 奇扇区** | N=6, d=13, η=1/2: b_L=1.925, min_pivot=0.560 | mpmath dps=100 outward-rounded LDL^T |
 | **Path A ∩ Path B** | 100 个 M_K 基础对全部相交（depth=4） | 23 个专项测试 |
-| **proofctl 集成** | doctor ✓, checkers pinned, status/frontier 可用 | v0.3.11 |
+| **proofctl 集成** | doctor ✓, checkers pinned, status/frontier 可用 | v0.3.12 |
 | **E3 Lean 4 定理 3** | ✅ 超额完成 | 整数比较（native_decide）+ log2<7/10 + sqrt2>7/5（Mathlib）全部验证 |
 | **预印本** | ✅ 完成，就绪投稿 | paper/main.pdf，7页，三轮审阅全部处理 |
 | **CI** | ✅ 完成 | .github/workflows/ci.yml（pytest + schema + proofctl lint）|

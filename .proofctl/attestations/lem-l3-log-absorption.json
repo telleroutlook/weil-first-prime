@@ -1,7 +1,9 @@
 {
   "claim_id": "lem-l3-log-absorption",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:8a127c3c2cc7eb3ed894f83f2d48513d9fd9fb1f9da0f4f7eb5e21ec8c082232",
+  "dependency_digests": [
+    "sha256:76d3851e98c9b586438674d37aed726f26a2e5e5cc3eb0a7f7d8868c059aae7a"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 28,
+    "wall_millis": 22,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:69236a72ddff6aa7542dc630870f7759f498d0a0281984fbb2cc5a2b8fbdaa44",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:418c2a173a96c74a1ad07f3c4e0a237b720b067594990f829aef7871e4a3293a",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/lem-l3-log-absorption.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:edec1f1b84c0a3cffd720877c64b0d4bb8d689a2bbb861443809e42f5f63d441",
+  "cache_key": "fec9d3cb5f18b420eebeaec159736e9854521e1522f4302bad101a2b8d076f77",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "l3.edge-norm-V-bound",

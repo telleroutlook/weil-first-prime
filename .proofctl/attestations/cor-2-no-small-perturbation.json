@@ -1,7 +1,9 @@
 {
   "claim_id": "cor-2-no-small-perturbation",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:0acfa851d8ae3d1201350d7b84bf12ce994de6788bfbf0f0c00d0107c8c6d686",
+  "dependency_digests": [
+    "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 26,
+    "wall_millis": 21,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:a4f58aca6b386ace16f14a018835482c72f05bb2e9ba6e26f84321444c54e88a",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:be463b9d9500c6d776827271d4c6a15e28153cd755bc907b102aa4436d790c3c",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/cor-2-no-small-perturbation.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:eb88d80eb13286fe1f6bac147aac12cbfee5e3bc08f69f6576033c40be06ad3b",
+  "cache_key": "711e0b526596455e03ba84e1966a5a9bfa7a1e0436badfd8647da3d8fe16749b",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "cor2.norm-jumps-to-1-at-threshold",

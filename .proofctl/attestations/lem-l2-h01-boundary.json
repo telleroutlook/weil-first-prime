@@ -1,7 +1,9 @@
 {
   "claim_id": "lem-l2-h01-boundary",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:28dd870e516c478b305b6af5635d15f908db5ad285a966a8f671157fb5e07b3b",
+  "dependency_digests": [
+    "sha256:86d9f57668d8b779c76c3aa3a3558af680d46cc94e13c8086c703853804a80aa"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 25,
+    "wall_millis": 21,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:52bf5f8805a55dc4e2a6a3aad155e9175e57890263d76f5e9d51bd7d77c387c4",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:e41e14a71f353b01e87c05fe898db4b673b2a87471af487e53b94a3d21eebf09",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/lem-l2-h01-boundary.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:ceeb3a45f18a974235c1a9aed1f09afd17a21d3bb31cf00ca23c5f4e70e683d6",
+  "cache_key": "6b1a2ee23a01c4dc76468f9b409b16a698e60d701f5f9315a9a64905be8e8a59",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "l2.poincare-inequality",

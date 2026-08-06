@@ -20,17 +20,17 @@
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 29,
+    "wall_millis": 49,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:dffda56c29f740e7241264c442ab184afad7b3bd24b02a3681f1b7f2173a13c1",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:15a68d251fde8a204f6094fce459273712ed09cf82dbdc3b17903b58da05dbdd",
   "metadata": {
     "archimedean_obligation": "archimedean_primitives_o2_v1",
     "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
+    "cold_replay_date": "2026-08-06",
     "digests_fresh": "true",
     "evidence_count": "1",
     "evidence_digests": "sha256:913e0a867305036ad62f7920004213c207b044b3ecb8f0667622f5535bea1c6c",

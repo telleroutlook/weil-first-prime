@@ -1,7 +1,9 @@
 {
   "claim_id": "cor-3-1-potential-redistribution",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:05e591b284b8ab74a83903d3ab28b30c4b25cfa37aac0803f1257bbf94d5a3a9",
+  "dependency_digests": [
+    "sha256:8eb81a6808077e2e565b59a5877d8b72ad8c1264eeda1a0c5e64b14d33824239"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 24,
+    "wall_millis": 22,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:ed70235ca8e3b1a30928b5ca631498bd21012cb3549e172c2d99b14508d624e6",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:0eb1fd7a293d7bbbee7f86b384126fd9e5863003ba82cc2b3708609f1b3c20ed",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/cor-3-1-potential-redistribution.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:2a9384f6f272b6de2c82bf7ac4d67b9b2360206fe97135858878b4a6bc9340b4",
+  "cache_key": "a7d5847f48bb109b3ce0df6025ae4f9f2df37755b41de3467333dd41dd3d237c",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "cor31.P2L-plus-31V-nonneg",

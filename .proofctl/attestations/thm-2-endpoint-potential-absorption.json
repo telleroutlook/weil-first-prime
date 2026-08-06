@@ -1,7 +1,10 @@
 {
   "claim_id": "thm-2-endpoint-potential-absorption",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:76d3851e98c9b586438674d37aed726f26a2e5e5cc3eb0a7f7d8868c059aae7a",
+  "dependency_digests": [
+    "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d",
+    "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +21,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 25,
+    "wall_millis": 22,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:669bf08c9ff133f7efa63b722a9479d04b47c5b0a29db76cf741cf5251a3c8d5",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:cc78f4a30b022998d428db036a6616ada60cd503d650628b6469eb38ede2a19a",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/thm-2-endpoint-potential-absorption.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:42ce325384e1c9ac8aa492f4089b312d1cd6c4ef21c2dd8b41c609eeb9803515",
+  "cache_key": "efe3350a9196d1ad23bd72c85b60ce1b97d95dab931bd3b3da28f4c740879032",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "thm2.edge-mass-bound",

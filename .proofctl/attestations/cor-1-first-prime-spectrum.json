@@ -1,7 +1,9 @@
 {
   "claim_id": "cor-1-first-prime-spectrum",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:48d75a8f29325adf9e6adbd106f4d46501ee21fa055ac1df71bc7301d4b5199d",
+  "dependency_digests": [
+    "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 32,
+    "wall_millis": 26,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:390c2b9a3f3684871f88625689678a2aa0f76c48b898453f9c85762a98aee5f6",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:0ed4d3ccdb1286ae8a8f3d2f88e440653f657d3758a498500728601135822c8a",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/cor-1-first-prime-spectrum.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:89b098298920222fa0ee991412473f48497a642662dc0b611d07b4d662f9dd0e",
+  "cache_key": "d309f74076d8992932bdb5102e2e9928d1cf914e763ccaa7b872ad513383d7c8",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "cor1.window-only-n=2",

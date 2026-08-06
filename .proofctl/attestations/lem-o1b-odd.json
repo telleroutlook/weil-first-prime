@@ -6,16 +6,14 @@
   "checker": {
     "id": "fp035-cap-checker",
     "protocol_version": 2,
-    "checker_digest": "sha256:ebdd8b45e40ae7a4f97b2b9d4508268ccaa3f115073a7f29ea969be4f80eb214",
+    "checker_digest": "sha256:ffa54ea37837e3d128e727c471b23752db82ce0706f98e31bb398de0fc632534",
     "schema_digest": "sha256:80c53d44b3a0e06b58cfa4c216121622b620b15fe0d663d85b1a0992b81f2b8f",
     "runtime": {
-      "kind": "scripted",
+      "kind": "native",
       "cmd": [
         "python3",
         "checker/first_prime/check_fp_wrapper.py"
       ],
-      "dependency_manifest_digest": "sha256:e950ae9912ee76f0ca47cc5751bf14ecc512015e928cd73589b674a5bcb00751",
-      "dependency_manifest_path": "environment.lock",
       "schema_path": "schemas/certificate-first-prime-v1.schema.json"
     },
     "network": "none"
@@ -23,19 +21,19 @@
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 666014,
+    "wall_millis": 703943,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-05",
   "end_freshness": "2026-08-05",
-  "self_digest": "sha256:70ccffb0a008a8dbd28883dfce8f77d5fcc357ba5f3ec0c3a2a86a60e3d3b9eb",
+  "self_digest": "sha256:9a1fcda1a5b2c8b0acab629cf3f9f95c6519c08bc827758201e0ec8b1cb2235f",
   "metadata": {
     "checker_exit": "0",
     "cold_replay_date": "2026-08-05",
     "digests_fresh": "true",
     "evidence_count": "1",
-    "evidence_digests": "sha256:1037313076107c655acd07d3bcb675c636bc4172988957a8446f7f1343f46a72",
+    "evidence_digests": "sha256:728292f540a7b69493a3bb6a039d58b4eb84ec61a9c4ee7b534613b2a42b417d",
     "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector odd --out {cert}",
     "semantic_replay": "true"
   },

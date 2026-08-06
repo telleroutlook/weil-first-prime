@@ -128,6 +128,16 @@ import Mathlib.Data.Real.Sqrt
 
 **graph.json fix**: `proofctl pin checker` wrote `runtime.kind: "native"` (pre-scripted proofctl). Fixed to `"scripted"` after rebuild.
 
+## v0.3.12 additions (current)
+
+- **`proofctl check --timeout <duration>`**: override per-checker wall-clock timeout.
+  Archimedean checker needs ~600s for even sector — use `--timeout 20m` when running
+  `proofctl check @lem-o1b-even` or `--all`.
+  Example: `proofctl check --timeout 20m --all`
+
+**weil-first-prime action required**: none for release gate (uses replay path).
+Use `--timeout 20m` when running `proofctl check --all` for full verification.
+
 ## v0.3.11 fixes (current)
 
 - **B6 — `proofctl attest` wrote obligation_results=[] causing REJECTED**: After B4 fix,

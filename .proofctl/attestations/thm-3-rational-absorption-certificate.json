@@ -1,7 +1,9 @@
 {
   "claim_id": "thm-3-rational-absorption-certificate",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:8eb81a6808077e2e565b59a5877d8b72ad8c1264eeda1a0c5e64b14d33824239",
+  "dependency_digests": [
+    "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"
+  ],
   "evidence": null,
   "checker": {
     "id": "thm3-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 33,
+    "wall_millis": 24,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:da54bd98fc9c1a1ff14e2015471d4920308e21279ed3313378302fff22a96658",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:10801bcd7a53bba2bc245bee75d34c6e16a4447c05354c9e2bb7a091f3dc23a7",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/thm-3-rational-absorption-certificate.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:63ce7ce1badb57889785843d8f839b1656813c180491607f1cc7bc36b1b5567b",
+  "cache_key": "6bf90b1a27ba7742479e583a40211623995f2271619440a8914b3ce31cc8c187",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "thm3.log2-bounds-verified",

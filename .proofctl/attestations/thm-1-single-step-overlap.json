@@ -1,7 +1,9 @@
 {
   "claim_id": "thm-1-single-step-overlap",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e",
+  "dependency_digests": [
+    "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d"
+  ],
   "evidence": null,
   "checker": {
     "id": "fp035-ir-checker",
@@ -18,25 +20,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 26,
+    "wall_millis": 22,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:52d23c6f836a769dcdc4d4b907ff909bb4a547f656be579f0d0491fa006ba1d5",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:92fd9c55c15ddfbfab8b604bdada66f078725638f86c5e07c79f5064dfe4321e",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/thm-1-single-step-overlap.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:736fa4d49be9bd86909c602e206c7ad18e6472c9e2c144e6a1408c715091c7f1",
+  "cache_key": "677ef004f260bb81e578471ab8dd59a2d2871d0d6449310bd086676fc1c1c2ec",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "thm1.decomposition-correct",

@@ -1,7 +1,10 @@
 {
   "claim_id": "thm-4-prime-legendre-matrix",
-  "statement_digest": "",
-  "dependency_digests": null,
+  "statement_digest": "sha256:6403ea3ae66293fe313e496554332a8594fd1797bc67f83dd2a04a2c7ebec839",
+  "dependency_digests": [
+    "sha256:e8457f7cee6a5e44990375f19b0f310ae40a187a0af0295acd2870556514db6d",
+    "sha256:0edc2c12967bb9fa786e7e2fcfdd833570d998800bd6086c8072ffd6888fe28e"
+  ],
   "evidence": null,
   "checker": {
     "id": "thm4-checker",
@@ -18,25 +21,17 @@
     "network": "none"
   },
   "outcome": "accepted",
-  "assurance": "reproducible-computation",
+  "assurance": "",
   "resources": {
-    "wall_millis": 81,
+    "wall_millis": 75,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-05",
-  "end_freshness": "2026-08-05",
-  "self_digest": "sha256:457c47ba693a4af8ffb83d5b06d5c007bc05eedc1bbd4c2a0a48f7f4edfc2b42",
-  "metadata": {
-    "checker_exit": "0",
-    "cold_replay_date": "2026-08-05",
-    "digests_fresh": "true",
-    "evidence_count": "1",
-    "evidence_digests": "sha256:37b37f36b6c2dd23fee10860d18aa529c50edc531c2c7ac961ced091d1248e4a",
-    "generator_cmds": "python3 -c \"import shutil; shutil.copy('certs/thm-4-prime-legendre-matrix.json', '{cert}')\"",
-    "semantic_replay": "true"
-  },
-  "replay_mode": "from_scratch",
+  "start_freshness": "2026-08-06",
+  "end_freshness": "2026-08-06",
+  "self_digest": "sha256:67bc13af6bb64fef0690748cd46d6dca2f24e50700200135d5bbebec694f414a",
+  "cache_key": "b985c5f7a2b0d70ee27abc79da04dda8501f35fe690f1b532cc2ab8cf9f5b63e",
+  "replay_mode": "self_consistency",
   "obligation_results": [
     {
       "id": "thm4.parity-vanishing",
