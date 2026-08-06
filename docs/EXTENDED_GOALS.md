@@ -340,6 +340,30 @@ needed. Dead, with the death mechanism (real-space localization) understood.
 
 ---
 
+### ⚠️ PRECISION-RELIABILITY CAVEAT (2026-08-06, added post-hoc)
+
+The multi-L scans used to execute several kills (dir 1/5 scale-strip, dir 2
+nodes, dir 4 gap, dir 7 IPR) ran the FAST explorer path: `integrate_M_K` at
+**depth=2** (seconds per point), NOT the certify-grade depth=4 M_K / depth=3
+S_KK used by the proof pipeline. A subsequent L=0.42 verdict scan revealed the
+fast path is NON-MONOTONE / unstable at high N:
+```
+ N=8 -0.032, N=14 -0.024, N=16 -0.0007, N=20 -0.022   <- jumps around
+```
+This is numerical instability of depth=2 at high order, not physics. Therefore:
+- **Dir 6 (Parisi)**: kill is PURE LOGIC (ensemble vs single instance) — unaffected, stays dead.
+- **Dir 3 (Lee-Yang)**: kill is the SIGN pattern's topological frustration; sign
+  is far more robust than magnitude, but a sign-stability re-check at certify
+  grade is owed before calling it permanent.
+- **Dir 1/2/4/5/7**: the QUALITATIVE trend (reserve flat vs indefinite growth;
+  nodes appear; gap doesn't close; IPR localized) is plausibly stable, but every
+  QUANTITATIVE figure (+84%/+16%, node-onset L, gap values, IPR values) used
+  depth=2 and must be re-verified at certify grade before being called final.
+Status of all non-logic kills is hereby DOWNGRADED from "executed" to
+"strong qualitative lean, quantitative re-verification owed". A certify-grade
+re-run is the honest requirement. The executioner used the explorer's blade to
+pass sentence — the same error this log exists to catch, now caught on itself.
+
 ### FINAL TALLY (2026-08-06): 7 isomorphism-mapping candidates
 
 - **Dir 1** property (T): DEAD — growth is in indefinite prime norm (+84%),
