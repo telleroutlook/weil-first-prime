@@ -165,13 +165,39 @@ $\cosh/\sinh$ directions.
 **Actionable consequence of row 3**: the scalar $c_L$ shift penalises *every*
 eigen-direction equally, whereas the true pole contribution is rank-2. This is
 consistent with the E1 diagnostic ("Path A's negative direction is driven by the
-$c_L \approx 1.365$ global negative shift"). **If L=0.42's min_eig is stuck at
-$-0.024$ partly because the scalar $c_L$ over-penalises high-order directions that
-the rank-2 pole should not touch, replacing $-c_L G$ with the explicit rank-2
-$\mathcal{C}_L$ could recover margin for free.** This is the ONE place the new
-framework might materially help the current certification. Flagged as the first
-thing to try IF N=32 comes back negative — as an alternate assembler *inside this
-repo*, not a new repo (see below).
+$c_L \approx 1.365$ global negative shift"). It was hypothesised that replacing
+$-c_L G$ with the explicit rank-2 $\mathcal{C}_L$ could recover margin for free.
+
+**QUANTIFIED AND REJECTED (2026-08-06)**. Computed $c_j = \langle e_j, \cosh\tfrac{x}{2}\rangle$
+on the L=0.42 even-sector N=8 subspace:
+
+```
+c_j = [0.9233, 0.006, 0, 0, 0, 0, 0, 0]   (indices 0,2,...,14)
+```
+
+$\cosh\tfrac{x}{2}$ is nearly constant on $[-0.42, 0.42]$ (varies < 2%), so it
+projects almost entirely onto $P_0$. Consequences:
+- The rank-2 pole (rank-1 in the even sector) acts **only on the $P_0$ direction**
+  (eigenvector $\propto c/\|c\| = [1.0, 0.007, 0, \ldots]$).
+- On high-order directions $P_2 \ldots P_{14}$ — exactly where min_eig's negative
+  eigenvector lives — the rank-2 form contributes $\approx 0$, essentially
+  identical to the scalar approximation. **No margin is recoverable there.**
+- The only place they differ ($P_0$) is already the *most positive* direction
+  ($F_{00} = +0.397$). Adding margin to the most-positive direction does nothing
+  for min_eig (governed by the most-negative high-order direction).
+
+This is the same geometric error as the $\kappa_L^2 I$ patch: the correction lands
+on the wrong eigen-direction. **Net effect on min_eig ≈ 0, nowhere near the 0.024
+deficit. Do NOT implement `acp_gate.py`. Do NOT retry this.**
+
+**Score after full scoping**: of the five "elegant" reformulation identities
+(operator-norm $\star$; frequency-side $-\zeta'/\zeta$; $\mathbb{Q}[\tau]$ algebra;
+segmented $\tau(X,L)$; rank-2 pole), **zero advance the L=0.42 certification**.
+$\star$ and the frequency side ARE RH (no computable content); $\mathbb{Q}[\tau]$
+algebra already exists as `compute_J`; $\tau(X,L)$ is publishable only as a
+*negative* obstruction result; rank-2 pole is geometrically inert here. The
+framework is an elegant re-description plus one publishable obstruction theorem —
+it hides no shortcut around the compute wall.
 
 #### Repository policy: A+C-P stays in THIS repo
 
@@ -183,10 +209,12 @@ $c_L$. It must NOT get its own repository:
 - separate certs could not be reconciled against the existing FP-0.35 chain;
 - the `fp035` proofctl domain would fracture.
 
-If pursued, it belongs as an alternate assembler (e.g. `src/assemble/acp_gate.py`)
-that REUSES `compute_J`, `log_moments`, and the existing Arb certification stack,
-replacing only the matrix-assembly layer. That yields an independent cross-check
-of Theorem 4 with reconcilable certificates.
+If pursued FOR CROSS-CHECK ONLY (not for margin — see rank-2 rejection above), it
+would belong as an alternate assembler (e.g. `src/assemble/acp_gate.py`) that
+REUSES `compute_J`, `log_moments`, and the existing Arb certification stack,
+replacing only the matrix-assembly layer, yielding an independent cross-check of
+Theorem 4. Low priority: the cross-check value is real but does not help any open
+certification.
 
 A genuinely new repo is warranted ONLY for a **basis change** (Legendre →
 prolate/PSWF), because that breaks the $\mathbb{Q}[\tau]$ algebra and the Lean
