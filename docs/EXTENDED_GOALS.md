@@ -261,6 +261,80 @@ located so far. This entry documents an insight that was tempting under coarse
 data and corrected under finer data: in this repo, no shortcut or narrative
 survives contact with a finer grid.
 
+---
+
+### Directions 6 & 7 (post-mortem "wasteland" candidates): adjudication
+
+**Direction 6 — Spin glass / Parisi free-energy bound: SUSPENDED at a theory
+gate (NOT executed numerically).** Proposal: map $\mathcal H_L$ to the zero-temp
+Hessian of a disordered spin system; prime off-diagonals = quenched disorder
+$J_{ij}$; borrow Talagrand's proven Parisi lower bound. **Refused to run the DOS
+(density-of-states) test at N=12-16**: random-matrix universality (semicircle /
+Marchenko-Pastur) is an $N\to\infty$ statement; a histogram of 12-16 eigenvalues
+is noise, and fitting it would be exactly the "narrative over data" failure this
+log exists to prevent. **Theory gate instead**: the Parisi machine needs quenched
+i.i.d. disorder, but $P_{ij}$ is DETERMINISTIC with exact arithmetic structure
+($\log p$), not random. Pre-gate (for proposers): prove the deterministic prime
+coupling is statistically equivalent to i.i.d. quenched disorder — this touches
+Sarnak-conjecture-level pseudorandomness of arithmetic functions. Unproven =>
+Parisi cannot start. Status: alive only in principle, blocked on a hard theory
+gate; no numerical execution attempted (deliberately).
+
+**Direction 7 — Quasi-periodic / Anderson localization / KAM: REJECTED
+(2026-08-06).** Proposal: treat $\mathcal H_L$ as a quasi-periodic operator
+(incommensurable $\log p$), use Aubry-André / KAM extended-state spectral
+bounds. KAM protection holds ONLY for EXTENDED states. IPR (inverse
+participation ratio) of the ground state, N=12:
+
+```
+ L      IPR(ground)   1/N ref
+ 0.35   0.6662        0.0833
+ 0.42   0.5313        0.0833
+ 0.50   0.4295        0.0833
+ 0.60   0.4766        0.0833
+```
+
+IPR is 5-8x the extended-state reference $1/N$ at every L: the ground state is
+LOCALIZED, not extended. KAM's extended-state door is shut. **Executioner's
+self-audit** (recorded): the IPR is measured in the Legendre COEFFICIENT
+(basis/momentum) space, so its counter-intuitive DECREASE with L is not
+"anti-prediction" — it is the correct physics. High basis-space IPR at L=0.35
+(energy concentrated on $c_0$, i.e. $P_0\equiv1$) is a SMOOTH CONSTANT =
+real-space EXTENDED state; as L grows, energy spreads to high modes ($P_2,P_4,
+\dots$), interfering into real-space nodes = real-space LOCALIZATION. So the data
+confirms Anderson localization in real space: the potential's growth crushes the
+extended state, removing exactly the KAM/Aubry-André protection Direction 7
+needed. Dead, with the death mechanism (real-space localization) understood.
+
+---
+
+### FINAL TALLY (2026-08-06): 7 isomorphism-mapping candidates
+
+- **Dir 1** property (T): DEAD — growth is in indefinite prime norm (+84%),
+  reserve stagnant (+16%); no positive rigid volume growth.
+- **Dir 2** Bakry-Émery: DEAD — ground state acquires nodes at L>=0.40; ground-
+  state conjugation blows up.
+- **Dir 3** Lee-Yang: DEAD — sign-graph frustration (congruence-invariant) +
+  negative diagonal; ferromagneticity topologically unreachable.
+- **Dir 4** fermionic/LSM: DEAD — no gap closing at L≈0.40; no phase transition;
+  bosonic->fermionic statistics switch unsupported.
+- **Dir 5** Ruelle/hyperbolic: DEAD — quasi-periodic (zero Lyapunov); shares
+  Dir 1's rigid-gap-vs-decrease refutation.
+- **Dir 6** spin glass/Parisi: SUSPENDED at theory gate — deterministic prime
+  coupling != quenched i.i.d. disorder (Sarnak-level). Not executed numerically
+  (small-N DOS would be noise).
+- **Dir 7** quasi-periodic/KAM: DEAD — ground state localized (IPR >> 1/N);
+  real-space localization removes KAM protection.
+
+None died of circularity or mere rewriting. Each died on the target theorem's
+structural precondition failing under measurement — or was honestly suspended
+rather than executed on statistically meaningless data. The infinite formula
+$(\star)$ (Weil criterion) already exists; the scarce object is its PROOF, which
+equals RH. Any uniform-in-L argument must characterise the FULL spectrum: no
+counting invariant, no single-direction geometry, and none of these 7 tempting
+structural shortcuts captures the sign of $\lambda(L)$. This file is a verified
+minefield map — the path is not in these directions.
+
 **Decision**: Defer to after Route 1 Effect B measurement. If Effect B is polynomial, uniform-in-L is worth pursuing; if exponential, computational approach to second window takes priority.
 
 ---
