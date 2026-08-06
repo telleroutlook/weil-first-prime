@@ -65,6 +65,49 @@ Run the full Schur certification at 2–3 additional L values ($L = 0.42, 0.46$)
 **Path to uniform-in-L** (if pursued):
 Either (A) translate Groskin's $B_T$ to Legendre/Schur framework, or (B) prove a Poincaré-type inequality for the $\mathcal{L}(w)/\|w\|^2$ operator in Suzuki's framework giving $\inf \mathcal{L}(w)/\|w\|^2 > C$ uniformly. Both require 3–6 months of new theory.
 
+#### Prolate / PSWF basis change — go/no-go gate (2026-08-06)
+
+Computed the time-frequency product $c = L\Omega$ that governs the PSWF eigenvalue
+cliff (significant dimension $\approx 2c/\pi$). The kernel $r''(a(x-y))$ is analytic
+in the strip $|\mathrm{Im}| < \pi/a$ (nearest pole at $t = \pi i$; see
+`integrator_a.py:634,851` and the Bernstein-ellipse $\rho = \exp(\mathrm{arcsinh}(\pi/(ah)))$
+in `bernstein.py:18`). This gives Fourier decay $\sim e^{-(\pi/a)|\xi|}$, hence
+half-bandwidth $\Omega_u \sim \frac{a}{\pi}\log(1/\epsilon)$, $c = 2\Omega_u$:
+
+| target $\epsilon$ | $2c/\pi$ ($a=L$) | $2c/\pi$ ($a=2L$, conservative) |
+|---|---|---|
+| $10^{-8}$ | ~3 | ~6 |
+| $10^{-16}$ | ~6 | ~13 |
+| $10^{-30}$ | ~12 | ~24 |
+
+Legendre needs $N \approx 32$–$40$ at $L=0.42$.
+
+**Verdict**: prolate wins, but the realistic dividend is **~2.5–3×** (N≈32 → ~12)
+at the FP-0.35 precision $\epsilon \sim 2^{-30}$, **NOT the ~8× "N=4" myth**. The
+cliff scales linearly in $\log(1/\epsilon)$ and in $a \propto L$, so:
+- higher certification precision erodes the advantage (linear in $\log(1/\epsilon)$);
+- the dividend shrinks toward the second window ($c \propto L$, cliff rises ~40%
+  by $L\approx0.6$) — **do not extrapolate the first-window ratio**.
+
+**Recommended order IF N=32 comes back negative**:
+1. **P3 — prolate/band-limited quadrature for the S_KK kernel, NO basis change.**
+   Zero paradigm cost. Reuses the SAME $\pi/a$ analytic bandwidth already present
+   in `bernstein.py` — turns it from an error bound into quadrature-node design.
+   Directly attacks the measured 40s/pair S_KK wall. Try first.
+2. **P1 — hybrid basis: prolate-ise only the $K_L$ block**, keep Legendre for
+   $T, V, \mathcal{P}_L$ via a certified change-of-basis matrix $U$. Reduces to
+   ~12 dims; preserves V closed-form and prime $\mathbb{Q}[\tau]$; one certified
+   basis-change error layer.
+3. **P2 — full prolate basis.** Last resort: $2c/\pi \sim 12$ makes full re-basing
+   low-yield while destroying the $\mathbb{Q}[\tau]$ algebra and Lean chain.
+
+**Repo policy**: P3 stays in this repo (quadrature swap, no structural change).
+P1/P2 (actual basis change → breaks $\mathbb{Q}[\tau]$ + Lean) warrant a NEW repo.
+
+**Honesty boundary**: every prolate variant is a *per-$L_k$ dimensionality
+accelerator only*. It does not change the monotone decay of $\lambda(L)$ and does
+not reach $L \to \infty$.
+
 **Decision**: Defer to after Route 1 Effect B measurement. If Effect B is polynomial, uniform-in-L is worth pursuing; if exponential, computational approach to second window takes priority.
 
 ---
