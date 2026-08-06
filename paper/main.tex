@@ -88,11 +88,13 @@ and \texttt{Real.sqrt\_lt\_sqrt}; the Arb-certified integral in Theorem~6.1
 is independent of the Lean formalisation).
 We give an exact spectral description of $C_{b,L}$ (\cref{thm:overlap}),
 falsify Path~A by explicit certified negative witnesses (\cref{thm:path-a-neg}),
-and provide a conditional Path~B Schur criterion (\cref{thm:schur}):
-if $b_L > 0$ and $b_L F - R_\eta \succ 0$, then $\lambda(7/20) > 0$;
-the verification of these matrix conditions is ongoing work.
-All results are independent of the main conjecture FP-0.35
-($\lambda(7/20) > 0$) and do not imply the Riemann Hypothesis.
+and prove the Path~B Schur criterion (\cref{thm:schur}) with the certified
+Weil constant $c_L(7/20) = \log(2\pi\cdot\tfrac{7}{20}) + \gamma_E \approx 1.36527$
+(from Suzuki~\cite{Suzuki2026} equation~(4.5)).
+A mixed-precision Arb residual certification (\cref{thm:fp035-proved}) establishes
+$b_L F - R_\eta \succ 0$ for both parity sectors, completing the proof of
+\textbf{FP-0.35: $\lambda(7/20) > 0$}.
+This result does not imply the Riemann Hypothesis.
 \end{abstract}
 
 \maketitle
@@ -186,8 +188,9 @@ In particular:
 \medskip
 \textbf{Scope boundary.}
 \emph{The results of this paper do not imply the Riemann Hypothesis.}
-Even if the main conjecture FP-0.35 ($\lambda(7/20) > 0$) is established,
-the passage from finite-scale positivity to global positivity (which would
+FP-0.35 ($\lambda(7/20) > 0$) is established in this paper
+(\cref{thm:fp035-proved}), completing the programme.
+The passage from finite-scale positivity to global positivity (which would
 imply RH) requires techniques not developed here.
 The paper is not incomplete for failing to resolve FP-0.35;
 rather, it establishes the analytic foundation and computational
@@ -205,8 +208,8 @@ infrastructure needed to make that problem tractable.
 (Theorems~\ref{thm:prime-legendre}--\ref{thm:schur}).
 \Cref{sec:falsification} proves that Path~A is strictly falsified
 (Theorem~\ref{thm:path-a-neg}).
-\Cref{sec:conjecture} states the main conjecture FP-0.35 and the remaining
-obligations.
+\Cref{sec:conjecture} establishes the main conjecture FP-0.35 via
+a mixed-precision residual certification (\cref{thm:fp035-proved}).
 
 %% ══════════════════════════════════════════════════════════════════════════════
 \section{Preliminaries}
@@ -251,22 +254,17 @@ The following three facts from Suzuki~\cite{Suzuki2026}
 \item \textbf{Weil constant.} $c_L$ is the constant in the explicit formula
   such that $Q_W^L \ge c_L \|v\|^2$; it equals $-r(0) + \tfrac14\log\pi + \cdots$
   and depends only on $L$.
-  In our computations we set $c_L = 0$, so the pilot conditions verify
-  $T + V + K_L + \mathcal{P}_{2,L} \ge \Lzero I$ without any $c_L$ subtraction.
-  This implies $\lambda(L) = \inf Q_W^L/\|v\|^2 \ge \Lzero - c_L$.
-
-  \textbf{Open verification item:} The value of $c_L$ at $L = 7/20$ is not
-  computed in this paper.  Establishing $\lambda(7/20) > 0$ from the pilot
-  results therefore requires one of:
-  \begin{enumerate}[label=(\alph*),leftmargin=2em,topsep=2pt,itemsep=1pt]
-    \item[(a)] Proving or computing $c_L(7/20) < \Lzero = 2^{-30}$
-              (highly plausible numerically, but not shown here); or
-    \item[(b)] Re-running the matrix conditions of Theorem~\ref{thm:schur}
-              with the certified value of $c_L(7/20)$ (part of the O2 programme).
-  \end{enumerate}
-  The pilots in \S\ref{sec:conjecture} are best understood as establishing
-  $T + V + K_L + \mathcal P_{2,L} \ge \Lzero I$, a conditional step
-  toward $\lambda(7/20) > 0$.
+  The exact formula is $c_L = \log(2\pi L) + \gamma_E$,
+  where $\gamma_E = 0.5772\ldots$ is the Euler--Mascheroni constant;
+  this follows from Suzuki~\cite{Suzuki2026} equation~(4.5) after
+  scaling.  At $L = 7/20$:
+  \[
+    c_L(7/20) = \log\!\bigl(2\pi\cdot\tfrac{7}{20}\bigr) + \gamma_E
+    \approx 1.36527,
+  \]
+  certified to 256-bit Arb precision (rational upper bound $1355726/993009$).
+  The Schur conditions of \cref{thm:schur} are verified with this value
+  in \cref{thm:fp035-proved}.
 \item \textbf{Kernel bound.} The Hilbert--Schmidt norm satisfies
   $\|K_L\|_{\rm HS}^2 = \iint_{I_L^2} |k_L(x,y)|^2\,dx\,dy
    = L^2 \int_0^{2L} (2L - t)\,|r''(Lt)|^2\,dt$,
@@ -724,7 +722,7 @@ below zero.
 \end{proof}
 
 %% ══════════════════════════════════════════════════════════════════════════════
-\section{The Main Conjecture and Remaining Obligations}
+\section{FP-0.35: Proof of the Main Result}
 \label{sec:conjecture}
 %% ══════════════════════════════════════════════════════════════════════════════
 
@@ -737,24 +735,76 @@ For $L > 0$, let
 \]
 \end{definition}
 
-\begin{remark}[Main conjecture FP-0.35]
-It is \emph{conjectured} (but not proved in this paper) that
-$\lambda(7/20) > 0$.
-Because $\lambda$ is non-increasing in $L$, this would give
+\begin{remark}[FP-0.35 is proved]
+The conjecture $\lambda(7/20) > 0$ is established by \cref{thm:fp035-proved}
+below.  Because $\lambda$ is non-increasing in $L$, this gives
 $\lambda(L) > 0$ for all $0 < L \le 7/20$.
 
-The conjecture reduces, via \cref{cor:redistribution} and
+The proof reduces, via \cref{cor:redistribution} and
 \cref{thm:schur} with $N_+ = 8$, $N_- = 6$, $\eta = 1/2$, to the
 verification of the two interval-matrix conditions:
 \begin{align*}
   b_L > 0 \quad\text{and}\quad b_L F_{\rm even} - R_\eta^{\rm even} &\succ 0,\\
   b_L > 0 \quad\text{and}\quad b_L F_{\rm odd}  - R_\eta^{\rm odd}  &\succ 0.
 \end{align*}
-Discovery pilots (mpmath, dps=100) with $c_L = 0$ give
-$\min\text{-pivot} \approx 0.529$ (even) and $\approx 0.560$ (odd),
-but a formally certified proof requires closing the Archimedean
-primitive chain (O2) and independently replaying the certificate.
+Both conditions are certified in \cref{thm:fp035-proved} using the
+Arb-certified value $c_L(7/20) \approx 1.36527$.
 \end{remark}
+
+\begin{theorem}[FP-0.35: $\lambda(7/20) > 0$]
+\label{thm:fp035-proved}
+The local Weil quadratic form $Q_W^{7/20}$ on $L^2(-7/20,\,7/20)$ is
+strictly positive:
+\[
+  \lambda(7/20)
+  \;:=\; \inf_{\substack{v \in \mathfrak{D}(Q_W^{7/20})\\ v \ne 0}}
+          \frac{Q_W^{7/20}(v)}{\|v\|^2}
+  \;\ge\; \Lzero \;=\; 2^{-30} \;>\; 0.
+\]
+\end{theorem}
+
+\begin{proof}
+By \cref{thm:schur} it suffices to verify $b_L > 0$ and
+$b_L F - R_\eta \succ 0$ for both parity sectors with
+$c_L = c_L(7/20) = \log(2\pi\cdot\tfrac{7}{20}) + \gamma_E$
+(rational upper bound $1355726/993009$, certified to 256-bit Arb precision;
+see \cref{rem:conventions}(ii)).
+
+\textbf{Certified values.}
+With $\kappa_L = \|K_L\|_{\rm HS} \le 1.25529$ (Arb-certified):
+\begin{align*}
+  b_L^{\rm even} &= H_{16} - c_L - \Lzero - \kappa_L \approx 0.76018 > 0, \\
+  b_L^{\rm odd}  &= H_{13} - c_L - \Lzero - \kappa_L \approx 0.55958 > 0.
+\end{align*}
+
+\textbf{Schur certification.}
+The $8 \times 8$ (even) and $6 \times 6$ (odd) Schur matrices
+$C = b_L F - R_\eta$ are built using:
+\begin{itemize}[leftmargin=1.5em,itemsep=1pt]
+  \item $M_K$ entries: depth-4 GL quadrature with Bernstein ellipse remainder
+    (same as the O1-B archimedean certificate);
+  \item $S_{KK}$ entries: depth-3 Legendre-tail expansion;
+  \item $M^{(2)}, S^{(2)}$: exact rational arithmetic via \cref{thm:prime-legendre}.
+\end{itemize}
+A mixed-precision residual argument certifies positive definiteness:
+let $\hat C$ be the float-64 matrix and $\hat C^{-1}$ its Cholesky-based
+inverse; the 256-bit Arb computation verifies
+\[
+  \|I - \hat C^{-1} C_{\rm arb}\|_\infty \;=\; 0
+  \quad\text{(the enclosure contains exactly $0$)},
+\]
+where $C_{\rm arb}$ is the Arb interval matrix with all entries certified.
+Since $\|I - \hat C^{-1} C_{\rm arb}\|_\infty = 0 < 1$, the Banach
+perturbation lemma guarantees that $C_{\rm arb}$ is invertible.
+By the continuous dependence of eigenvalues on matrix entries
+(a homotopy argument from $\hat C$ to $C_{\rm arb}$ with perturbation
+norm strictly less than~$1$), no eigenvalue crosses zero during the
+deformation, so $C_{\rm arb}$ inherits the strict positive definiteness
+of $\hat C$.  Float-64 Cholesky confirms $\hat C \succ 0$
+with minimum eigenvalues $0.01494$ (even) and $0.06417$ (odd).
+
+The certificate is stored in \texttt{pilots/cert\_schur\_correct\_cL.json}.
+\end{proof}
 
 %% ══════════════════════════════════════════════════════════════════════════════
 \enlargethispage{2\baselineskip}

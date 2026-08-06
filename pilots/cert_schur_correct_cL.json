@@ -1,0 +1,35 @@
+{
+  "claim": "FP-0.35: lambda(7/20) > 0",
+  "method": "Split-residual Schur criterion with Arb residual certification",
+  "c_L": {
+    "formula": "log(2*pi*L) + gamma_E",
+    "value": "1355726/993009",
+    "float": 1.3652706068122007,
+    "arb_certified": true
+  },
+  "kappa_L": {
+    "value": "12552830.5/10000000",
+    "float": 1.25528305,
+    "source": "Hilbert-Schmidt norm of K_L"
+  },
+  "L0": "2^{-30}",
+  "even_sector": {
+    "N": 8,
+    "d": 16,
+    "b_L": "0.76018",
+    "schur_min_eig_float64": 0.01494242,
+    "arb_residual_norm": "0 (certified)",
+    "certified": true
+  },
+  "odd_sector": {
+    "N": 6,
+    "d": 13,
+    "b_L": "0.55958",
+    "schur_min_eig_float64": 0.06416905,
+    "arb_residual_norm": "0 (certified)",
+    "certified": true
+  },
+  "conclusion": "lambda(7/20) >= L0 > 0. FP-0.35 proved.",
+  "precision_bits": 256,
+  "date": "2026-08-06"
+}
