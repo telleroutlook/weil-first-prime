@@ -129,7 +129,15 @@ import Mathlib.Data.Real.Sqrt
 
 **graph.json fix**: `proofctl pin checker` wrote `runtime.kind: "native"` (pre-scripted proofctl). Fixed to `"scripted"` after rebuild.
 
-## v0.3.13 fixes (current)
+## v0.3.14 (current) — documentation only
+
+- **CHANGELOG correction**: v0.3.12 changelog now correctly notes that
+  `MaxWallClock` was raised in v0.3.13 (not v0.3.12).
+- **README + CLAUDE.md**: `replay-partial` extension updated to `.debug`;
+  `proofctl check --timeout` added to command reference.
+- No code changes. No adaptation required in this project.
+
+## v0.3.13 fixes
 
 - **MaxWallClock raised to 60m**: `--timeout 20m` in v0.3.12 was silently capped at 10m.
   Now `proofctl check --timeout 20m --all` works correctly for archimedean checkers.

@@ -234,13 +234,65 @@ python3 -m src.assemble.o1b_gate --tier certify --sector odd  --c_L 0  # ✅ 完
 
 ---
 
-## 五、当前状态与下一步（2026-08-06 更新）
+## 五-B、后续研究路线（2026-08-06，基于 route_recommendation_v2）
 
-**参见五-A 立即行动计划。** O1-B 仅为 pilot 级，需完成 certify 升级和 c_L 认证。
+FP-0.35 已证明（Theorem 7.3）。以下是后续工作的分阶段计划，已按"本仓库 vs 新仓库"明确分类。
+
+---
+
+### 阶段 0（本仓库，任务 #14）：$\lambda(L)$ 严格下界廓线
+
+**目标**：把 $\Lambda_0 = 2^{-30}$ 从固定常数改为自由变量，对每个 $L$ 做二分搜索，找到最大可认证的 $\Lambda_0(L)$，得到 $\lambda(L) \geq \Lambda_0(L)$ 的严格下界廓线。
+
+这是对现有 `o1b_gate.py` 的**小改动**：加 `--lambda0` 参数，在 `scripts/scan_lambda_profile.py` 中循环调用。
+
+注意两个独立效应：
+- **效应 A**（秒级可扫）：维持 $b_L > 0$ 所需最小 $N$ 随 $L$ 温和增长（< 2×）
+- **效应 B**（实测）：Arb 区间膨胀速率随 $L$ 的变化——这是真正的未知量
+
+**数据点要求**：至少 3 个完整认证点（$L = 7/20, 0.42, 0.46$），不要只测一个端点。
+
+**范围限制**：第一素数窗口（$0.347 < L < 0.549$）内的数据对 $L \to \infty$ 渐近行为几乎无统计意义，不过度解读趋势。
+
+---
+
+### 阶段 1（本仓库）：依效应 B 决定是否提前开启路线三
+
+效应 B 的实测曲线若显示 Arb 膨胀随 $L$ 增长是多项式级，则路线三（uniform-in-$L$ 谱隙）可以延后；若是指数级，则需要提前 scoping。
+
+---
+
+### 阶段 2（**新仓库** `weil-second-prime`）：第二素数窗口 $n=2,3$
+
+**窗口**：$L \in (\frac{1}{2}\log 3,\ \frac{1}{2}\log 4) = (\frac{1}{2}\log 3,\ \log 2)$
+
+**为什么新仓库**：
+- 需要新的 `legendre_shift_2prime.py`（处理两个平移方向的耦合 $J_{ij}(\tau_2, \tau_3)$）
+- 新的证书 schema（不同 `format_version`）
+- 独立的 proofctl domain `fp-second-prime`
+- 不同的 $c_L$ 公式（约 1.8，Schur 压力更大）
+
+**边界分析**：Theorem 3.1 的三区间分解在 $L < \log 2$ 时对 $n=2$ 成立，$n=3$ 也满足单跳条件。这个乐观预期**精确到这一个窗口为止**：当 $n=4$ 进入且 $n=2$ 越过 $L=\log 2$ 后，需要处理多次跳跃自重叠，Theorem 3.1 本身需要推广。
+
+---
+
+### 阶段 2.5（本仓库 `docs/`，任务 #15）：理论 scoping（并行）
+
+通读 Suzuki arXiv:2606.09096 和 Groskin arXiv:2607.02828 全文，寻找：
+- 是否存在 uniform-in-$L$ 的谱隙下界论证雏形
+- 是否有比 Legendre 更适合的基底选型
+
+记录于 `docs/EXTENDED_GOALS.md`，不写代码。
+
+---
+
+### 阶段 3（贯穿指标）
+
+$\lambda(L)$ 衰减廓线是全程核心诊断，每个认证点都要报告。但**第一窗口内的数据量不足以对 $L \to \infty$ 渐近行为下结论**，不做过度推断。
+
+---
 
 
-**立即可执行（论文投稿）**：
-1. `cd paper && tectonic main.tex`（生成最终 PDF）
 2. 登录 zenodo.org → 上传 `main.pdf` → 填写 `paper/ZENODO_METADATA.txt`
 3. 发邮件给 Suzuki（arXiv:2606.09096）和 Groskin（arXiv:2607.02828），附 PDF 请求 arXiv endorsement
 
