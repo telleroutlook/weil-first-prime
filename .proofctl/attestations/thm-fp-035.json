@@ -20,13 +20,13 @@
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 49,
+    "wall_millis": 39,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
   "start_freshness": "2026-08-06",
   "end_freshness": "2026-08-06",
-  "self_digest": "sha256:15a68d251fde8a204f6094fce459273712ed09cf82dbdc3b17903b58da05dbdd",
+  "self_digest": "sha256:e14318049588eb67764576b3a08cd20ea83741478931deee3debe408b785cb63",
   "metadata": {
     "archimedean_obligation": "archimedean_primitives_o2_v1",
     "checker_exit": "0",
