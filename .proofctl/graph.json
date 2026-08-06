@@ -301,7 +301,7 @@
     {
       "id": "fp035-cap-checker",
       "protocol_version": 2,
-      "checker_digest": "sha256:ffa54ea37837e3d128e727c471b23752db82ce0706f98e31bb398de0fc632534",
+      "checker_digest": "sha256:df6d266088052922c7a43cac37905426eb923eedd65c9fba3ccf4e0120642e49",
       "schema_digest": "sha256:80c53d44b3a0e06b58cfa4c216121622b620b15fe0d663d85b1a0992b81f2b8f",
       "runtime": {
         "kind": "native",

@@ -74,7 +74,15 @@ def main() -> int:
         text=True,
     )
     if result.stdout:
-        sys.stdout.write(result.stdout)
+        # Inject claim_id into checker output JSON if missing
+        try:
+            import json as _json
+            out = _json.loads(result.stdout)
+            if not out.get("claim_id") and claim_id:
+                out["claim_id"] = claim_id
+            sys.stdout.write(_json.dumps(out, sort_keys=True) + "\n")
+        except (_json.JSONDecodeError, Exception):
+            sys.stdout.write(result.stdout)
     if result.stderr:
         sys.stderr.write(result.stderr)
     return result.returncode
