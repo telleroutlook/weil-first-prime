@@ -2,12 +2,33 @@
   "results": [
     {
       "L": 0.35,
-      "c_L": 1.3652706068122242,
-      "lambda_lower_bound": 0.03203125033469405,
-      "elapsed_s": 173.4612090587616
+      "c_L": 1.3652706068,
+      "lambda_lower_bound": 0.03203,
+      "N": 8,
+      "certified": true,
+      "note": "Arb 256-bit residual cert PASS"
+    },
+    {
+      "L": 0.42,
+      "c_L": 1.5475939036,
+      "lambda_lower_bound": null,
+      "N": 8,
+      "certified": false,
+      "note": "float64 min_eig=-0.032 at lambda0=2^{-30}; N=8 insufficient; need N>=10"
+    },
+    {
+      "L": 0.46,
+      "c_L": 1.6385603066,
+      "lambda_lower_bound": null,
+      "N": 8,
+      "certified": false,
+      "note": "b_L=0.499 at N=8, too small; need N>=14"
     }
   ],
-  "total_s": 173.4612159729004,
-  "method": "Arb residual cert, even N=8 d=16",
-  "note": "lambda_lower_bound is certified strict lower bound"
+  "summary": {
+    "effect_A": "N needs to grow ~1.6x from L=7/20 to L=0.42 (c_L increases by 0.182)",
+    "effect_B": "Arb interval inflation at N=10+ unknown \u2014 next step is to certify L=0.42 with N=10",
+    "conclusion": "Route 2 (second-prime window) should use N>=10 even sector baseline"
+  },
+  "method": "Arb residual cert, even sector"
 }
