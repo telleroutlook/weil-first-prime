@@ -108,6 +108,81 @@ P1/P2 (actual basis change → breaks $\mathbb{Q}[\tau]$ + Lean) warrant a NEW r
 accelerator only*. It does not change the monotone decay of $\lambda(L)$ and does
 not reach $L \to \infty$.
 
+---
+
+### The finite -> infinite gap: epistemic boundary (2026-08-06)
+
+**Why induction fails.** $\lambda(L)$ is monotone non-increasing (proven). So
+$\lambda(L)>0 \Rightarrow \lambda(L')>0$ only for $L'<L$ — the induction arrow
+points toward *small* L (useless), while RH needs *large* L. Monotonicity gives
+a limit but says nothing about whether that limit is $>0$ or $=0$; the latter is
+exactly RH. Finite pointwise verification can never assemble a uniform bound.
+
+**Five rejected "shortcut criteria" for the sign of $\lambda(L)$** (all falsified
+by data, not by opinion):
+1. rank = prime arithmetic — FALSE (L=0.35->0.42: prime count unchanged, rank 5->13)
+2. $K_L$ low-rank -> reduce to ~5 dims — FALSE (measurement artifact; true rank ~11)
+3. sign flip = rank crossing — FALSE (crossing at L=0.50, flip before L=0.42)
+4. sign flip = principal-direction overlap — FALSE (overlap peaks L=0.40, then falls; trend opposite)
+5. Transformer/attention-style low-rank alignment — FALSE (P is full-rank, indefinite; attention's premise inverted)
+
+**Conclusion**: the sign of $\lambda(L)$ is a *full-spectrum, irreducible spectral
+quantity*. No counting invariant (rank, dimension, prime count) and no
+single-direction geometric quantity predicts it. Any uniform-in-L argument MUST
+characterise the whole spectrum; it cannot take a structural shortcut. The
+infinite formula $(\star)$ already exists (Weil criterion) — the scarce thing is
+its *proof*, which equals RH. The only logically-closed path is an isomorphism
+mapping $(\star)$ to an already-proven theorem in another field (not another
+rewrite of $(\star)$).
+
+---
+
+### Isomorphism-mapping candidates: adjudication log
+
+Standard for a real candidate (all five must hold): (1) non-equivalent to
+$(\star)$; (2) target field has an RH-independent proven theorem to absorb it;
+(3) expresses uniform-in-L / full spectrum; (4) non-circular (no RH assumed);
+(5) difficulty visibly transferred to a proven fact.
+
+**Direction 3 — Lee-Yang / ferromagnetic spin system: REJECTED (2026-08-06).**
+Proposal: map $(\star)$ to a spin system whose partition-function zeros are
+controlled by the Lee-Yang circle theorem; prime couplings = $J_{ij}$. Lee-Yang
+requires ferromagnetic couplings $J_{ij}\ge0$. Tested whether ANY diagonal
+congruence $DPD$ can make the prime matrix $P$ elementwise non-negative (the
+Asano-contraction escape hatch). **Triple structural rejection at L=0.35,0.42,0.50:**
+- **Sign-graph frustration** (topological, congruence-invariant): the 2-colouring
+  test fails at all three L. $P$'s sign pattern contains odd sign-cycles
+  ($\mathrm{sign}(P_{ij})\mathrm{sign}(P_{jk})\mathrm{sign}(P_{ki})<0$) that NO
+  diagonal $D$ can remove. Ferromagneticity is topologically unreachable.
+- **Negative diagonal entries**: $DPD$ preserves diagonal signs ($D_i^2>0$), so
+  the negative $J_{ii}$ cannot even be flipped.
+- **Off-diagonals ~half negative** (72/60, 64/68, 66/66): negative coupling is
+  intrinsic, not a repairable minority.
+This is the *model* of a good failure: dies on the target theorem's structural
+precondition (ferromagneticity), not on circularity. Do not re-send.
+
+**Direction 2 — Bakry-Émery / Ricci curvature: OPEN, highest survival odds.**
+Target theorem form matches exactly ("curvature $\ge K>0 \Rightarrow$ spectral gap
+$\ge K$", no need to solve the operator). Life-or-death point: can the
+indefiniteness of $\mathcal{P}_L$ be absorbed into a *first-order drift*
+(anti-symmetric part) rather than a *zeroth-order potential* (symmetric
+indefinite part)? Bakry-Émery needs a Markov diffusion generator (non-negative
+off-diagonal / maximum principle); an indefinite potential generally is not one.
+Adjudication: compute the symmetric/anti-symmetric split of $\mathcal{P}_L$; test
+whether a Doob h-transform moves the indefiniteness into drift. Likely partial at
+best, but even partial success is a publishable mixed estimate.
+
+**Direction 1 — Kazhdan property (T): OPEN, but tension flagged.**
+Property (T) gives an L-independent rigid gap $\kappa>0$; but $\lambda(L)$ is
+empirically monotone DECREASING. If prime translations embedded in a (T) group,
+(T)'s rigidity should prevent the decrease — so the observed decay may itself be
+evidence AGAINST (T). Two hurdles: (a) incommensurable translations ($\log p$
+irrational ratios) generate a DENSE (non-discrete) subgroup, breaking the
+Cayley-graph/expander frame; (b) prime translation on $\mathbb{R}$ is an ABELIAN
+action, and abelian groups do NOT have (T). A non-commutative crossed-product
+representation would be required. Adjudication deferred: needs $\lambda(L)$ data
+at larger L (second window) to test for a "bottoming out".
+
 **Decision**: Defer to after Route 1 Effect B measurement. If Effect B is polynomial, uniform-in-L is worth pursuing; if exponential, computational approach to second window takes priority.
 
 ---
