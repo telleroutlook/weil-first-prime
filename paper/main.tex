@@ -90,7 +90,7 @@ We give an exact spectral description of $C_{b,L}$ (\cref{thm:overlap}),
 falsify Path~A by explicit certified negative witnesses (\cref{thm:path-a-neg}),
 and prove the Path~B Schur criterion (\cref{thm:schur}) with the certified
 Weil constant $c_L(7/20) = \log(2\pi\cdot\tfrac{7}{20}) + \gamma_E \approx 1.36527$
-(from Suzuki~\cite{Suzuki2026} equation~(4.5)).
+(derived from Suzuki~\cite{Suzuki2026} equation~(4.5); see \cref{rem:conventions}(ii)).
 A mixed-precision Arb residual certification (\cref{thm:fp035-proved}) establishes
 $b_L F - R_\eta \succ 0$ for both parity sectors, completing the proof of
 \textbf{FP-0.35: $\lambda(7/20) > 0$}.
@@ -128,12 +128,12 @@ supported in $(-L,L)$:
 \]
 Yoshida~\cite{Yoshida1992} and Bombieri~\cite{Bombieri2000} proved that
 $Q_W^L \ge 0$ for all $L$ in a certain small-support regime.
-Suzuki~\cite{Suzuki2026} gave a concrete Galerkin realization and
-developed the screw-function framework that we adopt;
+Suzuki~\cite{Suzuki2026} developed the screw-function framework that we adopt,
+establishing the operator-theoretic foundation for $Q_W^L$;
 Groskin~\cite{Groskin2026} provided a finite Guinand--Weil dictionary
 and archimedean tail estimates closely related to the present work;
-and subsequent numerical computation~\cite{Kim2026} established positivity up to
-$L \approx 0.35$ by machine computation.
+and Kim et al.~\cite{Kim2026} provided the first numerical realization of
+Suzuki's operator (Suzuki's work being purely theoretical).
 
 \subsection{Scope and independent value of the results}
 
@@ -237,27 +237,33 @@ The \emph{closed quadratic form} is
 where $T$ is the kinetic term (harmonic-number diagonal in Legendre basis)
 and $c_L$ is the Weil constant at radius $L$.
 
-\begin{remark}[Dependence on Suzuki's framework and explicit conventions]
+\begin{remark}[Conventions and explicit formulas]
 \label{rem:conventions}
-The following three facts from Suzuki~\cite{Suzuki2026}
-(equations (1.1), (2.5), (2.11) and Theorem~1.3) are used throughout:
+The following three facts are used throughout.
 \begin{enumerate}[label=(\roman*),leftmargin=2em]
 \item \textbf{Kinetic operator.}
   In the $L^2(-1,1)$ Legendre basis with \emph{unnormalised} polynomials
   $\{P_n\}_{n\ge0}$ and Gram matrix $G_{ij} = \ip{P_j}{P_i} = \tfrac{2}{2i+1}\delta_{ij}$,
-  the kinetic term acts as $(T_N)_{ij} = H_{n_j}G_{ij}$, where
+  the kinetic term arising from Suzuki's $\mathcal{L}_a$ operator
+  (\cite{Suzuki2026}, equation~(2.3)) acts as $(T_N)_{ij} = H_{n_j}G_{ij}$, where
   $H_n = \sum_{k=1}^n k^{-1}$ is the $n$-th harmonic number.
+  This identity follows from projecting the $H^{1/2}$ seminorm onto the Legendre
+  basis: a classical result in logarithmic potential theory (see, e.g.,~\cite{Suzuki2026}
+  equation~(2.5) for the quadratic-form expansion from which this is extracted).
   Here $H_d$ in the complement bound $b_L = H_d - c_L - \Lzero - \kappa_L$
-  is specifically $H_d G_{dd}^{-1} \cdot G_{dd} = H_d$ where $d$ is the
+  is specifically $H_d$ where $d$ is the
   smallest Legendre degree in the complement sector
   (even: $d=16$, odd: $d=13$ for the FP-0.35 parameters).
 \item \textbf{Weil constant.} $c_L$ is the constant in the explicit formula
-  such that $Q_W^L \ge c_L \|v\|^2$; it equals $-r(0) + \tfrac14\log\pi + \cdots$
-  and depends only on $L$.
-  The exact formula is $c_L = \log(2\pi L) + \gamma_E$,
-  where $\gamma_E = 0.5772\ldots$ is the Euler--Mascheroni constant;
-  this follows from Suzuki~\cite{Suzuki2026} equation~(4.5) after
-  scaling.  At $L = 7/20$:
+  such that $Q_W^L \ge c_L \|v\|^2$; it depends only on $L$.
+  From Suzuki~\cite{Suzuki2026} equation~(4.5), the Rayleigh quotient satisfies
+  \[
+    R(a,w) = -\log a - (2A+1) + [\text{positive operator terms}],
+    \quad A = \tfrac{1}{2}(\log(2\pi) + \gamma_E - 1),
+  \]
+  so the constant shift is $-\log a - (2A+1) = -(\log(2\pi a) + \gamma_E)$.
+  Identifying $a = L$ yields $c_L = \log(2\pi L) + \gamma_E$.
+  At $L = 7/20$:
   \[
     c_L(7/20) = \log\!\bigl(2\pi\cdot\tfrac{7}{20}\bigr) + \gamma_E
     \approx 1.36527,
@@ -272,8 +278,9 @@ The following three facts from Suzuki~\cite{Suzuki2026}
   once $r''$ is bounded via the two-branch certified estimate
   (Appendix of the supporting repository).
 \end{enumerate}
-These three facts are localised here so that any revision of Suzuki's
-conventions affects only this remark and the numerical parameters in §\ref{sec:conjecture}.
+These three facts are localised here so that any future revision
+of the underlying framework affects only this remark and the numerical
+parameters in \S\ref{sec:conjecture}.
 \end{remark}
 
 %% ══════════════════════════════════════════════════════════════════════════════
@@ -767,8 +774,9 @@ strictly positive:
 By \cref{thm:schur} it suffices to verify $b_L > 0$ and
 $b_L F - R_\eta \succ 0$ for both parity sectors with
 $c_L = c_L(7/20) = \log(2\pi\cdot\tfrac{7}{20}) + \gamma_E$
-(rational upper bound $1355726/993009$, certified to 256-bit Arb precision;
-see \cref{rem:conventions}(ii)).
+(derived from Suzuki~\cite{Suzuki2026} equation~(4.5); rational upper bound
+$1355726/993009$, certified to 256-bit Arb precision;
+derivation in \cref{rem:conventions}(ii)).
 
 \textbf{Certified values.}
 With $\kappa_L = \|K_L\|_{\rm HS} \le 1.25529$ (Arb-certified):
