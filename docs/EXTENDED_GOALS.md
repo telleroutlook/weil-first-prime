@@ -183,6 +183,65 @@ action, and abelian groups do NOT have (T). A non-commutative crossed-product
 representation would be required. Adjudication deferred: needs $\lambda(L)$ data
 at larger L (second window) to test for a "bottoming out".
 
+**Direction 4 — Fermionic many-body / Lieb-Schultz-Mattis gap: OPEN but DAMAGED.**
+Inspiration: the ground state grows 2 nodes at L≈0.40 (node-less = bosonic;
+nodal = fermionic/Pauli-repulsive), suggesting an LSM-type protected gap.
+**Damage from the fine-grid scan**: the fermionic character is L-DEPENDENT — the
+system is bosonic (node-less) at L≤0.38 and becomes fermionic (2 nodes) only at
+L≥0.40. LSM requires a SCALE-INDEPENDENT local symmetry (e.g. half-odd-integer
+spin per site, fixed for all system sizes). A statistics that switches from
+bosonic to fermionic as the scale L grows violates LSM's core premise.
+Pre-gate (must answer first): (i) how does an abelian (bosonic) prime translation
+become an anti-commuting fermionic hopping (Jordan-Wigner-type)? AND (ii) what
+uniform many-body Hamiltonian spontaneously switches from bosonic to fermionic
+statistics as system size increases? Unanswered (ii) => dead.
+
+**Direction 5 — Ruelle transfer operator / hyperbolic dynamics: OPEN, shares
+Direction 1's tension.** Map $\mathcal H_L$ to the generator of a transfer
+operator; a uniformly hyperbolic (Anosov) system has an L-independent spectral
+gap (exponential mixing rate) by Ruelle's theorem. Hurdle (theoretical, not
+data-testable now): prime translations are QUASI-PERIODIC ($\log p$ irrational =>
+torus rotation, zero Lyapunov exponent), whereas Anosov requires POSITIVE
+Lyapunov exponents (exponential stretching). Pre-gate: construct a hyperbolic map
+with positive Lyapunov exponent from quasi-periodic prime translations.
+**Shared tension with Direction 1**: both deliver a RIGID CONSTANT gap (group
+$\kappa$ / mixing rate), but $\lambda(L)$ is measured to decrease monotonically.
+Both survive only if the decrease is a pure normalization artifact ($D$-matrix /
+$\log L$ scale growth) that, once stripped, reveals a constant. This is the
+terminal numerical execution to run once N=32 + second-window data arrive.
+
+---
+
+### Ground-state node transition: a lead indicator, NOT a sign criterion (2026-08-06)
+
+While executing Direction 2's gate, found the ground state of
+$\mathcal H_L = \mathcal A_L - c_2\mathcal P_L - c_L$ grows nodes as L increases.
+Initial coarse scan (L=0.35/0.42/0.50) suggested "node onset = sign flip".
+**Fine-grid scan (N=10/14) FALSIFIED synchrony:**
+
+```
+ L      lambda      nodes
+ 0.36   +0.00099     0
+ 0.38   +0.00087     0
+ 0.40   +0.00082     2   <- node transition here
+ 0.42   +0.00038     2
+ (sign flip: L in 0.43-0.45, still lambda>0 at 0.40)
+```
+
+The node transition (L≈0.40) LEADS the sign flip (L≈0.43-0.45) by a finite gap.
+They are NOT synchronous. So node count is the SIXTH quantity that fails to
+pinpoint the sign of $\lambda(L)$ — though it is the only one so far that is
+same-direction AND a genuine spectral-geometric (non-counting) quantity.
+
+**Honest status**: a "lead indicator" / instability precursor (the ground state
+structurally distorts before the reserve is exhausted and $\lambda$ finally drops
+below 0), NOT a sign criterion and NOT a mechanism. Do not overinterpret. The
+lead relationship, if stable across more L (esp. second window), could serve as
+an early-warning diagnostic — but both transition points are only coarsely
+located so far. This entry documents an insight that was tempting under coarse
+data and corrected under finer data: in this repo, no shortcut or narrative
+survives contact with a finer grid.
+
 **Decision**: Defer to after Route 1 Effect B measurement. If Effect B is polynomial, uniform-in-L is worth pursuing; if exponential, computational approach to second window takes priority.
 
 ---
