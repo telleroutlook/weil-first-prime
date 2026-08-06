@@ -135,8 +135,64 @@ quantity $\tau(X,L)$.
 **Action gating**: do NOT write a SymPy $I_{ij}$ engine (duplicates `compute_J`).
 Do NOT switch the certification backend to $A+C-P$ (reintroduces the
 non-truncatable frequency-side problem). Before ANY cross-framework numerics,
-close the two dictionary gaps (rows 2–3): reconcile the $W_\infty$ vs $V+K_L$
-decomposition, and locate the pole block $\mathcal{C}_L$.
+close the two dictionary gaps (rows 2–3) — now resolved structurally below.
+
+#### Dictionary gap resolution (2026-08-06, structural)
+
+**Row 2 — $W_\infty$ vs $V + K_L$**: NOT a contradiction. $W_\infty(t) =
+\operatorname{Re}\psi(\tfrac14 + \tfrac{it}{2}) - \log\pi$ has high-frequency
+asymptotic $\sim \tfrac12\log|t|$. Inverse-transformed to position space this
+$\log$ growth splits into (i) the endpoint log-singularity
+$-\tfrac12\log(1-x^2)$ = the `V` block (`log_moments.V_matrix_entry`, computed by
+exact Beta/digamma closed forms, ZERO quadrature error), plus (ii) a smooth
+remainder = the `K_L` block (`integrate_M_K`). So the new framework's single
+frequency block equals the existing framework's TWO position blocks:
+$W_\infty \leftrightarrow V + K_L$. The existing decomposition is *finer and more
+Arb-friendly* (V is closed-form; only K_L needs integration). A full numerical
+confirmation would require running the $W_\infty$ oscillatory frequency integral
+— exactly the expensive object the position-space framework was built to avoid —
+so it is deferred until/unless a framework switch is actually chosen. Structurally
+sound; not a blocker.
+
+**Row 3 — pole block $\mathcal{C}_L$ FOUND**: the new framework's rank-2 pole
+term $\mathcal{C}_L = 2(\int f\cosh\tfrac{x}{2})^2 - 2(\int f\sinh\tfrac{x}{2})^2$
+is present in the existing framework, but **collapsed into the scalar Weil
+constant** $c_L = \log(2\pi L) + \gamma$ (`scan_lambda_profile.c_L_at`, line 44).
+The existing pipeline applies the pole contribution as an isotropic diagonal
+shift $-c_L G$; the new framework keeps it as a rank-2 form acting only on the
+$\cosh/\sinh$ directions.
+
+**Actionable consequence of row 3**: the scalar $c_L$ shift penalises *every*
+eigen-direction equally, whereas the true pole contribution is rank-2. This is
+consistent with the E1 diagnostic ("Path A's negative direction is driven by the
+$c_L \approx 1.365$ global negative shift"). **If L=0.42's min_eig is stuck at
+$-0.024$ partly because the scalar $c_L$ over-penalises high-order directions that
+the rank-2 pole should not touch, replacing $-c_L G$ with the explicit rank-2
+$\mathcal{C}_L$ could recover margin for free.** This is the ONE place the new
+framework might materially help the current certification. Flagged as the first
+thing to try IF N=32 comes back negative — as an alternate assembler *inside this
+repo*, not a new repo (see below).
+
+#### Repository policy: A+C-P stays in THIS repo
+
+The $A+C-P$ reformulation is **the same first-window quadratic form in a different
+notation**, not a new problem. Its prime engine IS `compute_J`; its pole block IS
+$c_L$. It must NOT get its own repository:
+- a second `compute_J`/`legendre_shift` violates the no-duplicate-logic rule and
+  creates two rival "authorities" for the same algebra;
+- separate certs could not be reconciled against the existing FP-0.35 chain;
+- the `fp035` proofctl domain would fracture.
+
+If pursued, it belongs as an alternate assembler (e.g. `src/assemble/acp_gate.py`)
+that REUSES `compute_J`, `log_moments`, and the existing Arb certification stack,
+replacing only the matrix-assembly layer. That yields an independent cross-check
+of Theorem 4 with reconcilable certificates.
+
+A genuinely new repo is warranted ONLY for a **basis change** (Legendre →
+prolate/PSWF), because that breaks the $\mathbb{Q}[\tau]$ algebra and the Lean
+chain — a paradigm-level split. $A+C-P$ is still Legendre, so it stays here.
+(Contrast: `weil-second-prime` IS a new repo, because the second *prime window*
+is a new problem — different coupling $J(\tau_2,\tau_3)$, schema, and domain.)
 
 ---
 
