@@ -196,19 +196,38 @@ become an anti-commuting fermionic hopping (Jordan-Wigner-type)? AND (ii) what
 uniform many-body Hamiltonian spontaneously switches from bosonic to fermionic
 statistics as system size increases? Unanswered (ii) => dead.
 
-**Direction 5 — Ruelle transfer operator / hyperbolic dynamics: OPEN, shares
-Direction 1's tension.** Map $\mathcal H_L$ to the generator of a transfer
-operator; a uniformly hyperbolic (Anosov) system has an L-independent spectral
-gap (exponential mixing rate) by Ruelle's theorem. Hurdle (theoretical, not
-data-testable now): prime translations are QUASI-PERIODIC ($\log p$ irrational =>
-torus rotation, zero Lyapunov exponent), whereas Anosov requires POSITIVE
-Lyapunov exponents (exponential stretching). Pre-gate: construct a hyperbolic map
-with positive Lyapunov exponent from quasi-periodic prime translations.
-**Shared tension with Direction 1**: both deliver a RIGID CONSTANT gap (group
-$\kappa$ / mixing rate), but $\lambda(L)$ is measured to decrease monotonically.
-Both survive only if the decrease is a pure normalization artifact ($D$-matrix /
-$\log L$ scale growth) that, once stripped, reveals a constant. This is the
-terminal numerical execution to run once N=32 + second-window data arrive.
+**Direction 5 — Ruelle transfer operator / hyperbolic dynamics: REJECTED
+(2026-08-06, shared execution with Direction 1).** See scale-strip execution below.
+
+**Directions 1 & 5 — TERMINAL SCALE-STRIP EXECUTION (2026-08-06).**
+Both survive only if $\lambda(L)$'s monotone decrease is a normalization artifact
+(a positive volume/scale growth hiding a rigid constant gap). Multi-L scan
+(N=16, method: existing certified pipeline), then a self-correcting re-check:
+
+```
+ L      lambda_min    reserve_min   ||c2*P|| (indefinite prime norm)
+ 0.42   -0.000686      1.5455        0.2402
+ 0.50   -0.012722      1.6886        0.2402
+ 0.60   -0.053842      1.7752        0.4383
+ 0.65   -0.088193      1.7962        0.4415
+```
+
+**Self-correction (recorded deliberately)**: the first-draft kill argument was
+"reserve barely grows (+16%) while lambda crashes (x125), so the decrease is not
+a scale artifact." That phrasing was TOO FAST — it conflated "reserve" with the
+"volume growth" the (T)/Ruelle defence actually invokes. Re-check of the prime
+operator norm $\|c_2 P\|$ found it DOES grow (+84%, 0.24->0.44). So growth
+exists; the naive "nothing grows" claim is withdrawn.
+
+**Corrected kill (stronger)**: the growth is in the INDEFINITE prime part
+(+84%), while the POSITIVE reserve stagnates (+16%) — a 5x asymmetry. Property
+(T) and Ruelle both require a POSITIVE, rigid volume/geometry growth to floor the
+gap; the data shows the growth is destructive/indefinite, with the positive
+reserve unable to keep pace. The rigid-constant gap they need does not exist;
+the decrease is REAL dynamics, not normalization. **Both dead.** Quantified
+mechanism for lambda's accelerating crash: indefinite "spear" +84% vs positive
+"shield" +16%, gap widening. Methodological note: even the executioner's own
+kill-stroke was sent back through a scale-choice re-check before landing.
 
 ---
 
