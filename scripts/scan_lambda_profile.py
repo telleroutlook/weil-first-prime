@@ -69,7 +69,7 @@ class SchurCache:
     """
 
     def __init__(self, L_num: int, L_den: int, N: int = DEFAULT_N,
-                 d: int = DEFAULT_D, sector: str = "even"):
+                 d: int = DEFAULT_D, sector: str = "even", resume: bool = False):
         self.L_num, self.L_den = L_num, L_den
         self.L_val = L_num / L_den
         self.N, self.d = N, d
@@ -82,11 +82,67 @@ class SchurCache:
         self.c_L = float(self.c_L_frac)
         self.kappa = float(KAPPA_FRAC)
 
+        if resume and self._load_cache_checkpoint():
+            print(f"  [checkpoint] loaded assembled cache for "
+                  f"L={L_num}/{L_den} [{sector}] (skipped {self.n} integral rows)",
+                  flush=True)
+            return
+
         print(f"  Building cache for L={L_num}/{L_den} [{sector}]  "
               f"c_L={self.c_L:.5f}  N={N} d={d}", flush=True)
         t0 = time.time()
         self._build()
+        self._save_cache_checkpoint()
         print(f"  Cache built in {time.time()-t0:.1f}s", flush=True)
+
+    # ── Cache checkpoint (F_base + R_eta are the expensive integral products) ──
+
+    def _ckpt_path(self) -> Path:
+        p = ROOT / "pilots"
+        p.mkdir(exist_ok=True)
+        return p / f"lambda-cache-{self.L_num}_{self.L_den}-{self.sector}.checkpoint.json"
+
+    def _save_cache_checkpoint(self) -> None:
+        n = self.n
+        def enc(a):
+            # Serialize an Arb ball as (midpoint, radius) decimal strings. Mid is
+            # written at 80 sig digits (below prec=256 ~ 77 decimal) and rad at 30;
+            # reconstruction arb(mid, rad) then OUTWARD-contains the original ball
+            # (verified: original in reconstructed), so the certified enclosure is
+            # preserved, never tightened.
+            return [a.mid().str(80, radius=False), a.rad().str(30, radius=False)]
+        data = {
+            "L_num": self.L_num, "L_den": self.L_den, "sector": self.sector,
+            "N": self.N, "d": self.d,
+            "G_diag": [enc(g) for g in self.G_diag],
+            "F_base": [[enc(self.F_base[i][j]) for j in range(n)] for i in range(n)],
+            "R_eta":  [[enc(self.R_eta[i][j]) for j in range(n)] for i in range(n)],
+        }
+        path = self._ckpt_path()
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data))
+        tmp.replace(path)  # atomic
+
+    def _load_cache_checkpoint(self) -> bool:
+        path = self._ckpt_path()
+        if not path.exists():
+            return False
+        try:
+            d = json.loads(path.read_text())
+            if (d.get("L_num"), d.get("L_den"), d.get("sector"), d.get("N"), d.get("d")) \
+                    != (self.L_num, self.L_den, self.sector, self.N, self.d):
+                return False
+            def dec(pair):
+                mid_s, rad_s = pair
+                return arb(arb(mid_s), arb(rad_s))
+            self.G_diag = [dec(p) for p in d["G_diag"]]
+            self.G_diag_f = [float(g.mid()) for g in self.G_diag]
+            self.F_base = [[dec(p) for p in row] for row in d["F_base"]]
+            self.R_eta  = [[dec(p) for p in row] for row in d["R_eta"]]
+            return True
+        except Exception as e:
+            print(f"  [checkpoint] cache load failed ({e}), rebuilding", flush=True)
+            return False
 
     def _build(self):
         n, indices = self.n, self.indices
@@ -232,6 +288,41 @@ SCAN_POINTS = [
 SECTOR_ND = {"even": (8, 16), "odd": (6, 13)}
 
 
+def _profile_path() -> Path:
+    return ROOT / "pilots" / "lambda_profile.json"
+
+
+def _save_profile(results, sectors, total_s) -> None:
+    """Incrementally persist completed profile points (crash/interrupt safe)."""
+    out_path = _profile_path()
+    out_path.parent.mkdir(exist_ok=True)
+    tmp = out_path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(
+        {"results": results, "total_s": total_s, "sectors": sectors,
+         "method": "Arb residual cert, four-term S0=S_VV+S_VK+S_KV+S_KK, real S2",
+         "note": "lambda_lower_bound is certified strict lower bound (min over sectors)"},
+        indent=2))
+    tmp.replace(out_path)
+
+
+def _load_completed(resume: bool) -> dict:
+    """Return {L_float: result} of already-completed points, if resuming."""
+    if not resume:
+        return {}
+    p = _profile_path()
+    if not p.exists():
+        return {}
+    try:
+        data = json.loads(p.read_text())
+        done = {round(r["L"], 6): r for r in data.get("results", [])}
+        if done:
+            print(f"  [resume] {len(done)} profile point(s) already complete: "
+                  f"{sorted(done)}", flush=True)
+        return done
+    except Exception:
+        return {}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--quick", action="store_true",
@@ -240,6 +331,8 @@ def main() -> int:
                         help="Scan only point index (0=L=7/20, 1=L=0.42, 2=L=0.46)")
     parser.add_argument("--sector", choices=["even", "odd", "both"], default="both",
                         help="Which parity sector(s) to scan (default both)")
+    parser.add_argument("--resume", action="store_true",
+                        help="Reuse cached integral matrices and skip completed points")
     args = parser.parse_args()
 
     if args.point is not None:
@@ -252,56 +345,64 @@ def main() -> int:
     sectors = ["even", "odd"] if args.sector == "both" else [args.sector]
 
     print("λ(L) Profile Scanner — First-Prime Window (four-term S0, real S2)", flush=True)
-    print(f"Scanning {len(points)} point(s) x {len(sectors)} sector(s)", flush=True)
+    print(f"Scanning {len(points)} point(s) x {len(sectors)} sector(s)"
+          f"{' [resume]' if args.resume else ''}", flush=True)
 
-    results = []
+    completed = _load_completed(args.resume)
+    results = list(completed.values())
     t_total = time.time()
 
-    for L_num, L_den, label in points:
-        print(f"\n{'='*55}", flush=True)
-        print(f"{label}", flush=True)
-        t0 = time.time()
+    try:
+        for L_num, L_den, label in points:
+            L_key = round(L_num / L_den, 6)
+            if L_key in completed:
+                print(f"\n[skip] {label} already complete "
+                      f"(λ >= {completed[L_key]['lambda_lower_bound']:.5f})", flush=True)
+                continue
+            print(f"\n{'='*55}", flush=True)
+            print(f"{label}", flush=True)
+            t0 = time.time()
 
-        per_sector = {}
-        c_L_val = None
-        for sector in sectors:
-            N, d = SECTOR_ND[sector]
-            cache = SchurCache(L_num, L_den, N, d, sector=sector)
-            c_L_val = cache.c_L
-            print(f"  [{sector}] Binary searching Λ_0...", flush=True)
-            best = cache.binary_search(lo=2**-30, hi=0.05, tol=1e-3)
-            per_sector[sector] = best
-            print(f"  [{sector}] λ >= {best:.5f}", flush=True)
+            per_sector = {}
+            c_L_val = None
+            for sector in sectors:
+                N, d = SECTOR_ND[sector]
+                cache = SchurCache(L_num, L_den, N, d, sector=sector,
+                                   resume=args.resume)
+                c_L_val = cache.c_L
+                print(f"  [{sector}] Binary searching Λ_0...", flush=True)
+                best = cache.binary_search(lo=2**-30, hi=0.05, tol=1e-3)
+                per_sector[sector] = best
+                print(f"  [{sector}] λ >= {best:.5f}", flush=True)
 
-        # The certified profile value is the min over sectors (both must hold).
-        lam = min(per_sector.values())
-        elapsed = time.time() - t0
-        print(f"\n  λ({L_num}/{L_den}) >= {lam:.5f}  (c_L={c_L_val:.5f})  "
-              f"per-sector={per_sector}  [{elapsed:.0f}s]", flush=True)
+            # The certified profile value is the min over sectors (both must hold).
+            lam = min(per_sector.values())
+            elapsed = time.time() - t0
+            print(f"\n  λ({L_num}/{L_den}) >= {lam:.5f}  (c_L={c_L_val:.5f})  "
+                  f"per-sector={per_sector}  [{elapsed:.0f}s]", flush=True)
 
-        results.append({
-            "L": L_num / L_den, "c_L": c_L_val,
-            "lambda_lower_bound": lam, "per_sector": per_sector,
-            "elapsed_s": elapsed,
-        })
+            results.append({
+                "L": L_num / L_den, "c_L": c_L_val,
+                "lambda_lower_bound": lam, "per_sector": per_sector,
+                "elapsed_s": elapsed,
+            })
+            _save_profile(results, sectors, time.time() - t_total)  # incremental
+    except KeyboardInterrupt:
+        print("\n[interrupted] saving completed points; "
+              "rerun with --resume to continue", flush=True)
+        _save_profile(results, sectors, time.time() - t_total)
+        return 130
 
     total = time.time() - t_total
     print(f"\n{'='*55}", flush=True)
     print(f"Total: {total:.0f}s", flush=True)
     print("\nλ(L) lower bounds:", flush=True)
-    for r in results:
+    for r in sorted(results, key=lambda r: r["L"]):
         print(f"  L={r['L']:.4f}: λ >= {r['lambda_lower_bound']:.5f}"
-              f"  (c_L={r['c_L']:.4f})  {r['per_sector']}", flush=True)
+              f"  (c_L={r['c_L']:.4f})  {r.get('per_sector', {})}", flush=True)
 
-    out_path = ROOT / "pilots" / "lambda_profile.json"
-    out_path.parent.mkdir(exist_ok=True)
-    with open(out_path, "w") as f:
-        json.dump({"results": results, "total_s": total,
-                   "sectors": sectors,
-                   "method": "Arb residual cert, four-term S0=S_VV+S_VK+S_KV+S_KK, real S2",
-                   "note": "lambda_lower_bound is certified strict lower bound (min over sectors)"},
-                  f, indent=2)
-    print(f"\nWritten to {out_path}", flush=True)
+    _save_profile(results, sectors, total)
+    print(f"\nWritten to {_profile_path()}", flush=True)
     return 0
 
 
