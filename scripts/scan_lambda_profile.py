@@ -287,9 +287,13 @@ SCAN_POINTS = [
 # Per-sector expansion parameters (match recompute_schur / o1b_gate).
 SECTOR_ND = {"even": (8, 16), "odd": (6, 13)}
 
+# Output profile path (overridable via --out so L* refinement never clobbers
+# the canonical M2 profile lambda_profile.json).
+_PROFILE_FILE = "lambda_profile.json"
+
 
 def _profile_path() -> Path:
-    return ROOT / "pilots" / "lambda_profile.json"
+    return ROOT / "pilots" / _PROFILE_FILE
 
 
 def _save_profile(results, sectors, total_s) -> None:
@@ -333,9 +337,22 @@ def main() -> int:
                         help="Which parity sector(s) to scan (default both)")
     parser.add_argument("--resume", action="store_true",
                         help="Reuse cached integral matrices and skip completed points")
+    parser.add_argument("--L", default=None,
+                        help="Scan a single arbitrary L given as 'num/den' (e.g. 37/100). "
+                             "Overrides --point/--quick; used for M1 L* refinement.")
+    parser.add_argument("--out", default=None,
+                        help="Output profile filename under pilots/ (default lambda_profile.json). "
+                             "Use a distinct name for L* refinement to avoid clobbering the M2 profile.")
     args = parser.parse_args()
 
-    if args.point is not None:
+    if args.out is not None:
+        global _PROFILE_FILE
+        _PROFILE_FILE = args.out
+
+    if args.L is not None:
+        ln, ld = (int(x) for x in args.L.split("/"))
+        points = [(ln, ld, f"L={ln}/{ld} (L* refine)")]
+    elif args.point is not None:
         points = [SCAN_POINTS[args.point]]
     elif args.quick:
         points = SCAN_POINTS[:1]

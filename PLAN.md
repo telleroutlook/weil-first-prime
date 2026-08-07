@@ -64,8 +64,11 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
 
 - **M1 · E2 端点吸收窗口有效射程**：计算临界 L*，证明 L>L* 吸收法失效。
   现有正确四项 S0 工具，可落地。目标期刊：*Analysis and Mathematical Physics*。
-- **M2 · λ(L) 廓线重做**：用修正后的四项 S0 重扫第一窗口，给严格下界廓线。
-  （旧廓线基于 S_KK-only，需重做。）
+  **M2 廓线已定位 L* ∈ (0.35, 0.42)**：认证下界只在 L=7/20 为正（even 7.8e-4），
+  到 L=0.42 已塌为 0（odd 先失效）。下一步细化 L* 并证 L>L* 存在显式反例。
+- **M2 · λ(L) 廓线重做**：✅ 完成（commit d746086，`pilots/lambda_profile.json`）。
+  四项 S0 + 真 S2，两扇区，3 点 certify 级；positive 只存活于 L=7/20。
+  修复了 `scan_lambda_profile.py` 两个漏项 bug（S_KK-only + S2=0）并加 checkpoint/resume。
 - **M3 · proofctl 方法论论文**：C10/C11 pilot 故事本身独立可发表——
   “一个真实数学 pilot 如何暴露并修复验证系统的两类盲区”。目标：*J. Automated Reasoning* / CICM。
 - **M4 · E3 Lean 扩展**：定理 1–3 形式化已成，扩展至更多引理。ITP/CPP 2027。
