@@ -27,7 +27,7 @@ regenerated because the old certificate has two process defects (§3).
 | pilots/cert_fp035_clean.json | TRUSTED | canonical clean cert (four-term S0, real c_L): even min_eig 0.00095, odd 0.01896. |
 | scripts/reproduce_fp035.py | FIXED | four-term S0 + --out {cert}. Was S_KK-only (16x inflation), now fixed. |
 | src/assemble/o1b_gate.py | TRUSTED | production four-term S0, mpmath LDL. |
-| scripts/scan_lambda_profile.py | HAS KNOWN BUG | S0 = S_KK only. Must fix to four-term before use. |
+| scripts/scan_lambda_profile.py | FIXED (2026-08-07) | four-term S0 + real S2 (was S_KK-only + S2=0), both sectors, checkpoint/resume. S0 line matches recompute_schur exactly. |
 | pilots/cert_schur_correct_cL.json | RETIRED / DO NOT USE | S_KK-only (16x inflated min_eig 0.01494) + shutil.copy. Do not reuse its numbers. |
 
 Most dangerous bug pattern: omitting a second-moment term (S_VV/S_VK/S_KV or S2)

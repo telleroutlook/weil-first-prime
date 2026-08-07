@@ -96,7 +96,7 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
 | checker/fp035/mutation_catalog.py | OK 可信 | 6 mutant,kill=100%。 |
 | scripts/reproduce_fp035.py | OK 已修 | 四项 S0 + --out。原为 S_KK-only(虚高16x),已修。 |
 | src/assemble/o1b_gate.py | OK 可信 | 生产级四项 S0,mpmath LDL。 |
-| scripts/scan_lambda_profile.py | WARN 有bug | S0=S_KK only。用前必须先修成四项 S0。 |
+| scripts/scan_lambda_profile.py | OK 已修 (2026-08-07) | 四项 S0 + 真 S2（原 S_KK-only + S2=0），两扇区，checkpoint/resume。S0 行与 recompute_schur 完全一致。commit 7325a8e。 |
 | pilots/cert_schur_correct_cL.json | DEAD 废弃 | S_KK-only(虚高16x)+ shutil.copy。勿复用数值。 |
 
 最危险 bug 模式:漏二阶矩项 -> 残差偏小 -> 判据假通过。S0 必须四项。
