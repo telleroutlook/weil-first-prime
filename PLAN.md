@@ -62,10 +62,17 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
 
 ## 第三编 · 中期（已有明确路径，数月）
 
-- **M1 · E2 端点吸收窗口有效射程**：计算临界 L*，证明 L>L* 吸收法失效。
-  现有正确四项 S0 工具，可落地。目标期刊：*Analysis and Mathematical Physics*。
-  **M2 廓线已定位 L* ∈ (0.35, 0.42)**：认证下界只在 L=7/20 为正（even 7.8e-4），
-  到 L=0.42 已塌为 0（odd 先失效）。下一步细化 L* 并证 L>L* 存在显式反例。
+- **M1 · E2 端点吸收窗口有效射程**：🟡 大部完成。数值定位 + 认证负见证已成。
+  目标期刊：*Analysis and Mathematical Physics*。
+  - L* 定位：even-sector L* ∈ (0.36, 0.37)（L≤0.36 以 λ≥7.8e-4 认证，L≥0.37 贴 2^-30 floor）；
+    odd-sector L* ∈ (0.37, 0.39)。FP-0.35 (L=7/20) 处于吸收法认证射程的实际边缘。
+  - **认证负见证（PLAN 附3 验收）已达成**：L=0.39 odd，
+    w=(-37/167,12/611,-1/5,-56/197,-25/62,-370/453)，wᵀCw ∈ [-0.01555,-0.00994] < 0
+    （Arb 认证，commit f70d0a8）。显式证明 Schur 正定判据在 L>L* 失效。
+    工具 `scripts/lstar_negative_witness.py`。
+  - 未完：L=0.46 even 浮点为负（min_eig=-1.2e-2）但 Arb 未认证——R_eta 区间依赖爆炸
+    （rad 27.7 ≫ 信号 0.012），是 build_R 组装法问题（非精度/深度），需更紧的 R 组装
+    （mpmath LDL 或仿射区间）才能认证。诚实态：float-negative, Arb-pending。
 - **M2 · λ(L) 廓线重做**：✅ 完成（commit d746086，`pilots/lambda_profile.json`）。
   四项 S0 + 真 S2，两扇区，3 点 certify 级；positive 只存活于 L=7/20。
   修复了 `scan_lambda_profile.py` 两个漏项 bug（S_KK-only + S2=0）并加 checkpoint/resume。
