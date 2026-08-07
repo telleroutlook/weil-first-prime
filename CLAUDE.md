@@ -62,11 +62,29 @@ the first-prime layer. Do not resume work in weil-lower-bound.
   Path B prime matrices to obtain "double credit."
 - **Conclusion boundary.** Published conclusions are bounded to "finite-scale Weil
   positivity at L ≤ 7/20." Never write RH, "near RH," or equivalent in any file.
-- **FP-0.35 status (2026-08-06)**: Proved via Arb 256-bit residual certification with correct c_L = log(2πL) + γ_E ≈ 1.36527. Certificate: pilots/cert_schur_correct_cL.json. Both even (N=8) and odd (N=6) sectors certified. Conclusion remains bounded to finite-scale Weil positivity at L ≤ 7/20.
+- **FP-0.35 status (2026-08-07, corrected)**: Mathematically HOLDS — L=7/20 both sectors have positive Schur min-pivot (even +0.008704 / min_eig +0.00095; odd +0.053134), using the FULL four-term S0 = S_VV+S_VK+S_KV+S_KK, real c_L ≈ 1.36527, min-pivot judge; confirmed by two independent implementations (element-wise max|C_A−C_B|=4e-3). The retired certificate pilots/cert_schur_correct_cL.json is DEFECTIVE: S0 used S_KK only (min_eig inflated ~16x to 0.01494) and it was produced by shutil.copy — do NOT reuse its numbers. A clean certificate (real recomputation via checker/fp035/recompute_schur.py) is being regenerated. Even-sector margin is small but strictly positive. Bounded to finite-scale Weil positivity at L ≤ 7/20 (does NOT imply RH).
 - **Window check mandatory.** Any certificate claiming the first-prime window must
   carry `log2 ≤ 2L < log3` verified by certified rational bounds, not enumeration.
 
-## proofctl v0.3.4 security invariants (INV-01–INV-12)
+## proofctl v0.3.16 release conditions & security invariants
+
+proofctl is at v0.3.16 (this repo is its first pilot). Two release conditions
+were ADDED because this pilot exposed them — every FP-0.35 certificate MUST
+satisfy both:
+
+- **C10 (no copy-only generator)**: an attestation claiming from-scratch
+  recomputation whose generator_cmds is a pure file-copy (shutil.copy, cp, cat,
+  ln) is BLOCKED. Checkers must genuinely recompute, not copy a stored cert.
+- **C11 (checker mutation coverage)**: such an attestation must carry
+  mutation_kill_rate == "100%" and a non-empty mutation_catalog_digest, proving
+  the checker is sensitive to every asserted term. FP-0.35 catalog:
+  checker/fp035/mutation_catalog.py (artifact pilots/mutation_catalog_fp035.json,
+  6/6 kill). Catches the retired S_KK-only omitted-term bug.
+
+Enable per-domain in policy-v2.json via forbid_copy_only_generators: true and
+require_checker_mutation_coverage: true (both on for weil/fp035).
+
+### proofctl security invariants (INV-01–INV-12)
 
 These are enforced by proofctl's kernel layer. Violations produce hard errors,
 not warnings. Every PR that touches checker, runtime, or attestation code must

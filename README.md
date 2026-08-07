@@ -30,11 +30,11 @@ first-prime window infrastructure and two P0 integrator bug fixes
 | Theorem 4: prime Legendre matrix algebra | Closed | Q[τ] exact algebra |
 | Theorem 5: split-residual Schur criterion | Closed | Analytic proof |
 | Theorem 6: Path A strict negative witnesses | Closed | Rational + Arb-certified |
-| FP-0.35 | **PROVED** | Arb 256-bit Schur residual certification |
+| FP-0.35 | **HOLDS** (min_pivot>0, four-term S0) | cert regenerating for C10/C11 compliance |
 | O1-A (weakened path) | Falsified | Two rational negative witnesses |
 | O1-B even sector (N=8, d=16, η=1/2) | **CERTIFIED** min_pivot=0.529 (c_L=0) | certify tier (depth=4, dps=100) |
 | O1-B odd sector (N=6, d=13, η=1/2)  | **CERTIFIED** min_pivot=0.560 (c_L=0) | certify tier (depth=4, dps=100) |
-| FP-0.35 Schur (correct c_L=1.365) | **CERTIFIED** | Mixed-precision Arb residual certification (2026-08-06) |
+| FP-0.35 Schur (correct c_L=1.365, four-term S0) | even min_pivot=+0.0087, odd=+0.053 (both >0) | recompute checker; retired cert had S_KK-only/copy defects |
 | Path A ∩ Path B (100 M_K entries)   | **Verified**  all intersect   | depth=4, 23 tests |
 | O2: trusted proof chain | **In progress** | Bernstein remainder + replay pending |
 
