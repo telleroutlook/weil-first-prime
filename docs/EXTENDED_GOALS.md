@@ -3,6 +3,16 @@
 These goals are pursued after FP-0.35 is proved (Theorem 7.3, 2026-08-06).
 E1–E3 are mathematically self-contained; Routes 0–3 are the post-proof programme.
 
+> **Related (SPECULATIVE, not certify-grade):** a purely speculative RH roadmap —
+> the critical canonical-system / Λ=0 zero-margin analysis program — lives in
+> `docs/SPECULATIVE_ROADMAP.md`. It contains **no certify-grade claims**, does not
+> enter the proofctl chain, and does not touch this repo's scope boundary
+> (FP-0.35 does not imply RH). It shares three cross-referenced contact points
+> with this file (PSWF-as-coordinates in Route 3; the tail term τ(X,L) in Honesty
+> nail 2; the A+C−P operator form in the Route 3 addendum) — those are independent
+> corroboration from the continuous side, **not** new progress. Keep the evidence
+> grades separate when reading across the two files.
+
 ---
 
 ## Post-FP-0.35 Research Routes
