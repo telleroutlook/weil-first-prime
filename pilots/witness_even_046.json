@@ -1,0 +1,30 @@
+{
+  "L": 0.46,
+  "L_den": 100,
+  "L_num": 46,
+  "N": 8,
+  "b_L": 0.4868820004857912,
+  "c_L": 1.6385639418118794,
+  "certified_negative": false,
+  "d": 16,
+  "lambda0": 9.313225746154785e-10,
+  "min_eig_float": -0.009235536160328912,
+  "note": "w\u1d40 C w certified enclosure upper endpoint < 0 proves the Schur complement is NOT positive definite at this L: an explicit negative witness for L > L*.",
+  "quadratic_form_str": "[+/- 0.525]",
+  "quadratic_form_wCw_enclosure": [
+    -0.5246402795513692,
+    0.5061691918323217
+  ],
+  "sector": "even",
+  "witness_norm_sq": 1.000000833712963,
+  "witness_w": [
+    "-21/164",
+    "-45/673",
+    "10/917",
+    "-61/615",
+    "-103/584",
+    "-91/368",
+    "-268/615",
+    "-557/672"
+  ]
+}
