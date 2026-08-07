@@ -36,7 +36,8 @@ exposed two \emph{kernel blind spots} that every prior release had silently
 passed: (i) a generator that merely \emph{copied} a stored certificate while its
 attestation claimed from-scratch recomputation, and (ii) a checker that
 recomputed honestly but \emph{omitted a term} of the quantity it claimed to
-verify, emitting a false pass with a $16\times$-inflated margin. Neither is
+verify, emitting a false pass with a $\sim\!16\times$-inflated margin (a factor of
+$15.7$, from $0.01494$ reported vs.\ $0.00095$ true). Neither is
 caught by digest-binding, schema validation, or ``all obligations pass'':
 the copy-generator produces byte-identical replays, and the omitted-term checker
 is internally consistent. We describe the two release conditions added in
@@ -90,7 +91,7 @@ that \proofctl{} had been happily accepting:
   \texttt{pass} while computing the second-moment matrix $S^{(0)}$ as its
   $S_{KK}$ block alone, silently dropping the three positive blocks
   $S_{VV}+S_{VK}+S_{KV}$. Dropping positive mass shrinks the Schur residual and
-  \emph{inflates} the certified eigenvalue --- here by roughly $16\times$
+  \emph{inflates} the certified eigenvalue --- here by a factor of $15.7$
   ($0.01494$ reported vs.\ $0.00095$ true). The checker was internally
   consistent and passed its own schema; it was simply verifying a different,
   easier quantity than the one it claimed.
