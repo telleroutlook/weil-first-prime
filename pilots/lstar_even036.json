@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "L": 0.36,
+      "c_L": 1.3934414837788938,
+      "lambda_lower_bound": 0.0007812509167706594,
+      "per_sector": {
+        "even": 0.0007812509167706594
+      },
+      "elapsed_s": 496.662535905838
+    }
+  ],
+  "total_s": 496.66306614875793,
+  "sectors": [
+    "even"
+  ],
+  "method": "Arb residual cert, four-term S0=S_VV+S_VK+S_KV+S_KK, real S2",
+  "note": "lambda_lower_bound is certified strict lower bound (min over sectors)"
+}
