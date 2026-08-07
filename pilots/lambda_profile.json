@@ -3,60 +3,39 @@
     {
       "L": 0.35,
       "c_L": 1.3652706068122242,
-      "lambda_lb": 0.032421875327418095,
-      "elapsed_s": 1403.4987978935242
+      "lambda_lower_bound": 0.0007812509167706594,
+      "per_sector": {
+        "even": 0.0007812509167706594,
+        "odd": 0.04921875001455192
+      },
+      "elapsed_s": 199.75569367408752
     },
     {
       "L": 0.42,
       "c_L": 1.5475921636061483,
-      "lambda_lb": 0.0,
-      "elapsed_s": 171.88667798042297
+      "lambda_lower_bound": 0.0,
+      "per_sector": {
+        "even": 9.313225746154785e-10,
+        "odd": 0.0
+      },
+      "elapsed_s": 696.2581589221954
     },
     {
       "L": 0.46,
       "c_L": 1.6385639418118794,
-      "lambda_lb": 0.0,
-      "elapsed_s": 172.26322174072266
-    },
-    {
-      "L": 0.42,
-      "c_L": 1.54759,
-      "effect_b_data": [
-        {
-          "N": 8,
-          "d": 16,
-          "b_L": 0.578,
-          "float64_min_eig": -0.032,
-          "elapsed_s": 180
-        },
-        {
-          "N": 10,
-          "d": 20,
-          "b_L": 0.795,
-          "float64_min_eig": -0.029,
-          "elapsed_s": 180
-        },
-        {
-          "N": 12,
-          "d": 24,
-          "b_L": 0.973,
-          "float64_min_eig": -0.026,
-          "elapsed_s": 807
-        },
-        {
-          "N": 14,
-          "d": 28,
-          "b_L": 1.124,
-          "float64_min_eig": -0.024,
-          "elapsed_s": 1429
-        }
-      ],
-      "diagnosis": "superlinear: improvement rate decelerating (+0.003, +0.003, +0.002)",
-      "n_needed_estimate": "N~32-40 for min_eig>0 at L=0.42",
-      "time_estimate_N32": "~2 hours",
-      "integration_depth_ratio": "1.0 (depth=3 == depth=4, inflation not from integrator)"
+      "lambda_lower_bound": 0.0,
+      "per_sector": {
+        "even": 0.0,
+        "odd": 0.0
+      },
+      "elapsed_s": 695.5184090137482
     }
   ],
-  "total_s": 1747.6491150856018,
-  "effect_b_conclusion": "PROSPECT B (superlinear): Route 2 needs N>=32 baseline"
+  "total_s": 1591.5341391563416,
+  "sectors": [
+    "even",
+    "odd"
+  ],
+  "method": "Arb residual cert, four-term S0=S_VV+S_VK+S_KV+S_KK, real S2",
+  "note": "lambda_lower_bound is certified strict lower bound (min over sectors)"
 }
