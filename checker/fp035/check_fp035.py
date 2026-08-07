@@ -37,25 +37,32 @@ OBLIGATION_IDS = [
 def verify() -> tuple[bool, str]:
     """Verify the five FP-0.35 structural obligations."""
 
-    # 1. Both sectors certified: attested by lem-o1b-even and lem-o1b-odd
-    #    (these are dependency claims; their acceptance is verified by proofctl)
-    obl_1_ok = True
-    obl_1_msg = ("lem-o1b-even and lem-o1b-odd both ACCEPTED with positive LDL^T pivots: "
-                 "even min_pivot ≈ 0.529, odd min_pivot ≈ 0.560 (certify tier, mpmath dps=100)")
+    # 1. Both sectors certified: INDEPENDENTLY RECOMPUTED here (not trusted).
+    #    recompute_schur rebuilds C = b_L*F - R_eta with the FULL four-term
+    #    S0 = S_VV+S_VK+S_KV+S_KK, real c_L, and reports the min LDL^T pivot.
+    from checker.fp035.recompute_schur import verify_sector
+    piv_even, bL_even, _ = verify_sector(7, 20, "even", 8, 16)
+    piv_odd, bL_odd, _ = verify_sector(7, 20, "odd", 6, 13)
+    obl_1_ok = piv_even > 0 and piv_odd > 0
+    obl_1_msg = (f"independent recompute (four-term S0, real c_L, min-pivot judge): "
+                 f"even b_L={bL_even:.4f} min_pivot={piv_even:+.6f}; "
+                 f"odd b_L={bL_odd:.4f} min_pivot={piv_odd:+.6f}")
 
-    # 2. Theorem 5 Schur criterion conclusion:
-    #    Given b_L > 0 and b_L*F - R_eta > 0 (pos. def.) in both sectors,
-    #    Theorem 5 gives Q_W^{7/20} >= (L_0 - kappa_L) * I >= L_0 * I - kappa_L * I.
-    #    Since kappa_L < b_L and b_L > 0, the form is bounded below by L_0/2 > 0.
-    obl_2_ok = True
-    obl_2_msg = "Theorem 5 Schur criterion applies: b_L > 0 and Schur complement positive definite"
+    # 2. Theorem 5 Schur criterion holds iff both recomputed Schur complements
+    #    are positive definite (min_pivot > 0).
+    obl_2_ok = obl_1_ok
+    obl_2_msg = ("Theorem 5 applies iff both recomputed Schur complements are positive definite: "
+                 + ("satisfied" if obl_2_ok else "NOT satisfied (min_pivot <= 0)"))
 
-    # 3. c* = min_pivot / b_L > 0
-    #    From certify tier: even b_L ≈ 2.125, min_pivot ≈ 0.529 → c* ≈ 0.249
-    #    Odd b_L ≈ 1.925, min_pivot ≈ 0.560 → c* ≈ 0.291
-    #    Both positive.
-    obl_3_ok = True
-    obl_3_msg = "c* > 0: even c* ≈ 0.249, odd c* ≈ 0.291 (pilot-level; certified at c_L=0)"
+    # 3. c* = min_pivot / b_L > 0 in both sectors (from recomputed pivots).
+    if obl_1_ok:
+        cstar_even = piv_even / bL_even if bL_even else 0.0
+        cstar_odd = piv_odd / bL_odd if bL_odd else 0.0
+        obl_3_ok = cstar_even > 0 and cstar_odd > 0
+        obl_3_msg = f"c* > 0: even c*={cstar_even:.6f}, odd c*={cstar_odd:.6f}"
+    else:
+        obl_3_ok = False
+        obl_3_msg = "c* not positive: at least one sector has min_pivot <= 0"
 
     # 4. Conclusion bounded to finite-scale: lambda(7/20) > 0 only,
     #    not global positivity, not RH, not any other prime window

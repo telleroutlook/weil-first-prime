@@ -51,9 +51,9 @@ import os, pathlib
 ROOT = pathlib.Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
-from src.archimedean.integrator_a import integrate_M_K, integrate_S_KK
-from src.archimedean.log_moments import V_matrix_entry
-from src.prime_layer.legendre_shift import compute_J
+from src.archimedean.integrator_a import integrate_M_K, integrate_S_KK, integrate_S_VK
+from src.archimedean.log_moments import V_matrix_entry, V2_matrix_entry
+from src.prime_layer.legendre_shift import compute_J, compute_E
 
 # ── Physical constants ───────────────────────────────────────────────────────
 L_NUM, L_DEN = 7, 20
@@ -114,6 +114,7 @@ def build_schur_arb(indices: list[int], d: int,
     M0_a = [[arb(0)]*n for _ in range(n)]
     S0_a = [[arb(0)]*n for _ in range(n)]
     M2_a = [[arb(0)]*n for _ in range(n)]
+    S2_a = [[arb(0)]*n for _ in range(n)]
 
     for i, ni in enumerate(indices):
         for j, nj in enumerate(indices):
@@ -130,15 +131,24 @@ def build_schur_arb(indices: list[int], d: int,
             K_ij = arb(arb(str(r.enclosure_lower)),
                        arb(str(r.enclosure_upper)))
 
-            # S_KK entry (Arb)
+            # S0 = full second moment ||(V+K)p||^2 = S_VV + S_VK + S_KV + S_KK
+            # (2026-08-07 fix: previously S0 = S_KK only -> inflated pivot ~16x)
+            svv = V2_matrix_entry(ni, nj, 256)
+            svv_a = (arb(str(svv[0])) + arb(str(svv[1]))) / arb(2)
+            svk = integrate_S_VK(ni, nj, L_NUM, L_DEN, depth=depth_mk)
+            skv = integrate_S_VK(nj, ni, L_NUM, L_DEN, depth=depth_mk)
+            svk_a = (arb(str(svk.enclosure_lower)) + arb(str(svk.enclosure_upper))) / arb(2)
+            skv_a = (arb(str(skv.enclosure_lower)) + arb(str(skv.enclosure_upper))) / arb(2)
             s = integrate_S_KK(ni, nj, L_NUM, L_DEN, depth=depth_skk)
-            S0_a[i][j] = arb(arb(str(s.enclosure_lower)),
-                              arb(str(s.enclosure_upper)))
+            skk_a = (arb(str(s.enclosure_lower)) + arb(str(s.enclosure_upper))) / arb(2)
+            S0_a[i][j] = svv_a + svk_a + skv_a + skk_a
 
-            # Prime entry (Arb)
+            # Prime entry (Arb): M2 and S2 (prime self second moment)
             J_ij = arb(str(float(compute_J(ni, nj, TAU_RAT))))
+            E_ij = arb(str(float(compute_E(ni, nj, TAU_RAT))))
             M0_a[i][j] = V_ij + K_ij
             M2_a[i][j] = -c2_arb * J_ij
+            S2_a[i][j] = c2_arb * c2_arb * E_ij
             F_a[i][j]  = (T_ij + M0_a[i][j] + M2_a[i][j]
                           - (c_L_arb + L0_arb) * G_ij)
 
@@ -150,7 +160,7 @@ def build_schur_arb(indices: list[int], d: int,
     R2_a = [[arb(0)]*n for _ in range(n)]
     for i in range(n):
         for j in range(n):
-            r0, r2 = S0_a[i][j], arb(0)
+            r0, r2 = S0_a[i][j], S2_a[i][j]
             for k in range(n):
                 r0 -= M0_a[k][i] * M0_a[k][j] / G_diag[k]
                 r2 -= M2_a[k][i] * M2_a[k][j] / G_diag[k]

@@ -198,3 +198,31 @@ broken.
 INCIDENT: the FP-0.35 certificate had a copy generator AND a 16x-inflated
 eigenvalue, yet the SIGN (lambda(7/20)>0) is correct. "Bug in the certificate"
 was true; "the proof fails" was false.
+
+---
+
+## PART E — Mutation Testing Nuance (added 2026-08-07)
+
+### E1. Kill criterion must match the mutated term's real magnitude of influence
+TRIGGER: designing a mutation catalog to prove a checker is sensitive to each
+asserted term (proofctl C11).
+RULE: a mutant that zeros a term whose true influence is tiny will NOT flip the
+verdict — this does not mean the checker is blind; that term genuinely barely
+matters. Classify mutants: JUDGE-sensitivity (sign flip, zero a dominant term,
+swap min-pivot->min-eig) MUST be killed; PRECISION mutants (zero a ~1e-4-
+influence term) judged by a RELATIVE tolerance, or replaced by a large-factor
+scaling mutant that DOES move the pivot.
+INCIDENT: L=7/20 EVEN sector, zeroing S2 moved min_pivot +0.0088 -> +0.0087
+(~1e-4). A naive "100% kill" rule would wrongly flag the checker insensitive to
+S2. S2 has negligible even-sector influence; a large-factor S2 scaling mutant is
+the correct sensitivity probe.
+
+### E2. Prefer self-contained recomputation over certificate-reading checkers
+TRIGGER: writing or auditing a checker.
+RULE: a checker that RECOMPUTES the claim from primitives is structurally immune
+to copy-cert and self-attestation attacks (unlike one that reads+validates a
+supplied certificate). Recompute-style checkers still need mutation coverage for
+OMITTED-TERM bugs, but cannot be fooled by a doctored certificate.
+INCIDENT: recompute_schur.py recomputes C from scratch; the retired
+check_fp035.py hard-coded all obligations True while its generator merely copied
+the certificate. Recompute is the fix for both.

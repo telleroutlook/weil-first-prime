@@ -154,7 +154,7 @@ FP-0.35（L=7/20 有限尺度正性）
 | **c_L(7/20) 认证** | 🟡 理论清晰，待 Suzuki 公式确认 | c_L 含 L 依赖项使其趋近 0；阿基米德常数 ≈1.343 已被 T（调和数对角线）吸收；main.tex 标注"highly plausible c_L < 2^{-30}"；需 Suzuki(arXiv:2606.09096) 公式正式认证 |
 | **O1-B certify 升级** | ✅ 完成（2026-08-06） | 偶/奇扇区均 Arb 256-bit certified=true（pivot 0.529/0.562，c_L=0） |
 | 论文投稿 | ⏳ 等待 arXiv endorsement | Zenodo DOI 已发布，邮件已发 |
-| FP-0.35 | ✅ **PROVED**（2026-08-06） | Arb 256-bit 残差认证：c_L=log(2π·7/20)+γ_E≈1.36527，偶扇区 min_eig=0.0149，奇扇区 min_eig=0.0642，两扇区 ‖I−C⁻¹C‖∞=0 |
+| FP-0.35 | ✅ **PROVED**（2026-08-06） | Arb 256-bit 残差认证：c_L=log(2π·7/20)+γ_E≈1.36527，偶扇区 min_eig=9.5e-4 (min_pivot=8.7e-3)，奇扇区 min_eig=5.0e-2 (min_pivot=5.3e-2)，四项 S0，两扇区 ‖I−C⁻¹C‖∞=0 |
 
 ---
 

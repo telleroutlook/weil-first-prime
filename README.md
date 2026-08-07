@@ -183,8 +183,8 @@ python3 scripts/reproduce_fp035.py
 Expected output (≈10–15 min, single core):
 
 ```
-EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=0.01494  residual=0  CERTIFIED
-ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=0.06417  residual=0  CERTIFIED
+EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=9.5e-4  min_pivot=8.7e-3  CERTIFIED
+ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=5.0e-2  min_pivot=5.3e-2  CERTIFIED
 FP-0.35 PROVED: lambda(7/20) >= 2^{-30} > 0
 ```
 

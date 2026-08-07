@@ -809,7 +809,11 @@ By the continuous dependence of eigenvalues on matrix entries
 norm strictly less than~$1$), no eigenvalue crosses zero during the
 deformation, so $C_{\rm arb}$ inherits the strict positive definiteness
 of $\hat C$.  Float-64 Cholesky confirms $\hat C \succ 0$
-with minimum eigenvalues $0.01494$ (even) and $0.06417$ (odd).
+with minimum eigenvalues $9.5\times10^{-4}$ (even) and $5.0\times10^{-2}$ (odd),
+equivalently minimum $\mathrm{LDL}^{\mathsf T}$ pivots $8.7\times10^{-3}$ (even)
+and $5.3\times10^{-2}$ (odd).  The even-sector margin is small but strictly
+positive; both sectors use the full second moment
+$S^{(0)} = S_{VV} + S_{VK} + S_{KV} + S_{KK}$.
 
 The certificate is stored in \texttt{pilots/cert\_schur\_correct\_cL.json}.
 \end{proof}

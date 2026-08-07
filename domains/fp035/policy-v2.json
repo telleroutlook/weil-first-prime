@@ -43,5 +43,7 @@
     "pivot_count",
     "window_verified",
     "archimedean_obligation"
-  ]
+  ],
+  "forbid_copy_only_generators": true,
+  "require_checker_mutation_coverage": true
 }
