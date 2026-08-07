@@ -1,0 +1,82 @@
+# Zenodo submission metadata for paper/proofctl-methodology.tex
+# Status: ready to upload
+# Companion to: 10.5281/zenodo.21807498 (FP-0.35 main paper)
+
+## Upload type
+Publication
+
+## Publication type
+Preprint
+
+## Title
+When the Pilot Audits the Tool: Two Verification Blind Spots Exposed and Closed by a Real Computational-Mathematics Proof
+
+## Authors
+Family name: Tao
+Given names: Lin
+Identifiers: (leave blank if no ORCID)
+Affiliations: (leave blank for independent researcher)
+Role: Author
+
+## Description
+Proof-orchestration systems promise that a machine-checked release gate makes a
+computational proof trustworthy, but a gate only checks the properties it was
+told to check. We report a case in which a genuine research proof — the FP-0.35
+conjecture on positivity of the Weil quadratic form at L = 7/20 — acted as an
+adversarial pilot against its own verification layer, proofctl, and exposed two
+kernel blind spots that every prior release had silently passed: (i) a generator
+that merely copied a stored certificate while its attestation claimed
+from-scratch recomputation, and (ii) a checker that recomputed honestly but
+omitted a term of the quantity it claimed to verify, emitting a false pass with a
+16x-inflated margin. Neither is caught by digest binding, schema validation, or
+"all obligations pass": the copy-generator produces byte-identical replays, and
+the omitted-term checker is internally consistent. We describe the two release
+conditions added in response — C10 (no copy-only generator) and C11 (checker
+mutation coverage) — the epistemic discipline (a written "proof constitution")
+the same incident forced, and the closeout in which the corrected pilot was
+driven back through the hardened gate, where a second independent instance of the
+same blind-spot class surfaced and was fixed. The broader methodological lesson:
+the highest-value feedback a real proof can give a verification system is not
+"it verified" but "here is a true statement your gate accepted for the wrong
+reason." This paper is about verification methodology; it makes no claim about
+the Riemann Hypothesis.
+
+## Keywords (enter each on a separate line)
+proof orchestration
+computational proof
+mutation testing
+release gate
+reproducibility
+certificate-first verification
+interval arithmetic
+software correctness
+proofctl
+FP-0.35
+
+## License
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+## Related/alternate identifiers
+URL: https://github.com/telleroutlook/weil-first-prime
+Relation: is supplemented by
+
+DOI: 10.5281/zenodo.21807498
+Relation: is supplement to
+Resource type: Publication / Preprint
+
+## Additional notes
+ACM Computing Classification:
+  Software and its engineering -> Software verification and validation
+  Theory of computation -> Logic and verification
+  Mathematics of computing -> Mathematical software
+
+Companion paper (mathematics being orchestrated):
+  doi:10.5281/zenodo.21807498
+  "Structural Lemmas for the First-Prime Window of the Weil Quadratic Form"
+
+Software: proofctl (open-source Go proof-orchestration tool), v0.3.16
+  (release conditions C10 and C11 introduced by this pilot).
+
+## Target venue (after arXiv)
+Journal of Automated Reasoning (Springer) — primary
+Conferences on Intelligent Computer Mathematics (CICM) — secondary
