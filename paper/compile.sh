@@ -36,7 +36,7 @@ if ! $USE_TECTONIC && ! command -v pdflatex &>/dev/null; then
   exit 1
 fi
 
-for TEX in main.tex e1-path-a-obstruction.tex; do
+for TEX in main.tex e1-path-a-obstruction.tex proofctl-methodology.tex; do
   if [[ ! -f "$TEX" ]]; then
     echo "Skipping $TEX (not found)"
     continue

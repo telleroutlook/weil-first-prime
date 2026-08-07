@@ -1,189 +1,415 @@
-\documentclass[12pt,a4paper]{amsart}
+\documentclass[11pt,a4paper]{amsart}
 \usepackage{verbatim}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
 \usepackage[margin=2.5cm]{geometry}
+\usepackage{booktabs}
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
+\newtheorem{principle}[theorem]{Principle}
 \newtheorem{example}[theorem]{Example}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{Certificate-First Proof Orchestration: \\
-       The \texttt{proofctl} Framework for Computational Mathematics}
+\newcommand{\proofctl}{\texttt{proofctl}}
+\newcommand{\CtenA}{\textsf{C10}}
+\newcommand{\CelevenA}{\textsf{C11}}
+
+\title{When the Pilot Audits the Tool: \\
+       Two Verification Blind Spots Exposed and Closed by a \\
+       Real Computational-Mathematics Proof}
 \author{}
 \date{\today}
 
 \begin{document}
 
 \begin{abstract}
-We describe \texttt{proofctl}, a proof orchestration layer for computational
-mathematics that enforces a \emph{certificate-first} architecture: every
-numerical result entering a proof must be accompanied by an independently
-replayable certificate, and the release gate derives claim acceptance solely
-from obligation results, never from self-reported outcomes.
-We illustrate the framework through its application to the FP-0.35 conjecture
-(Weil quadratic form positivity at $L=7/20$), where 17 inter-dependent claims
-spanning pure rational arithmetic, Lean~4 formalisation, and 256-bit Arb
-interval arithmetic are orchestrated into a single offline-verifiable bundle.
-Key design decisions — fail-closed schema validation, identity-closure
-propagation, and the \texttt{scripted} runtime class — are motivated by
-concrete failure modes encountered during development.
+Proof-orchestration systems promise that a machine-checked release gate makes a
+computational proof trustworthy. But a gate only checks the properties it was
+told to check. We report a case in which a genuine research proof --- the
+FP-0.35 conjecture on positivity of the Weil quadratic form at $L=7/20$ --- acted
+as an adversarial pilot against its own verification layer, \proofctl, and
+exposed two \emph{kernel blind spots} that every prior release had silently
+passed: (i) a generator that merely \emph{copied} a stored certificate while its
+attestation claimed from-scratch recomputation, and (ii) a checker that
+recomputed honestly but \emph{omitted a term} of the quantity it claimed to
+verify, emitting a false pass with a $16\times$-inflated margin. Neither is
+caught by digest-binding, schema validation, or ``all obligations pass'':
+the copy-generator produces byte-identical replays, and the omitted-term checker
+is internally consistent. We describe the two release conditions added in
+response --- \CtenA{} (no copy-only generator) and \CelevenA{} (checker mutation
+coverage) --- the epistemic discipline (a written ``proof constitution'') that
+the same incident forced, and the closeout in which the corrected pilot was
+driven back through the hardened gate. A second, independent instance of the
+same blind-spot class (a dependency lemma whose checker also lacked mutation
+coverage) surfaced during closeout, confirming the conditions generalise beyond
+the originating bug. The broader lesson is methodological: the highest-value
+feedback a real proof can give a verification system is not ``it verified'' but
+``here is a true statement your gate accepted for the wrong reason.''
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
-Computational proofs in number theory and analysis increasingly involve
-heterogeneous evidence: formal proofs in proof assistants, certified interval
-arithmetic, and independently replayable computational certificates.
-Orchestrating these into a single verifiable artefact requires infrastructure
-that is both rigorous and practical.
+Computational proofs increasingly combine heterogeneous evidence: formal proofs
+in proof assistants, certified interval arithmetic, and independently replayable
+numerical certificates. A proof-orchestration layer stitches these into one
+artefact and gates its release on machine-checkable conditions. \proofctl{} is
+such a layer: an open-source Go tool that binds every attestation to the exact
+digests of its checker, schema, and dependencies, derives claim acceptance
+solely from a checker's \texttt{obligation\_results} (never from a self-reported
+\texttt{outcome} field), and blocks release until a set of conditions
+\textsf{C01}--\textsf{C11} all pass against the full attestation graph.
 
-\texttt{proofctl} is an open-source Go tool that provides this infrastructure.
-Its core invariants are:
+The comfortable assumption is that once such a gate is green, the computational
+proof is sound up to the mathematics of the individual checkers. This paper is
+about the gap in that assumption. A green gate certifies only what its conditions
+encode; a property nobody thought to encode can be violated by every release and
+never noticed.
 
-\begin{enumerate}
-\item \textbf{No self-reported conclusions.} A claim is accepted only when
-  its checker emits \texttt{obligation\_results} with all verdicts \texttt{"pass"};
-  a hand-crafted \texttt{"outcome":"accepted"} field cannot bypass the gate.
-\item \textbf{Identity closure.} Every attestation binds the exact checker
-  digest, schema digest, and dependency digests. Changing any input
-  automatically stalens downstream attestations.
-\item \textbf{Cold-replay requirement.} Release is blocked until every
-  deterministic-cap claim has been independently replayed from scratch.
-\item \textbf{Offline verifiability.} The release bundle is self-contained;
-  no network access is required to verify it.
-\end{enumerate}
+Our evidence is concrete. During the development of a real research proof ---
+FP-0.35, the assertion that the local Weil quadratic form on
+$L^2(-7/20,\,7/20)$ has strictly positive infimum \cite{WFP2026} --- the proof's
+own certification exposed two such properties, each violated by a certificate
+that \proofctl{} had been happily accepting:
 
-\section{Architecture}
-
-\subsection{ProofGraph and Claims}
-
-A \emph{ProofGraph} is a directed acyclic graph of \emph{claims}.
-Each claim has:
 \begin{itemize}
-\item a \texttt{statement\_digest} (SHA-256 of the claim text),
-\item a list of \texttt{dependencies} with required assurance levels,
-\item a \texttt{checker\_policy} identifying which checker verifies it,
-\item an \texttt{obligations} list specifying what the checker must certify.
+\item \textbf{Copy-as-recomputation.} The main certificate's ``generator'' was a
+  one-line file copy,
+  \begin{quote}\small\ttfamily
+  python3 -c "shutil.copy('certs/thm-fp-035.json', \{cert\})"
+  \end{quote}
+  tagged \texttt{replay\_mode = from\_scratch}. Every replay reproduced the
+  stored bytes exactly, so digest-comparison passed. The attestation claimed the
+  result was recomputed; it was transcribed.
+\item \textbf{Omitted-term checker.} The checker reported all obligations
+  \texttt{pass} while computing the second-moment matrix $S^{(0)}$ as its
+  $S_{KK}$ block alone, silently dropping the three positive blocks
+  $S_{VV}+S_{VK}+S_{KV}$. Dropping positive mass shrinks the Schur residual and
+  \emph{inflates} the certified eigenvalue --- here by roughly $16\times$
+  ($0.01494$ reported vs.\ $0.00095$ true). The checker was internally
+  consistent and passed its own schema; it was simply verifying a different,
+  easier quantity than the one it claimed.
 \end{itemize}
 
-\subsection{Checker Protocol v2}
+Crucially, and this is the subtlety that makes the case worth reporting, the
+\emph{conclusion} was correct throughout: $\lambda(7/20)>0$ holds; both defects
+are process defects, not sign errors. A verification system that only ever asks
+``is the answer right?'' would see nothing wrong. The value of the pilot was to
+force the question ``was the answer obtained the way the attestation says it
+was?'' --- and the answer was no, twice.
 
-A checker is a subprocess that receives a certificate file path and emits
-JSON to stdout:
+The remainder of the paper describes \proofctl{}'s architecture
+(\Cref{sec:arch}), the FP-0.35 proof graph it orchestrates (\Cref{sec:fp035}),
+the two blind spots and the conditions \CtenA{}/\CelevenA{} added to close them
+(\Cref{sec:blindspots}), the mutation-catalog design that operationalises
+\CelevenA{} together with a nuance that naive mutation testing gets wrong
+(\Cref{sec:mutation}), the epistemic discipline the incident forced
+(\Cref{sec:constitution}), and the closeout in which the corrected pilot passed
+the hardened gate and a second instance of the blind-spot class was found and
+fixed (\Cref{sec:closeout}).
+
+\section{Architecture of \texorpdfstring{\protect\proofctl}{proofctl}}
+\label{sec:arch}
+
+\subsection{ProofGraph and claims}
+A \emph{ProofGraph} is a directed acyclic graph of \emph{claims}. Each claim
+carries a \texttt{statement\_digest} (SHA-256 of its text), a list of
+\texttt{dependencies} with required assurance levels, a \texttt{checker\_policy}
+naming the checker that verifies it, and an \texttt{obligations} list specifying
+exactly what that checker must certify.
+
+\subsection{Checker protocol}
+A checker is a subprocess that receives a certificate path and emits JSON:
 \begin{verbatim}
-{
-  "protocol_version": 2,
-  "obligation_results": [
-    {"id": "thm3.log2-bounds-verified", "verdict": "pass"},
-    ...
-  ],
-  "metadata": {"format_version": "first-prime-1.0", ...}
-}
+{ "protocol_version": 2,
+  "obligation_results": [ {"id": "...", "verdict": "pass"}, ... ],
+  "metadata": { "format_version": "...", ... } }
 \end{verbatim}
-Exit code 0 = certified; 1 = uncertified; 2 = malformed; 3 = O2\_BLOCKED.
+with exit codes $0$ (certified), $1$ (uncertified), $2$ (malformed),
+$3$ (resource/blocked). Acceptance is \emph{derived} by \proofctl{} from the
+verdict set; a checker cannot assert its own acceptance. The obligation set is
+matched \emph{exactly} against the contract: a missing, extra, or duplicated
+obligation is a hard reject, so a checker cannot quietly shrink what it is
+answerable for.
 
-\subsection{Release Gate}
+\subsection{Identity closure and staleness}
+Every attestation binds the full identity closure: statement digest, dependency
+digests, checker digest, and schema digest, recomputed and re-verified on load.
+Any change to an input automatically marks downstream attestations
+\emph{stale}, forcing re-verification rather than trusting a cached verdict.
 
-The release gate evaluates 11 conditions against the full attestation graph.
-Critical conditions include:
-\begin{itemize}
-\item \textbf{C01}: Every claim in the graph is accepted.
-\item \textbf{C04}: Replay consistency — every deterministic-cap claim has
-  a freshness-dated cold-replay attestation.
-\item \textbf{LEGACY}: No v1 attestation (protocol\_version $\neq$ 2) may
-  appear in the graph.
-\end{itemize}
+\subsection{Release gate}
+The gate evaluates conditions \textsf{C01}--\textsf{C11} against the whole graph.
+Representatives: \textsf{C01} every claim accepted (derived from obligation
+results, not from a writable \texttt{outcome}); \textsf{C04} replay consistency;
+\textsf{C09} no development-only (\texttt{native}) runtime on a releasable claim.
+The two conditions this paper is about, \CtenA{} and \CelevenA{}, are
+latecomers: they exist because the pilot showed that \textsf{C01}--\textsf{C09}
+were jointly insufficient.
 
-\section{Application to FP-0.35}
+\section{The pilot: FP-0.35}
+\label{sec:fp035}
 
-\subsection{Proof Graph Structure}
+FP-0.35 asserts $\lambda(7/20) := \inf_{v\neq0} Q_W^{7/20}(v)/\|v\|^2 > 0$, a
+finite-scale positivity statement (it does \emph{not} imply the Riemann
+Hypothesis). The proof reduces, via a split-residual Schur criterion, to positive
+definiteness of a matrix $C = b_L F - R_\eta$ in each of two parity sectors, where
+$R_\eta$ is built from the full second moment
+$S^{(0)} = S_{VV}+S_{VK}+S_{KV}+S_{KK}$, the certified Weil constant
+$c_L \approx 1.36527$, and prime-shift matrices. The orchestrated proof graph
+has 17 inter-dependent claims spanning three evidence regimes: pure rational
+arithmetic (window and absorption lemmas), Lean~4 formalisation of the integer
+skeleton, and 256-bit Arb interval arithmetic for the archimedean integrals.
 
-The FP-0.35 proof graph contains 17 claims organised in four layers:
+This heterogeneity is why orchestration is needed --- and why the blind spots
+matter. The main claim depends on two sector lemmas, each of which depends on an
+archimedean base certificate of $2.4$\,MB whose re-verification takes tens of
+minutes. Nobody re-derives such a chain by hand; the entire point of the gate is
+to make its acceptance trustworthy without doing so.
 
-\begin{center}
-\begin{tabular}{lll}
-\hline
-Layer & Claims & Assurance \\
-\hline
-Frozen model & 1 & independent-review \\
-Analytic lemmas & 8 & independent-review \\
-Deterministic-cap & 7 & deterministic-cap \\
-Main conjecture & 1 & deterministic-cap + exact-replay \\
-\hline
-\end{tabular}
-\end{center}
+\section{Two blind spots}
+\label{sec:blindspots}
 
-\subsection{Checker Taxonomy}
+\subsection{\texorpdfstring{\CtenA}{C10}: copy masquerading as recomputation}
 
-\begin{description}
-\item[\texttt{check\_thm3.py}] Pure rational arithmetic: five inequalities
-  about $\log 2$, $\varepsilon$, $\kappa_{\rm edge}$, and $c_2$.
-  No floating point; exit~0 iff all five hold.
-\item[\texttt{check\_archimedean.py}] Dual-path certification:
-  independently integrates $M_K$ via Arb~(Path~A) and mpmath~(Path~B),
-  verifies non-empty intersection for all $6{\times}6$ or $8{\times}8$
-  matrix entries, and emits leaf witnesses.
-\item[\texttt{check\_fp\_wrapper.py}] Orchestrates the full O1-B gate:
-  calls the archimedean sub-checker, assembles $F$ and $R_\eta$, runs
-  mpmath LDL$^T$ at dps=100, and emits 7 obligation results.
-\end{description}
+\begin{principle}[Recomputation must recompute]
+An attestation that claims from-scratch recomputation must run a generator that
+performs computation, not a file copy. A byte-exact replay of a copy proves only
+that copying is deterministic.
+\end{principle}
 
-\subsection{Key Engineering Lessons}
+The failure mode is invisible to digest binding precisely because it is
+\emph{too} reproducible. \proofctl{}'s replay compares the generated certificate's
+digest against the stored evidence; a \texttt{shutil.copy} reproduces the stored
+bytes perfectly, so the comparison always passes. The attestation's
+\texttt{replay\_mode = from\_scratch} is a self-report the gate had been trusting.
 
-\begin{enumerate}
-\item \textbf{M\_V + M\_K not M\_K alone.} The Archimedean matrix block
-  $M^{(0)} = M_V + M_K$; using only $M_K$ produces a matrix whose Schur
-  complement is indefinite.
-\item \textbf{Interval blowup in LDL$^T$.} Running outward-rounded LDL$^T$
-  on the full interval matrix amplifies off-diagonal widths; the mpmath
-  midpoint approach with certified width bound is more robust.
-\item \textbf{Timeout asymmetry.} The archimedean sub-checker reruns full
-  integration on each replay ($\approx600$\,s for the even sector); the
-  \texttt{replay.py} timeout was raised from 600\,s to 3600\,s to avoid
-  spurious O2\_BLOCKED exits.
-\end{enumerate}
+\CtenA{} closes this by inspecting the recorded \texttt{generator\_cmds} of every
+attestation that \emph{claims} substantive recomputation (\texttt{replay\_mode =
+from\_scratch}, or a reproducible/exact-replay assurance) and rejecting it when
+the generator is purely a copy/no-op primitive
+(\texttt{shutil.copy}, \texttt{cp}, \texttt{cat}, \texttt{ln}, \dots) with no
+sign of computation. The check is deliberately conservative --- a generator that
+imports \texttt{shutil} \emph{and} calls \texttt{recompute}/\texttt{integrate}/
+\texttt{schur} is not flagged --- so it blocks the fraud pattern without
+penalising legitimate generators that happen to touch the filesystem.
 
-\section{Comparison with Related Systems}
+\subsection{\texorpdfstring{\CelevenA}{C11}: honest recomputation of the wrong quantity}
 
-\begin{description}
-\item[Coq/Isabelle certificates] Formal kernels provide the strongest
-  guarantees but require the full proof term. \texttt{proofctl} is
-  complementary: it orchestrates \emph{computational} evidence that
-  formal systems could, in principle, certify.
-\item[CertiCoq / CompCert] Compiler verification uses similar
-  certificate-passing architectures but targets a different domain.
-\item[Jupyter notebooks] Reproducible but not independently replayable
-  in the proofctl sense: no checker digest, no obligation exact-set,
-  no fail-closed gate.
-\end{description}
+\CtenA{} is necessary but not sufficient. A checker can genuinely compute --- no
+copy anywhere --- and still emit a false pass by computing an \emph{incomplete}
+version of the asserted quantity. That is exactly the omitted-term bug: the
+generator computed $S^{(0)} = S_{KK}$ only, a real computation, dropping the
+three other positive second-moment blocks. The result is a smaller residual, a
+larger (inflated) minimum eigenvalue, and a confidently-passed obligation.
+
+\begin{principle}[Sensitivity is verification]
+A checker that claims to verify a quantity assembled from terms
+$T_1,\dots,T_m$ must be demonstrably sensitive to each $T_i$: perturbing $T_i$
+must be capable of changing the verdict. A term whose perturbation never moves
+the verdict is a term the checker does not actually check.
+\end{principle}
+
+\CelevenA{} operationalises this: any attestation claiming substantive
+recomputation must carry, in its metadata, \texttt{mutation\_kill\_rate}
+$=$ \texttt{"100\%"} and a non-empty \texttt{mutation\_catalog\_digest} pinning
+which mutants were run. The kill rate must be exactly $100\%$: a checker that
+lets any catalogued mutant survive has a blind spot of the same class as the
+omitted-term bug. \CelevenA{} cannot be satisfied by a certificate-reading
+checker that trusts supplied numbers; it forces a recompute-style checker whose
+verdict genuinely depends on every asserted term.
+
+\begin{remark}[Why digests and schemas miss both]
+Digest binding proves the same bytes were checked by the same script; it says
+nothing about whether the script computes the claimed quantity. Fail-closed
+schema validation rejects unknown or malformed fields; both defective
+certificates were schema-valid. ``All obligations pass'' is exactly the output a
+hard-coded or omitted-term checker produces. The two blind spots live in the
+space between ``the artefact is well-formed and stably reproduced'' and ``the
+artefact means what it claims.''
+\end{remark}
+
+\section{Mutation catalogs, and a nuance}
+\label{sec:mutation}
+
+To satisfy \CelevenA{}, each recompute checker ships a \emph{mutation catalog}: a
+list of single-term perturbations of the assembled matrices, each re-judged by
+the \emph{same} assembly and positivity judge the checker uses (no duplicated
+logic), recording whether the perturbation ``kills'' the verdict. For FP-0.35 the
+catalog has six mutants per sector --- e.g.\ zero the second moment $S^{(0)}$
+(the retired-bug class), flip the sign of the coupling diagonal, remove the
+kinetic coercivity, scale a prime-coupling block --- and achieves $6/6$ kills.
+
+A subtlety, easy to get wrong, deserves emphasis, because getting it wrong
+reintroduces the very failure \CelevenA{} guards against:
+
+\begin{principle}[Kill criterion must match a term's true influence]
+A mutant that zeros a term whose genuine influence is negligible will not flip
+the verdict --- and this does \emph{not} mean the checker is blind to that term.
+Classify mutants. \emph{Judge-sensitivity} mutants (sign flips, zeroing a
+dominant term, swapping the positivity judge) must flip the verdict. But a term
+with $\sim\!10^{-4}$ influence, zeroed, should be probed by a \emph{large-factor
+scaling} mutant that provably moves the pivot, or by a relative-tolerance
+threshold --- not by demanding a sign flip it cannot cause.
+\end{principle}
+
+Concretely, in the even sector zeroing the prime self-second-moment $S^{(2)}$
+moves the minimum pivot from $+0.00870$ to $+0.00871$ --- a $\sim\!10^{-4}$
+change. A naive ``100\% kill or the checker is blind'' rule would wrongly flag
+the checker as insensitive to $S^{(2)}$. In truth $S^{(2)}$ barely influences the
+even sector; the correct probe is a $100\times$ scaling mutant, which drives the
+pivot sharply negative and is cleanly killed. The catalog therefore separates
+\emph{judge} mutants (must flip) from \emph{recompute-verification} mutants (must
+move measurably), each scored by an appropriate criterion.
+
+\section{The discipline the incident forced}
+\label{sec:constitution}
+
+The two blind spots were the tool's failure. But the same night exposed a
+\emph{human} failure mode that no gate can catch, and that we found worth
+codifying as an executable-where-possible ``proof constitution.'' We record the
+parts most relevant to anyone building or trusting such a system.
+
+\begin{principle}[Narrative resistance]
+A computed number that supports a dramatic story --- ``we found a fatal bug,''
+``the proof fails'' --- demands \emph{more} scrutiny, not less. Excitement is a
+bias multiplier, not evidence.
+\end{principle}
+
+During diagnosis, an ad-hoc script produced a minimum pivot of $-0.043$
+(``FP-0.35 fails!''), which was accepted three times because it fit the exciting
+``we found a fatal bug'' narrative. It was a bug in that script's residual
+assembly; the true value was $+0.0087$ all along, and downstream conclusions had
+to be retracted. The corrective was mechanical, not attitudinal:
+
+\begin{principle}[Diff artefacts before narrating a disagreement]
+When two implementations give different scalars, dump and diff the full
+intermediate \emph{matrices} element-wise to locate the exact divergence before
+explaining ``why.'' A scalar mismatch plus a plausible story is not a diagnosis.
+\end{principle}
+
+The element-wise comparison of the two independent Schur assemblies settled it in
+one step: the matrices agreed to $\max|C_A-C_B| = 4\times10^{-3}$, both yielding
+$+0.0087$; the $-0.043$ existed in no correct computation.
+
+\begin{principle}[Process defect $\neq$ wrong conclusion]
+A defective process (copy generation, omitted term, hard-coded verdict) does not
+automatically make the conclusion wrong. State precisely which is broken.
+\end{principle}
+
+This principle is what let the pilot be both a genuine bug report against the
+tool and a preserved-correct mathematical result: the certificate's process was
+doubly broken, yet $\lambda(7/20)>0$ was never in question. Conflating the two
+would have either discarded a true theorem or excused a broken pipeline; keeping
+them separate is what made \CtenA{}/\CelevenA{} the right response rather than a
+retraction.
+
+A last principle bears directly on why \CelevenA{} takes the form it does:
+
+\begin{principle}[Prefer recomputation over certificate-reading]
+A checker that recomputes the claim from primitives is structurally immune to
+copy-certificate and self-attestation attacks, unlike one that reads and
+validates a supplied certificate. Recompute checkers still need mutation coverage
+for omitted-term bugs --- but they cannot be fooled by a doctored certificate.
+\end{principle}
+
+\section{Closeout, and a second instance}
+\label{sec:closeout}
+
+Hardening a gate is only credible if the originating artefact is then driven
+through it. We regenerated the FP-0.35 certification cleanly: the main
+certificate was produced by a genuine four-term recomputation (satisfying
+\CtenA{}), and the checker was made to emit mutation-catalog metadata with a
+$100\%$ kill rate and a non-empty catalog digest (satisfying \CelevenA{}). The
+release dry-run then passed all thirteen conditions with no blockers, and all
+17 claims reached the accepted state.
+
+The closeout also produced the paper's sharpest evidence that the conditions
+capture a \emph{class} of defect, not a single bug. \CelevenA{} fires on every
+attestation that claims recomputation --- and \proofctl{}'s replay tags every
+generated attestation \texttt{from\_scratch}. The two sector-lemma attestations
+(the main claim's dependencies) therefore also required mutation coverage, but
+their checker --- a distinct engine that replays the archimedean base and runs an
+exact-rational LDL$^\mathsf{T}$ --- emitted no mutation metadata at all. The
+originating fix had addressed only the main claim; the gate correctly refused to
+go green until the dependency checkers were given their own honest mutation
+catalogs (again $6/6$ kills per sector), built by refactoring the checker's
+assembly and judge into shared functions so that the catalog perturbs exactly
+what the checker asserts, with no duplicated logic. That a second, independent
+instance of the omitted-term blind-spot class surfaced --- and was blocked ---
+during routine closeout is the strongest available evidence that \CelevenA{}
+encodes a general property rather than patching one certificate.
+
+\begin{remark}[What \texorpdfstring{\protect\proofctl}{proofctl} still does not
+guarantee]
+The gate verifies that the pinned checker ran, that evidence digests match, that
+attestations are untampered, and that obligation and mutation-coverage conditions
+hold. It does \emph{not} verify that a checker's mathematics is correct; that
+comes from the checker code, its tests, and independent review. Mutation coverage
+raises the floor --- a checker must be sensitive to every asserted term --- but a
+checker can be sensitive to a term and still integrate it with the wrong
+constant. \CtenA{}/\CelevenA{} close two specific, previously-invisible holes;
+they do not turn orchestration into a formal kernel.
+\end{remark}
+
+\section{Related work and discussion}
+
+Formal kernels (Coq, Isabelle, Lean) give the strongest guarantees but demand the
+full proof term; \proofctl{} is complementary, orchestrating \emph{computational}
+evidence that such systems could in principle certify. Certificate-passing
+compiler verification (CompCert, CertiCoq) shares the architecture in a different
+domain. Reproducible-computation tooling (containerised notebooks, workflow
+managers) achieves byte-reproducibility but not the proofctl notions of an exact
+obligation set, a fail-closed gate, or --- as this paper stresses --- a check
+that the reproduced computation is the \emph{claimed} one rather than a copy or a
+term-incomplete surrogate.
+
+The transferable lesson is about the \emph{direction} of trust between a proof
+and its verifier. A verification system is usually treated as auditing the proof.
+The FP-0.35 pilot inverts this: a sufficiently real proof, pushed hard enough,
+audits the verifier, and the defects it surfaces are exactly the properties the
+verifier's designers did not think to encode. Copy-as-recomputation and
+honest-computation-of-the-wrong-quantity are two such properties; there are
+surely others. The practical recommendation is to treat every genuine pilot as an
+adversary against the gate, and to regard ``a true statement your gate accepted
+for the wrong reason'' as the most valuable bug report a proof can file.
 
 \section{Conclusion}
 
-\texttt{proofctl} demonstrates that certificate-first proof orchestration
-is practical for research-scale computational mathematics.
-The FP-0.35 case study produced a 19-member offline-verifiable bundle
-passing all 11 release conditions, with each checker independently
-replayable and each obligation explicitly attested.
+A green release gate certifies the properties its conditions encode, no more. Two
+properties --- that a recomputation actually recomputes, and that a checker is
+sensitive to every term it claims to verify --- were absent from \proofctl{}'s
+gate and violated by a real proof's own certificate, undetectably to digest
+binding and schema validation, because the conclusion happened to be correct.
+Encoding them as \CtenA{} and \CelevenA{}, and re-driving the corrected pilot
+through the hardened gate (where a second instance of the same class was caught),
+turned a pair of embarrassing near-misses into durable, reusable conditions. The
+episode is a small instance of a general principle worth stating plainly: the
+best thing a real computation can do for a verification system is to break it
+honestly.
 
 \begin{thebibliography}{9}
 \bibitem{WFP2026}
-Author(s), \emph{Structural lemmas for the first-prime window of the Weil
-quadratic form}, preprint (2026). \texttt{doi:10.5281/zenodo.21807498}.
+\emph{Structural lemmas for the first-prime window of the Weil quadratic form},
+preprint (2026). \texttt{doi:10.5281/zenodo.21807498}.
 
 \bibitem{Johansson2017}
-F.~Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius
-interval arithmetic}, IEEE Trans.\ Comput.\ \textbf{66} (2017), 1281--1292.
+F.~Johansson, \emph{Arb: efficient arbitrary-precision midpoint-radius interval
+arithmetic}, IEEE Trans.\ Comput.\ \textbf{66} (2017), 1281--1292.
 
 \bibitem{Lean4}
-L.~de~Moura et al., \emph{The Lean 4 theorem prover and programming
-language}, CADE 2021.
+L.~de~Moura and S.~Ullrich, \emph{The Lean 4 theorem prover and programming
+language}, CADE~28 (2021), 625--635.
+
+\bibitem{DeMillo1979}
+R.~A.~DeMillo, R.~J.~Lipton, and F.~G.~Sayward, \emph{Hints on test data
+selection: help for the practicing programmer}, Computer \textbf{11} (1978),
+34--41. [Origin of mutation testing.]
 \end{thebibliography}
 
 \end{document}
