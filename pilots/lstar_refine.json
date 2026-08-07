@@ -1,0 +1,41 @@
+{
+  "results": [
+    {
+      "L": 0.37,
+      "c_L": 1.4208404579669973,
+      "lambda_lower_bound": 9.313225746154785e-10,
+      "per_sector": {
+        "even": 9.313225746154785e-10,
+        "odd": 0.0039062508585629985
+      },
+      "elapsed_s": 728.7115421295166
+    },
+    {
+      "L": 0.39,
+      "c_L": 1.4734841914524357,
+      "lambda_lower_bound": 0.0,
+      "per_sector": {
+        "even": 9.313225746154785e-10,
+        "odd": 0.0
+      },
+      "elapsed_s": 700.6578662395477
+    },
+    {
+      "L": 0.4,
+      "c_L": 1.4988019994367332,
+      "lambda_lower_bound": 0.0,
+      "per_sector": {
+        "even": 9.313225746154785e-10,
+        "odd": 0.0
+      },
+      "elapsed_s": 697.6369080543518
+    }
+  ],
+  "total_s": 697.6376039981842,
+  "sectors": [
+    "even",
+    "odd"
+  ],
+  "method": "Arb residual cert, four-term S0=S_VV+S_VK+S_KV+S_KK, real S2",
+  "note": "lambda_lower_bound is certified strict lower bound (min over sectors)"
+}

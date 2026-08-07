@@ -366,7 +366,11 @@ def main() -> int:
           f"{' [resume]' if args.resume else ''}", flush=True)
 
     completed = _load_completed(args.resume)
-    results = []
+    # Seed results with prior points NOT in this run's scan set, so writing to a
+    # shared --out file across multiple single-point invocations accumulates
+    # rather than overwrites (each save persists the full profile).
+    scan_keys = {round(ln / ld, 6) for ln, ld, _ in points}
+    results = [r for k, r in completed.items() if k not in scan_keys]
     t_total = time.time()
 
     try:
