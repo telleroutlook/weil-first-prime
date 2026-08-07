@@ -74,6 +74,7 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
     （rad 27.7 ≫ 信号 0.012），是 build_R 组装法问题（非精度/深度），需更紧的 R 组装
     （mpmath LDL 或仿射区间）才能认证。诚实态：float-negative, Arb-pending。
 - **M2 · λ(L) 廓线重做**：✅ 完成（commit d746086，`pilots/lambda_profile.json`）。
+  完整发现见 `docs/M1_M2_LAMBDA_PROFILE_FINDINGS.md`。
   四项 S0 + 真 S2，两扇区，3 点 certify 级；positive 只存活于 L=7/20。
   修复了 `scan_lambda_profile.py` 两个漏项 bug（S_KK-only + S2=0）并加 checkpoint/resume。
 - **M3 · proofctl 方法论论文**：C10/C11 pilot 故事本身独立可发表——
