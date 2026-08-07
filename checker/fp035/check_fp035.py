@@ -80,6 +80,24 @@ def verify() -> tuple[bool, str]:
     return all_ok, summary
 
 
+def _mutation_metadata() -> dict:
+    """Read the committed mutation-catalog artifact and expose C11 fields.
+    Referencing a pre-run, auditable artifact (not re-running the ~40-min
+    catalog on every check) per PROOF_CONSTITUTION A7. Absent artifact -> empty
+    (C11 will then correctly block, rather than silently claim coverage)."""
+    import json
+    from pathlib import Path
+    art = Path(__file__).parent.parent.parent / "pilots" / "mutation_catalog_fp035.json"
+    try:
+        d = json.loads(art.read_text())
+        return {
+            "mutation_kill_rate": d.get("kill_rate_pct", ""),
+            "mutation_catalog_digest": d.get("catalog_digest", ""),
+        }
+    except Exception:
+        return {}
+
+
 def main() -> int:
     from checker._protocol import resolve_cert_and_claim
     _cert_path, claim_id = resolve_cert_and_claim()
@@ -101,6 +119,7 @@ def main() -> int:
             "pivot_count": "24",
             "window_verified": "true",
             "archimedean_obligation": "archimedean_primitives_o2_v1",
+            **_mutation_metadata(),
         },
     }
     if not passed:

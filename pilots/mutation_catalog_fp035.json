@@ -1,0 +1,58 @@
+{
+  "target": "thm-fp-035",
+  "sector": "even",
+  "N": 8,
+  "d": 16,
+  "baseline_min_pivot": 0.008704,
+  "n_mutants": 6,
+  "n_killed": 6,
+  "kill_rate": 1.0,
+  "kill_rate_pct": "100%",
+  "catalog_digest": "sha256:f6b67eb404c04f78ce812105b8d338bc432d5543b85a04ed72886f64d184769a",
+  "mutants": [
+    {
+      "mutant": "S0_KK_only",
+      "mutated": 0.159487,
+      "sign_flip": false,
+      "rel_move": 17.323,
+      "killed": true
+    },
+    {
+      "mutant": "flip_M0_diag",
+      "mutated": -16.465043,
+      "sign_flip": true,
+      "rel_move": 1892.654,
+      "killed": true
+    },
+    {
+      "mutant": "cL_zero",
+      "mutated": -0.447401,
+      "sign_flip": true,
+      "rel_move": 52.402,
+      "killed": true
+    },
+    {
+      "mutant": "M2_scale_100x",
+      "mutated": 0.016263,
+      "sign_flip": false,
+      "rel_move": 0.868,
+      "killed": true
+    },
+    {
+      "mutant": "S2_scale_100x",
+      "mutated": -2.53677,
+      "sign_flip": true,
+      "rel_move": 292.447,
+      "killed": true
+    },
+    {
+      "mutant": "judge_min_eig",
+      "mutated": 0.00095,
+      "sign_flip": false,
+      "rel_move": 0.891,
+      "killed": true
+    }
+  ],
+  "generated": "2026-08-07",
+  "note": "Proves the recompute checker is sensitive to every asserted term. S0_KK_only reproduces the retired 16x-inflation bug and is killed."
+}

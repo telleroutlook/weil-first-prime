@@ -56,21 +56,19 @@ def _min_pivot(C: np.ndarray) -> float:
     return float(np.min(d))
 
 
-def verify_sector(L_num: int, L_den: int, sector: str, N: int, d: int, eta: float = ETA):
+def build_matrices(L_num: int, L_den: int, sector: str, N: int):
+    """Assemble the raw building-block matrices (no mutation, no Schur step).
+    Returned dict is the single source consumed by verify_sector and by the
+    mutation catalog, so mutants perturb exactly what the checker asserts."""
     L = L_num / L_den
     parity = 0 if sector == "even" else 1
     indices = list(range(parity, parity + 2 * N, 2))
     n = len(indices)
     tau = Fraction(math.log(2) / L).limit_denominator(10000)
-
-    Gd = [2.0 / (2 * ni + 1) for ni in indices]
+    Gd = np.array([2.0 / (2 * ni + 1) for ni in indices])
     T = np.diag([_H(ni) * Gd[a] for a, ni in enumerate(indices)])
-
-    M0 = np.zeros((n, n))
-    M2 = np.zeros((n, n))
-    S0 = np.zeros((n, n))
-    S2 = np.zeros((n, n))
-
+    M0 = np.zeros((n, n)); M2 = np.zeros((n, n))
+    S0 = np.zeros((n, n)); S2 = np.zeros((n, n))
     for a, i in enumerate(indices):
         for b, j in enumerate(indices):
             V_ij = _mid_iv(V_matrix_entry(i, j, 256))
@@ -82,24 +80,40 @@ def verify_sector(L_num: int, L_den: int, sector: str, N: int, d: int, eta: floa
             S0[a, b] = svv + svk + skv + skk
             M0[a, b] = V_ij + K_ij
             M2[a, b] = -C2_FLOAT * float(compute_J(i, j, tau))
-            # S2 = ||P_2 p||^2 second moment = c2^2 * E (prime self second moment).
-            # BUG FIX 2026-08-07: previously S2 stayed zeros -> R2 too small ->
-            # false-positive pivot (same defect class as the retired certificate).
             S2[a, b] = (C2_FLOAT ** 2) * float(compute_E(i, j, tau))
+    return {"L": L, "indices": indices, "n": n, "Gd": Gd,
+            "T": T, "M0": M0, "M2": M2, "S0": S0, "S2": S2}
 
+
+def pivot_from_matrices(mats: dict, d: int, eta: float = ETA,
+                        judge: str = "pivot") -> tuple:
+    """Compute (min_pivot_or_eig, b_L) from a (possibly mutated) matrix dict.
+    judge='pivot' uses the min LDL^T pivot (correct); judge='eig' uses the
+    symmetrized min eigenvalue (the retired, looser criterion) — the catalog
+    uses this to prove the checker is sensitive to the choice of judge."""
+    Gd = mats["Gd"]; T = mats["T"]; M0 = mats["M0"]; M2 = mats["M2"]
+    S0 = mats["S0"]; S2 = mats["S2"]; L = mats["L"]
     Ginv = np.diag([1.0 / g for g in Gd])
     R0 = S0 - M0.T @ Ginv @ M0
     R2 = S2 - M2.T @ Ginv @ M2
     R_eta = (1 + eta) * R0 + (1 + 1.0 / eta) * R2
-
     c_L = _c_L(L)
     b_L = _H(d) - c_L - L0 - KAPPA_FLOAT
     F = T + M0 + M2 - c_L * np.diag(Gd)
     C = b_L * F - R_eta
-    piv = _min_pivot(C)
+    if judge == "eig":
+        val = float(np.linalg.eigvalsh(0.5 * (C + C.T))[0])
+    else:
+        val = _min_pivot(C)
+    return val, b_L
+
+
+def verify_sector(L_num: int, L_den: int, sector: str, N: int, d: int, eta: float = ETA):
+    mats = build_matrices(L_num, L_den, sector, N)
+    piv, b_L = pivot_from_matrices(mats, d, eta, judge="pivot")
     info = {
-        "L": L, "sector": sector, "N": N, "d": d, "eta": eta,
-        "b_L": b_L, "c_L": c_L, "min_pivot": piv,
+        "L": mats["L"], "sector": sector, "N": N, "d": d, "eta": eta,
+        "b_L": b_L, "c_L": _c_L(mats["L"]), "min_pivot": piv,
         "S0_definition": "S_VV+S_VK+S_KV+S_KK", "judge": "min LDL^T pivot",
     }
     return piv, b_L, info

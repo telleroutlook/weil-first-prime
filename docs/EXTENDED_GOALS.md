@@ -736,3 +736,30 @@ E3 is fully independent and can proceed in parallel at any time.
 - E1 proves a *negative* result (Path A fails); it does not prove FP-0.35
 - E2 establishes a *boundary*; it does not extend the proof to larger L
 - E3 is a formalisation of existing results; it adds no new mathematics
+
+---
+
+## Data-driven direction hint (2026-08-07, from the FP-0.35 mutation catalog)
+
+The mutation catalog produced an informative SURVIVOR that reshapes where the
+second-window difficulty likely sits.
+
+**Finding.** In the L=7/20 EVEN sector (N=8), zeroing the ENTIRE prime coupling
+M2 barely moves the Schur min-pivot: +0.008704 -> +0.008678 (rel move 0.003).
+Even-sector positive-definiteness is carried almost entirely by the archimedean
+reserve (T + V + K); the prime layer M2 is a negligible perturbation there.
+(Cross-checks: cosh-projection was P_0-dominated; S2 even-sector influence was
+~1e-4 -- all three say the same thing.)
+
+**Why it matters for the long game.** FP-0.35's narrative is "the prime
+perturbation is absorbed by the reserve and positivity survives." If in the even
+sector the prime term is essentially inert, the genuine prime-vs-zero tension
+that RH is about does NOT live in the even sector at this L/N. It must
+concentrate elsewhere: the ODD sector, larger L, or the cross-prime coupling
+J(tau_2,tau_3) of the second window.
+
+**Actionable steer (short -> long feedback).** When opening weil-second-prime,
+do NOT budget effort symmetrically between sectors. Profile prime-term influence
+per sector FIRST (a cheap mutation-style probe), and spend hard compute where
+M2/cross-terms actually move the pivot. A short-term measurement redirecting
+long-term effort. Scope boundary unchanged: FP-0.35 still does not imply RH.
