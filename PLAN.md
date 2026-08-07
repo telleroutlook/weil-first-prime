@@ -2,6 +2,9 @@
 
 **重写日期：2026-08-07**（旧版归档于 `docs/PLAN_v1_archive.md`）
 
+> **新程序员接手请先读 `HANDOFF.md`**（代码可信度地图、已知 bug、环境前置、
+> 收尾链的确切命令）。本 PLAN 是战略地图，HANDOFF 是操作交接。
+
 ---
 
 ## 状态快照（一句话真相）
@@ -72,6 +75,42 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
 - **L2 · 思辨路线图** `docs/SPECULATIVE_ROADMAP.md`（纯思辨，核心引理 L 敞开，不承诺）：
   铁律已预筛掉多数死路——PSWF=坐标系非火力、反向热流无激波=τ(X,L)→0、
   任何强守恒律本身=RH。未闭合合法路标：自守正则化（= RH 的几何朗兰兹重述，难度守恒下不可能更弱）。
+
+---
+
+## 第四编-附 · 代码可信度地图（接手必读）
+
+| 文件 | 状态 | 说明 |
+|---|---|---|
+| checker/fp035/recompute_schur.py | OK 可信 | 正确四项 S0 + min-pivot,独立重算。新工作以它为准。 |
+| checker/fp035/check_fp035.py | OK 可信 | 调用 recompute_schur 真重算 + mutation metadata。 |
+| checker/fp035/mutation_catalog.py | OK 可信 | 6 mutant,kill=100%。 |
+| scripts/reproduce_fp035.py | OK 已修 | 四项 S0 + --out。原为 S_KK-only(虚高16x),已修。 |
+| src/assemble/o1b_gate.py | OK 可信 | 生产级四项 S0,mpmath LDL。 |
+| scripts/scan_lambda_profile.py | WARN 有bug | S0=S_KK only。用前必须先修成四项 S0。 |
+| pilots/cert_schur_correct_cL.json | DEAD 废弃 | S_KK-only(虚高16x)+ shutil.copy。勿复用数值。 |
+
+最危险 bug 模式:漏二阶矩项 -> 残差偏小 -> 判据假通过。S0 必须四项。
+
+## 第四编-附2 · 环境前置
+
+- proofctl 在 ~/github/proofctl,需 v0.3.16(含 C10/C11);~/bin/proofctl 为部署副本。
+- Python:python-flint(Arb)、numpy;LaTeX 用 tectonic(paper/compile.sh)。
+- 长任务(>2min)用 ~/.local/bin/run_and_wait.sh -t <秒> -- <命令>,前台阻塞,禁裸 &。
+- certify 四项 S0 重算:偶 ~40min,奇 ~25min。禁用 depth=2 快扫下判决
+  (教训:depth=2 把 -0.022 算成 -0.0007,误差 30x)。
+
+## 第四编-附3 · 中长期任务入口 + 验收
+
+- M1 E2 端点吸收射程:入口 kappa_edge 分析(定理2证明内),L* 满足 c2=kappa_edge(L*)。
+  验收:证 L>L* 时存在显式反例 w_L 使 V(w_L)+P_{2,L}(w_L)<0。
+- M2 lambda(L)廓线重做:入口 scan_lambda_profile.py,先修其 S_KK-only bug(参考
+  recompute_schur 四项 S0)。验收:>=3 个 L 点 certify 级严格下界廓线。
+- M3 proofctl 方法论论文:入口 C10/C11 pilot 故事 + docs/PROOF_CONSTITUTION.md。
+  验收:可投 J. Automated Reasoning / CICM 草稿。
+- M4 Lean 扩展:入口 lean4/(定理1-3已成)。验收:更多引理机器验证。
+- L1 第二窗口:新仓库 weil-second-prime。首要:mutation-style 探针 profile 各扇区
+  素数项影响(第一窗口 even 素数项近乎惰性,勿对称分配算力)。需写双平移耦合 J(tau2,tau3)。
 
 ---
 

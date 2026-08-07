@@ -231,19 +231,27 @@ def certify_sector(label: str, N: int, d: int, sector: str) -> bool:
     print(f"Arb residual = {max_resid}  (elapsed {elapsed:.1f}s)",
           flush=True)
 
+    info = {"label": label, "N": N, "d": d, "b_L": float(b_L),
+            "min_eig": float(min_eig), "residual": str(max_resid)}
     if max_resid < arb(1):
         print(f"\n*** {label.upper()} SECTOR CERTIFIED ***")
         print(f"    b_L = {b_L:.5f}  min_eig = {min_eig:.5f}  "
               f"residual = {max_resid}  CERTIFIED")
-        return True
+        return True, info
     else:
         print(f"FAIL: residual >= 1 (interval arithmetic inflation)")
-        return False
+        return False, info
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> int:
+    import argparse, json as _json
+    ap = argparse.ArgumentParser(description="FP-0.35 reproduction / certificate generator")
+    ap.add_argument("--out", default=None,
+                    help="write the certificate JSON to this path (real recomputation)")
+    args = ap.parse_args()
+
     print("FP-0.35 Reproduction Script")
     print(f"Weil constant c_L(7/20) = {C_L_FLOAT:.8f}")
     print(f"                        = log(2*pi*7/20) + gamma_E")
@@ -252,17 +260,36 @@ def main() -> int:
 
     t_start = time.time()
 
-    ok_even = certify_sector("even", N=8, d=16, sector="even")
-    ok_odd  = certify_sector("odd",  N=6, d=13, sector="odd")
+    ok_even, info_even = certify_sector("even", N=8, d=16, sector="even")
+    ok_odd,  info_odd  = certify_sector("odd",  N=6, d=13, sector="odd")
 
     total = time.time() - t_start
     print(f"\n{'='*60}")
     print(f"Total elapsed: {total:.1f}s")
 
-    if ok_even and ok_odd:
+    ok = ok_even and ok_odd
+    if args.out is not None:
+        cert = {
+            "claim_id": "thm-fp-035",
+            "method": "exact_prime_split_v1",
+            "S0_definition": "S_VV+S_VK+S_KV+S_KK",
+            "c_L": {"value": str(C_L_FRAC), "float": C_L_FLOAT},
+            "kappa_L": {"value": str(KAPPA_FRAC), "float": KAPPA_FLOAT},
+            "L0": "2^-30",
+            "even_sector": info_even,
+            "odd_sector": info_odd,
+            "both_certified": bool(ok),
+            "conclusion": "lambda(7/20) > 0 (finite-scale Weil positivity); does NOT imply RH",
+            "generated_by": "scripts/reproduce_fp035.py (real recomputation, four-term S0)",
+        }
+        with open(args.out, "w") as f:
+            _json.dump(cert, f, indent=2, sort_keys=True)
+        print(f"certificate written to {args.out}")
+
+    if ok:
         print()
-        print("FP-0.35 PROVED: lambda(7/20) >= 2^{-30} > 0")
-        print("(Theorem 7.3, Lin Tao 2026)")
+        print("FP-0.35 HOLDS: lambda(7/20) > 0 (both sectors min_pivot > 0)")
+        print("(finite-scale Weil positivity; does NOT imply RH)")
         return 0
     else:
         print()
