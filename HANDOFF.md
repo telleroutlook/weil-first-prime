@@ -1,5 +1,13 @@
 # Handoff — 2026-08-07
 
+## 0. Closeout status (2026-08-07, updated)
+The near-term certification closeout (§4) is **COMPLETE** (commit d6538be):
+`proofctl release --dry-run` PASSES all 13 conditions incl. C10/C11, no blockers;
+17/17 claims ACCEPTED; tests 124 passed. The three from_scratch attestations
+(thm-fp-035, lem-o1b-even, lem-o1b-odd) were replayed with REAL generators and
+now carry mutation_kill_rate=100%. Only remaining near-term item is N7 (arXiv
+endorsement, human action). Canonical clean cert: pilots/cert_fp035_clean.json.
+
 ## 1. One-line status
 FP-0.35 (Weil quadratic form positive-definite at L=7/20) **holds mathematically**:
 both sectors have positive Schur min-pivot (even +0.0087, odd +0.053), using the
@@ -15,6 +23,8 @@ regenerated because the old certificate has two process defects (§3).
 | checker/fp035/recompute_schur.py | TRUSTED | correct four-term S0 + min-pivot, independent recompute. Base new work on it. |
 | checker/fp035/check_fp035.py | TRUSTED | calls recompute_schur (real recompute) + emits mutation metadata. |
 | checker/fp035/mutation_catalog.py | TRUSTED | 6 mutants, kill_rate 100%. |
+| checker/first_prime/mutation_catalog_o1b.py | TRUSTED | o1b C11 catalog, 6/6 kill both sectors; reuses exact_split.assemble_o1b_matrices+judge_o1b_pivot. |
+| pilots/cert_fp035_clean.json | TRUSTED | canonical clean cert (four-term S0, real c_L): even min_eig 0.00095, odd 0.01896. |
 | scripts/reproduce_fp035.py | FIXED | four-term S0 + --out {cert}. Was S_KK-only (16x inflation), now fixed. |
 | src/assemble/o1b_gate.py | TRUSTED | production four-term S0, mpmath LDL. |
 | scripts/scan_lambda_profile.py | HAS KNOWN BUG | S0 = S_KK only. Must fix to four-term before use. |

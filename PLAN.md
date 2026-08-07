@@ -46,11 +46,17 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
 |---|---|---|
 | N1 | mutation catalog（C11 实体，6/6 kill，artifact 已固化） | ✅ 完成 |
 | N2 | checker 改真重算 + 输出 mutation metadata | ✅ 完成 |
-| N3 | attestation 重生成：`proofctl replay` 用真 checker 调用作 generator（非 copy）→ 解除 C10 | ⬜ 进行中 |
-| N4 | 重新生成 `cert_schur_correct_cL.json`（正确四项值，真重算） | ⬜ |
-| N5 | `proofctl release` 通过（C01–C11 全绿） | ⬜ |
-| N6 | 三处数值最终对齐核验：paper / cert / reproduce_fp035 | ⬜ |
-| N7 | arXiv endorsement 跟进（Zenodo v1.5 修正版已发） | ⏳ 等待 |
+| N3 | attestation 重生成：`proofctl replay` 用真 checker 调用作 generator（非 copy）→ 解除 C10 | ✅ 完成 |
+| N4 | 重新生成干净证书 `pilots/cert_fp035_clean.json`（正确四项值，真重算） | ✅ 完成 |
+| N5 | `proofctl release --dry-run` 通过（C01–C11 全绿，13/13，无 blocker） | ✅ 完成 |
+| N6 | 三处数值最终对齐核验：paper / cert / reproduce_fp035（odd min_eig 5.0e-2→1.9e-2 修正，废弃证书引用清除） | ✅ 完成 |
+| N7 | arXiv endorsement 跟进（Zenodo v1.5 修正版已发） | ⏳ 等待人工 |
+
+> **2026-08-07 收尾完成**（commit d6538be）：C11 不止封 thm-fp-035，也封
+> lem-o1b-even/odd（`proofctl replay` 恒置 replay_mode=from_scratch）。已为 o1b
+> checker 建独立 mutation catalog（`checker/first_prime/mutation_catalog_o1b.py`，
+> 两扇区各 6/6 kill），并将 `exact_split` 重构出 `assemble_o1b_matrices`+
+> `judge_o1b_pivot` 供 checker 与 catalog 共用（无重复逻辑）。唯一剩余人工动作是 N7。
 
 ---
 
