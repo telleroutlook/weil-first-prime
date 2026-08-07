@@ -79,11 +79,18 @@ def main() -> int:
         description="Generate first-prime certificate for L=7/20"
     )
     parser.add_argument("--sector", choices=["even", "odd", "both"], required=True)
+    parser.add_argument("--out", default=None,
+                        help="write the certificate to this path (single sector only; "
+                             "used by proofctl replay's {cert} placeholder). Defaults to "
+                             "certs/first-prime-<sector>.json.")
     args = parser.parse_args()
 
     sectors = ["even", "odd"] if args.sector == "both" else [args.sector]
+    if args.out is not None and args.sector == "both":
+        parser.error("--out cannot be combined with --sector both")
     for sector in sectors:
-        out = _ROOT / "certs" / f"first-prime-{sector}.json"
+        out = pathlib.Path(args.out) if args.out is not None \
+            else _ROOT / "certs" / f"first-prime-{sector}.json"
         generate(sector, out)
     return 0
 

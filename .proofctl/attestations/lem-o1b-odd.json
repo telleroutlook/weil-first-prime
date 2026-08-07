@@ -21,21 +21,29 @@
   "outcome": "accepted",
   "assurance": "reproducible-computation",
   "resources": {
-    "wall_millis": 716165,
+    "wall_millis": 667876,
     "cpu_millis": 0,
     "mem_bytes": 0
   },
-  "start_freshness": "2026-08-06",
-  "end_freshness": "2026-08-06",
-  "self_digest": "sha256:9435e0377152a4c15f8be15f660649dc541c549a3610f1be44d11f6cb98378ff",
+  "start_freshness": "2026-08-07",
+  "end_freshness": "2026-08-07",
+  "self_digest": "sha256:33d8e6dbeda6aca55bc279e39a8082420b3d47bc7c39723966f1309607bea047",
   "metadata": {
+    "archimedean_obligation": "archimedean_primitives_o2_v1",
     "checker_exit": "0",
-    "cold_replay_date": "2026-08-06",
+    "cold_replay_date": "2026-08-07",
     "digests_fresh": "true",
     "evidence_count": "1",
     "evidence_digests": "sha256:728292f540a7b69493a3bb6a039d58b4eb84ec61a9c4ee7b534613b2a42b417d",
+    "format_version": "first-prime-1.0",
     "generator_cmds": "python3 -m src.assemble.generate_first_prime_cert --sector odd --out {cert}",
-    "semantic_replay": "true"
+    "method": "exact_prime_split_v1",
+    "mutation_catalog_digest": "sha256:fc016989366e92872ed49d4b3eb90393e127d8a06b7f92a1f664ea8fbdb8272b",
+    "mutation_kill_rate": "100%",
+    "pivot_count": "1",
+    "sector": "odd",
+    "semantic_replay": "true",
+    "window_verified": "true"
   },
   "replay_mode": "from_scratch",
   "obligation_results": [

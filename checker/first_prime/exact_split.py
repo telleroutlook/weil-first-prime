@@ -159,23 +159,24 @@ def recompute_prime_layer(sector: str, precision: int) -> dict[str, Any]:
     }
 
 
-def certify_with_archimedean_base(
+def assemble_o1b_matrices(
     sector: str,
     base: dict[str, Any],
     precision: int,
 ) -> dict[str, Any]:
-    """Run Path B Schur certification using checker primitives and o1b_gate assembly.
+    """Parse the Archimedean base primitives and build the raw O1-B matrices.
 
     `base` is the `primitives` dict from check_archimedean.py output:
       keys like "M_K_(i, j)", "S_KK_(i, j)", "S_VK_(i, j)", "M_V_(i, j)"
       values are [lo_str, hi_str] with exact Fraction numerator/denominator strings.
 
-    Returns a dict with 'pivots' (list of lower-bound Fraction values).
+    Returns the single matrix dict {M0, S0, M2, S2, G, T_N, indices, N, d}
+    consumed by both judge_o1b_pivot (the checker) and the mutation catalog,
+    so mutants perturb exactly the terms the checker asserts (no duplicate
+    assembly logic between checker and its C11 mutation evidence).
     """
     from src.assemble.o1b_gate import (
-        build_gram, build_kinetic, build_M2_S2, build_R, build_R_eta,
-        compute_b_L, build_F, build_schur_matrix, SECTOR_PARAMS,
-        _min_pivot_mpmath,
+        build_gram, build_kinetic, build_M2_S2, SECTOR_PARAMS,
     )
 
     if sector not in SECTOR_PARAMS:
@@ -212,6 +213,31 @@ def certify_with_archimedean_base(
     T_N  = build_kinetic(indices)
     M2, S2 = build_M2_S2(indices)
 
+    return {"sector": sector, "N": N, "d": d, "indices": indices,
+            "M0": M0, "S0": S0, "M2": M2, "S2": S2, "G": G, "T_N": T_N}
+
+
+def judge_o1b_pivot(mats: dict[str, Any], precision: int,
+                    raise_on_fail: bool = True) -> dict[str, Any]:
+    """Assemble the Schur matrix from (possibly mutated) matrices and return the
+    min LDL^T pivot. Single source of the positivity judge used by the checker
+    and the mutation catalog.
+
+    raise_on_fail=True (checker): raise O2Blocked on b_L<=0 or non-positive pivot.
+    raise_on_fail=False (catalog): return the failing pivot so a mutant that
+    drives the verdict negative is recorded as killed rather than aborting.
+    """
+    from src.assemble.o1b_gate import (
+        build_R, build_R_eta, compute_b_L, build_F, build_schur_matrix,
+        _min_pivot_mpmath,
+    )
+    from checker.archimedean.replay import O2Blocked
+
+    M0, S0 = mats["M0"], mats["S0"]
+    M2, S2 = mats["M2"], mats["S2"]
+    G, T_N = mats["G"], mats["T_N"]
+    d = mats["d"]
+
     R0    = build_R(M0, S0, G)
     R2    = build_R(M2, S2, G)
     R_eta = build_R_eta(R0, R2)
@@ -219,23 +245,41 @@ def certify_with_archimedean_base(
     c_L = Fraction(0)   # conservative lower bound
     b_L = compute_b_L(d, c_L, precision)
     if b_L <= 0:
-        from checker.archimedean.replay import O2Blocked
-        raise O2Blocked(f"b_L = {float(b_L):.6f} <= 0")
+        if raise_on_fail:
+            raise O2Blocked(f"b_L = {float(b_L):.6f} <= 0")
+        return {"min_pivot": float(b_L), "b_L": float(b_L)}
 
     F = build_F(T_N, M0, M2, G, c_L)
     C = build_schur_matrix(b_L, F, R_eta)
 
     min_piv = _min_pivot_mpmath(C, dps=100)
     if min_piv is None or min_piv <= 0:
-        from checker.archimedean.replay import O2Blocked
-        raise O2Blocked(
-            f"LDL^T non-positive pivot: {min_piv:.4e}" if min_piv is not None
-            else "LDL^T factorisation failed"
-        )
+        if raise_on_fail:
+            raise O2Blocked(
+                f"LDL^T non-positive pivot: {min_piv:.4e}" if min_piv is not None
+                else "LDL^T factorisation failed"
+            )
+        return {"min_pivot": float(min_piv) if min_piv is not None else float("-inf"),
+                "b_L": float(b_L)}
 
+    return {"min_pivot": float(min_piv), "b_L": float(b_L)}
+
+
+def certify_with_archimedean_base(
+    sector: str,
+    base: dict[str, Any],
+    precision: int,
+) -> dict[str, Any]:
+    """Run Path B Schur certification using checker primitives and o1b_gate assembly.
+
+    Returns a dict with 'pivots' (list of lower-bound Fraction values).
+    """
+    mats = assemble_o1b_matrices(sector, base, precision)
+    res = judge_o1b_pivot(mats, precision, raise_on_fail=True)
+    min_piv = res["min_pivot"]
     return {
         "pivots": [(Fraction(str(min_piv)), 0)],
-        "b_L": float(b_L),
-        "min_pivot": float(min_piv),
+        "b_L": res["b_L"],
+        "min_pivot": min_piv,
     }
 

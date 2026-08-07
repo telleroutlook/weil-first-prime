@@ -1,0 +1,72 @@
+{
+  "baseline_min_pivot": 0.5293771233785692,
+  "catalog_digest": "sha256:fc016989366e92872ed49d4b3eb90393e127d8a06b7f92a1f664ea8fbdb8272b",
+  "kill_rate": 1.0,
+  "kill_rate_pct": "100%",
+  "mutants": [
+    {
+      "baseline": 0.5293771233785692,
+      "desc": "omit the (V+K) second moment S0 (retired-bug class)",
+      "killed": true,
+      "kind": "judge",
+      "mutant": "S0_zero",
+      "mutated": 0.6063588644323024,
+      "rel_move": 0.14541947064584765,
+      "sign_flip": false
+    },
+    {
+      "baseline": 0.5293771233785692,
+      "desc": "flip sign of M0 diagonal (matrix no longer matches)",
+      "killed": true,
+      "kind": "judge",
+      "mutant": "flip_M0_diag",
+      "mutated": -6.660427466095667,
+      "rel_move": 13.581630697578612,
+      "sign_flip": true
+    },
+    {
+      "baseline": 0.5293771233785692,
+      "desc": "remove kinetic coercivity T (loses positivity)",
+      "killed": true,
+      "kind": "judge",
+      "mutant": "T_zero",
+      "mutated": -0.018658473631103494,
+      "rel_move": 1.0352460898046032,
+      "sign_flip": true
+    },
+    {
+      "baseline": 0.5293771233785692,
+      "desc": "scale Archimedean coupling M0 by 1.5x (dominant term)",
+      "killed": true,
+      "kind": "recompute",
+      "mutant": "M0_scale_1p5x",
+      "mutated": 0.6195186966182508,
+      "rel_move": 0.1702785580615642,
+      "sign_flip": false
+    },
+    {
+      "baseline": 0.5293771233785692,
+      "desc": "scale prime coupling M2 by 100x (probe M2 truly consumed)",
+      "killed": true,
+      "kind": "recompute",
+      "mutant": "M2_scale_100x",
+      "mutated": -1016.1232579818153,
+      "rel_move": 1920.4695295798856,
+      "sign_flip": true
+    },
+    {
+      "baseline": 0.5293771233785692,
+      "desc": "scale prime self second moment S2 by 100x",
+      "killed": true,
+      "kind": "recompute",
+      "mutant": "S2_scale_100x",
+      "mutated": -2.05033008464534,
+      "rel_move": 4.873099146332215,
+      "sign_flip": true
+    }
+  ],
+  "n_killed": 6,
+  "n_mutants": 6,
+  "sector": "even",
+  "target": "lem-o1b-even"
+}

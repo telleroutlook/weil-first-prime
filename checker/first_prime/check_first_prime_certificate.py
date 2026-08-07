@@ -79,6 +79,23 @@ def validate_contract(contract: dict) -> None:
         raise ValueError("; ".join(rendered))
 
 
+def _mutation_metadata(sector: str) -> dict:
+    """Read the committed o1b mutation-catalog artifact for this sector and
+    expose C11 fields. References a pre-run, auditable artifact (not re-running
+    the ~10-min catalog on every check) per PROOF_CONSTITUTION A7. Absent
+    artifact -> empty (C11 then correctly blocks, rather than silently claiming
+    coverage)."""
+    art = _ROOT / "pilots" / f"mutation_catalog_o1b_{sector}.json"
+    try:
+        d = json.loads(art.read_text())
+        return {
+            "mutation_kill_rate": d.get("kill_rate_pct", ""),
+            "mutation_catalog_digest": d.get("catalog_digest", ""),
+        }
+    except Exception:
+        return {}
+
+
 def check(args: argparse.Namespace) -> int:
     try:
         contract = _load_contract(args.contract)
@@ -148,6 +165,15 @@ def check(args: argparse.Namespace) -> int:
                 "method": "exact_prime_split_v1",
                 "sector": sector,
                 "pivot_count": len(result["pivots"]),
+                "metadata": {
+                    "format_version": "first-prime-1.0",
+                    "method": "exact_prime_split_v1",
+                    "sector": sector,
+                    "pivot_count": str(len(result["pivots"])),
+                    "window_verified": "true",
+                    "archimedean_obligation": "archimedean_primitives_o2_v1",
+                    **_mutation_metadata(sector),
+                },
             },
             sort_keys=True,
         )

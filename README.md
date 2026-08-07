@@ -183,14 +183,14 @@ python3 scripts/reproduce_fp035.py
 Expected output (≈10–15 min, single core):
 
 ```
-EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=9.5e-4  min_pivot=8.7e-3  CERTIFIED
-ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=5.0e-2  min_pivot=5.3e-2  CERTIFIED
-FP-0.35 PROVED: lambda(7/20) >= 2^{-30} > 0
+EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=0.00095  residual=0  CERTIFIED
+ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=0.01896  residual=0  CERTIFIED
+FP-0.35 HOLDS: lambda(7/20) > 0 (finite-scale Weil positivity; does NOT imply RH)
 ```
 
 The script requires no special hardware and runs on any machine with
 Python ≥ 3.11 and `python-flint`. The certificate JSON is stored in
-`pilots/cert_schur_correct_cL.json`.
+`pilots/cert_fp035_clean.json` (real recomputation, four-term S0).
 
 For a layered view of what each component certifies:
 

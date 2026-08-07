@@ -18,9 +18,9 @@ Expected runtime: ~10–15 minutes on a modern laptop (single core).
 
 Output
 ------
-  EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=0.01494  residual=0  CERTIFIED
-  ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=0.06417  residual=0  CERTIFIED
-  FP-0.35 PROVED: lambda(7/20) >= 2^{-30} > 0
+  EVEN SECTOR  N=8  d=16  b_L=0.76018  min_eig=0.00095  residual=0  CERTIFIED
+  ODD  SECTOR  N=6  d=13  b_L=0.55958  min_eig=0.01896  residual=0  CERTIFIED
+  FP-0.35 HOLDS: lambda(7/20) > 0 (finite-scale Weil positivity; does NOT imply RH)
 
 What the script does NOT verify
 --------------------------------
