@@ -349,34 +349,42 @@ def main() -> int:
           f"{' [resume]' if args.resume else ''}", flush=True)
 
     completed = _load_completed(args.resume)
-    results = list(completed.values())
+    results = []
     t_total = time.time()
 
     try:
         for L_num, L_den, label in points:
             L_key = round(L_num / L_den, 6)
-            if L_key in completed:
-                print(f"\n[skip] {label} already complete "
-                      f"(λ >= {completed[L_key]['lambda_lower_bound']:.5f})", flush=True)
+            prior = completed.get(L_key)
+            # Only skip a point if a prior result covers ALL requested sectors.
+            if prior and all(s in prior.get("per_sector", {}) for s in sectors):
+                print(f"\n[skip] {label} already complete for {sectors} "
+                      f"(λ >= {prior['lambda_lower_bound']:.5f})", flush=True)
+                results.append(prior)
                 continue
             print(f"\n{'='*55}", flush=True)
             print(f"{label}", flush=True)
             t0 = time.time()
 
-            per_sector = {}
+            # Preserve any already-computed sectors from a prior partial result.
+            per_sector = dict(prior.get("per_sector", {})) if prior else {}
             c_L_val = None
             for sector in sectors:
                 N, d = SECTOR_ND[sector]
                 cache = SchurCache(L_num, L_den, N, d, sector=sector,
                                    resume=args.resume)
                 c_L_val = cache.c_L
+                if sector in per_sector and args.resume:
+                    print(f"  [{sector}] reusing prior λ >= {per_sector[sector]:.5f}",
+                          flush=True)
+                    continue
                 print(f"  [{sector}] Binary searching Λ_0...", flush=True)
                 best = cache.binary_search(lo=2**-30, hi=0.05, tol=1e-3)
                 per_sector[sector] = best
                 print(f"  [{sector}] λ >= {best:.5f}", flush=True)
 
             # The certified profile value is the min over sectors (both must hold).
-            lam = min(per_sector.values())
+            lam = min(per_sector[s] for s in sectors)
             elapsed = time.time() - t0
             print(f"\n  λ({L_num}/{L_den}) >= {lam:.5f}  (c_L={c_L_val:.5f})  "
                   f"per-sector={per_sector}  [{elapsed:.0f}s]", flush=True)
