@@ -415,8 +415,8 @@ and therefore
 \[
   \boxed{V + P_{2,7/20} \;\ge\; \frac{69}{100}\,V \;\ge\; 0.}
 \]
-The certificate reduces to five integer comparisons, all of which
-are independently machine-verified in Lean~4:
+The certificate reduces to five integer/rational comparisons, of which
+the integer inequalities are independently machine-verified in Lean~4:
 \begin{enumerate}
 \item $23581 \times 10 < 34020 \times 7$
       \hfill(\,$\log 2 < 7/10$\,)
@@ -814,8 +814,10 @@ For $L > 0$, let
 
 \begin{remark}[FP-0.35 is proved]
 The conjecture $\lambda(7/20) > 0$ is established by \cref{thm:fp035-proved}
-below.  Because $\lambda$ is non-increasing in $L$, this gives
-$\lambda(L) > 0$ for all $0 < L \le 7/20$.
+below.  Because $\lambda$ is non-increasing in $L$ (the prime and archimedean
+contributions to $Q_W^L$ grow with the support length; monotonicity is used here
+only as a heuristic corollary and is not required for the main result at $L=7/20$),
+this gives $\lambda(L) > 0$ for all $0 < L \le 7/20$.
 
 The proof reduces, via \cref{cor:redistribution} and
 \cref{thm:schur} with $N_+ = 8$, $N_- = 6$, $\eta = 1/2$, to the
