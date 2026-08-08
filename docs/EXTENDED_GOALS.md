@@ -56,10 +56,29 @@ M_K interval widths within the precision budget; it manifests instead as a colla
 of the Schur margin (λ_lb → 0) as L increases, not as Arb interval explosion.**
 
 **Effect B verdict**: The margin collapse from L=0.35 (lb=7.8×10⁻⁴) to L=0.42
-(lb~10⁻⁹) is approximately 10⁶× over ΔL=0.07. This is **exponential-scale collapse**
-of the certified lower bound, not polynomial. Wall time also 3.5× longer at L=0.42.
-→ **Route 3 timing: high priority** — the certified margin collapses exponentially
-with L, not polynomially.
+(lb~10⁻⁹) is approximately 10⁶× over ΔL=0.07. This APPEARED to be exponential-
+scale collapse of the certified lower bound.
+
+**⚠️ 2026-08-08 更正 (CRITICAL)**：λ_lb 的坍缩是**证书松弛（Certificate
+Relaxation）**，不是真特征值坍缩。`scripts/lambda_separation.py` 测量：
+- L=0.42：λ_min^true = +3.19×10⁻⁵（正），λ_lb = 9.31×10⁻¹⁰，比值 34,000×
+- Task 4（d-refinement）：L_c(d=14)≈0.40 → L_c(d=16)≈0.44 → d=20：[0.38,0.45] 全正
+- **Scenario B（Gibbs 截断假象）确认**：L_c(d) 随 d 单调右移，d=20 时消失。
+  d→∞ 的行为仍是外推（仅 d≤20 有数值支撑），但方向明确。
+
+**已撤回结论**（不得援引）：
+- ❌ "Effect B 是指数坍缩" —— 是 d=16 截断的 Gibbs 假象
+- ❌ "Route 3 因 Effect B 而高优先级" —— 紧迫性基础不存在
+- ❌ "wall time 3.5× longer at L=0.42 → exponential" —— wall time 增加是真的，
+  但原因是 b_L 减小（更多 b_L·F 收缩），不是无穷维物理坍缩。
+
+**Scenario B 边界**：L_c(d) 在 d=14→16→20 右移/消失，强烈暗示假象；但"d=∞ 全正"
+是外推，需更大 d 或解析论证方能断言第一窗口无限维稳健。
+
+**Route 3 优先级重评**：原"Route 3 高优先级"判断基于错误 Effect B 读数。真实
+λ_min^true 在 L≤0.43 均为正（d=16 截断下），d=20 整区间为正。Route 3 的紧迫性
+**大幅降低**。若需推进，动机应改为"certify 更大 d 以严格证明 Scenario B"，而
+非"对抗已观测到的指数坍缩"。
 
 #### $B_T$ translation attempt (2026-08-08, arXiv not accessible)
 

@@ -6,6 +6,7 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
 \usepackage{enumitem}
+\usepackage{booktabs}
 \usepackage[margin=2.5cm]{geometry}
 
 %% ── Theorem environments ──────────────────────────────────────────────────────
@@ -88,9 +89,17 @@ and \texttt{Real.sqrt\_lt\_sqrt}; the Arb-certified integral in Theorem~6.1
 is independent of the Lean formalisation).
 We give an exact spectral description of $C_{b,L}$ (\cref{thm:overlap}),
 falsify Path~A by explicit certified negative witnesses (\cref{thm:path-a-neg}),
-and prove the Path~B Schur criterion (\cref{thm:schur}) with the certified
-Weil constant $c_L(7/20) = \log(2\pi\cdot\tfrac{7}{20}) + \gamma_E \approx 1.36527$
-(derived from Suzuki~\cite{Suzuki2026} equation~(4.5); see \cref{rem:conventions}(ii)).
+and identify the spectral mechanism: the Weil constant $c_L \approx 1.36527$
+acts as a global negative diagonal shift that Path~A cannot overcome, whereas
+without it the $\{P_0,P_2\}$ subspace is positive definite
+(\cref{rem:path-a-mechanism}). We also correct an error in an earlier draft
+that attributed the obstruction to an edge-mass asymptotic: the companion
+formula $\langle K_LP_0,P_2\rangle \sim \ctwo/\kappae(L)$ fails by a factor
+of~$40$ inside the first-prime window, invalidating the proposed flip-point
+formula $\theta_0 = 1 - \ctwo/\kappae$ (\cref{rem:lemma-L3-failure}).
+We prove the Path~B Schur criterion (\cref{thm:schur}) with the same certified
+Weil constant (derived from Suzuki~\cite{Suzuki2026} equation~(4.5); see
+\cref{rem:conventions}(ii)).
 A mixed-precision Arb residual certification (\cref{thm:fp035-proved}) establishes
 $b_L F - R_\eta \succ 0$ for both parity sectors, completing the proof of
 \textbf{FP-0.35: $\lambda(7/20) > 0$}.
@@ -727,6 +736,67 @@ in Lean~4 is a planned extension (Extended Goal~E3).
 Both upper endpoints of the resulting interval enclosures are strictly
 below zero.
 \end{proof}
+
+\begin{remark}[Spectral mechanism: $c_L$ as global negative shift]
+\label{rem:path-a-mechanism}
+The failure of Path~A has a clean spectral explanation in the $\{P_0, P_2\}$
+Legendre subspace.  A 128-bit Arb computation
+(\texttt{src/verify\_2x2\_gram.py}) gives the $2\times2$ Gram matrix
+$E^\theta_{mn}$ of $\tilde{q}_{7/20}^\theta$ at $\theta = 69/100$:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Quantity & Value & Note \\
+\midrule
+$\langle VP_0,P_0\rangle$ & $0.6137$ & $V > 0$ on $I_L$ \\
+$\langle K_LP_0,P_0\rangle$ & $2.4890$ & large positive \\
+$c_L G_{00}$ & $2.730$ & dominant negative shift \\
+$E_{00}^{0.69}$ & $\approx +0.163$ & \\
+\midrule
+$\langle VP_2,P_2\rangle$ & $0.2694$ & \\
+$H_2 G_{22}$ & $0.600$ & kinetic \\
+$c_L G_{22}$ & $0.546$ & \\
+$E_{22}^{0.69}$ & $\approx +0.222$ & \\
+\midrule
+$E_{02}^{0.69}$ & $\approx +0.218$ & off-diagonal \\
+$\det(E^\theta)$ & $\approx -0.011$ & \textbf{negative} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The determinant is negative because $c_L \approx 1.365$ reduces $E_{00}$ and
+$E_{22}$ below the level needed for $E_{00}E_{22} > E_{02}^2$.
+Without the Weil constant ($c_L = 0$) the matrix is positive definite:
+$\det E^\theta|_{c_L=0} \approx +1.48 > 0$.
+Hence the obstruction is not a competition between the Archimedean kernel and
+edge-mass absorption; it is the global negative shift $c_L I$ that Path~A
+cannot overcome.  The full Schur criterion of \cref{thm:schur} is necessary
+precisely because it uses high-order kinetic energy $H_n \gg c_L$ to
+compensate this shift.
+\end{remark}
+
+\begin{remark}[Failure of the edge-mass asymptotic in the physical window]
+\label{rem:lemma-L3-failure}
+An earlier draft of the obstruction analysis proposed the formula
+$\theta_0(L) = 1 - \ctwo/\kappae(L)$ as the zero of the off-diagonal entry
+$E_{02}^\theta(L)$.  This is incorrect.  The companion asymptotic
+$\langle K_LP_0,P_2\rangle \sim \ctwo/\kappae(L)$ as $\varepsilon \to 0^+$
+fails in the physical window: at $L = 7/20$, $\varepsilon \approx 0.020$ and
+the asymptotic gives $\ctwo/\kappae \approx 0.303$, while the Arb-certified
+value is $\langle K_LP_0,P_2\rangle \approx 0.00712$ --- a factor-of-$40$
+discrepancy in which the $O(1)$ remainder is the entire leading term.
+The actual zero of $E_{02}^\theta$ is
+\[
+  \theta_{\mathrm{zero}}
+  = \frac{\ctwo\,\gamma_{02} - \langle K_LP_0,P_2\rangle}{\langle VP_0,P_2\rangle}
+  \approx \frac{0.0186 - 0.00712}{0.3333}
+  \approx 0.034,
+\]
+far from $\theta_0 \approx 0.697$.
+The formula $1 - \ctwo/\kappae$ has no algebraic relationship to the spectrum
+of $\tilde{q}^\theta$, and any argument depending on it is invalid inside the
+first-prime window.  \Cref{thm:path-a-neg} provides the correct (certified)
+falsification of Path~A without requiring any asymptotic expansion.
+\end{remark}
 
 %% ══════════════════════════════════════════════════════════════════════════════
 \section{FP-0.35: Proof of the Main Result}

@@ -78,6 +78,27 @@ v0.3.16 C11（要求 checker mutation 覆盖）。weil checker 已改为真重�
   完整发现见 `docs/M1_M2_LAMBDA_PROFILE_FINDINGS.md`。
   四项 S0 + 真 S2，两扇区，3 点 certify 级；positive 只存活于 L=7/20。
   修复了 `scan_lambda_profile.py` 两个漏项 bug（S_KK-only + S2=0）并加 checkpoint/resume。
+
+  **⚠️ 2026-08-08 重大更正（来自 FIRST_WINDOW_COLLAPSE_VERDICT.md §2 四任务执行）**：
+  λ_profile.json 里的 L=0.42 认证下界（9.3×10⁻¹⁰）**不代表真特征值穿零**，而是
+  **证书松弛（Certificate Relaxation）**。脚本 `scripts/lambda_separation.py` 测量：
+  - L=0.42：λ_min^true = +3.19×10⁻⁵（正！），λ_lb = 9.31×10⁻¹⁰，比值 ~34,000×
+  - L=0.45：λ_min^true = -1.32×10⁻³（负），真穿零在 L≈0.44，不是 0.42
+
+  **以下结论从此撤回，不得在任何文档中援引**：
+  - ❌ "Effect B 指数级坍缩" —— Task 4 证明是 Gibbs 截断假象（Scenario B）：
+    L_c(d=14)≈0.40 → L_c(d=16)≈0.44 → d=20 时 [0.38,0.45] 全正无穿零。
+    L_c(d) 单调右移，d=20 时穿零消失。
+  - ❌ "Route 3 因指数坍缩而高优先级" —— 坍缩是截断假象，此紧迫性不存在。
+  - ❌ "Legendre 基在深水区结构性失效" —— d=20 时全窗口为正，加大 d 即恢复。
+  - ⚠️ "λ_profile.json 的 L=0.42 λ_lb=9.3e-10 是 Effect B 指数坍缩证据" —— 错误；
+    该值是 d=16 截断下证书松弛，不是真特征值行为。
+
+  **Scenario B 的诚实边界**：d=20 时 [0.38,0.45] 全正，L_c(d) 右移趋势强烈暗示
+  Gibbs 假象，但"d→∞ 穿零消失"是外推，**仅在 d≤20 范围得到数值支撑**。要断言
+  "第一窗口无限维稳健"，需将 Scenario B certify 到更大 d 或给出解析论证。
+  结论只能是："到 d=20 为止，穿零点随 d 右移/消失，强烈暗示 Gibbs 截断假象；
+  d=∞ 的最终行为仍是外推，未严格证明。"
 - **M3 · proofctl 方法论论文**：✅ 完成初稿（commit d0c1b7f，`paper/proofctl-methodology.tex`，
   5 页，tectonic 编译通过；Zenodo metadata 就绪 `paper/ZENODO_METADATA_METHODOLOGY.txt`）。
   标题《When the Pilot Audits the Tool》——真实数学 pilot 暴露并修复 C10/C11 两类内核盲区，

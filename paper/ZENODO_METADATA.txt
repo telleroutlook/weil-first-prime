@@ -3,7 +3,8 @@
 # v1.2 Published: (intermediate revision)
 # v1.3 Published: 2026-08-06  (FP-0.35 proved, Theorem 7.3 added)
 # v1.4 Published: 2026-08-07  (citation corrections in Remark 2.1 and Introduction)
-# v1.5 (this revision): eigenvalue-provenance correction — see version note below
+# v1.5 Published: 2026-08-08  (eigenvalue-provenance correction)
+# v1.6 (this revision, 2026-08-08): Path A spectral mechanism + edge-mass asymptotic correction
 # URL: https://zenodo.org/records/21807498
 #
 # Upload instructions:
@@ -31,7 +32,7 @@ Affiliations: (leave blank for independent researcher)
 Role: Author
 
 ## Description (paste as single block into the Abstract/Description field — do not add line breaks inside sentences)
-We prove six structural results for the local Weil quadratic form Q_W^L on L^2(-L,L) in the first-prime window (half*log2 < L < half*log3), the minimal interval where only the prime n=2 contributes to the Weil explicit formula. Our main technical contribution (Theorem 5.1) is an algebraisation showing that the matrices J_ij(tau) and E_ij(tau) lie in Q[tau] and are computable without numerical quadrature. We also prove a pure-rational absorption certificate (Theorem 4.3): V + P_{2,7/20} >= (69/100)*V >= 0, machine-verified in Lean 4/Mathlib. We give an exact spectral description of C_{b,L} (Theorem 3.1), falsify Path A by explicit certified negative witnesses (Theorem 6.1), and prove the Path B Schur criterion (Theorem 5.3). In v2 (2026-08-06), we additionally establish FP-0.35 (Theorem 7.3): lambda(7/20) > 0. The proof uses the certified Weil constant c_L(7/20) = log(2*pi*7/20) + gamma_E (from Suzuki arXiv:2606.09096 equation (4.5), Arb 256-bit certified), and a mixed-precision residual certification verifying ||I - C_inv * C_arb||_inf = 0 for both parity sectors (even N=8, odd N=6). These results do not imply the Riemann Hypothesis. Supporting code and 124 automated tests at https://github.com/telleroutlook/weil-first-prime
+We prove six structural results for the local Weil quadratic form Q_W^L on L^2(-L,L) in the first-prime window (half*log2 < L < half*log3), the minimal interval where only the prime n=2 contributes to the Weil explicit formula. Our main technical contribution (Theorem 5.1) is an algebraisation showing that the matrices J_ij(tau) and E_ij(tau) lie in Q[tau] and are computable without numerical quadrature. We also prove a pure-rational absorption certificate (Theorem 4.3): V + P_{2,7/20} >= (69/100)*V >= 0, machine-verified in Lean 4/Mathlib. We give an exact spectral description of C_{b,L} (Theorem 3.1), falsify Path A by explicit certified negative witnesses (Theorem 6.1), and identify the spectral mechanism: the Weil constant c_L ≈ 1.36527 acts as a global negative diagonal shift that Path A cannot overcome, while without it the {P_0, P_2} subspace is positive definite (Remark 6.2). We also correct an error in an earlier draft: the companion asymptotic for the off-diagonal entry K_L fails by a factor of 40 at L=7/20, invalidating the proposed flip-point formula theta_0 = 1 - c_2/kappa_edge inside the first-prime window (Remark 6.3). We prove the Path B Schur criterion (Theorem 5.3) and establish FP-0.35 (Theorem 7.3): lambda(7/20) > 0, using the certified Weil constant c_L(7/20) = log(2*pi*7/20) + gamma_E (from Suzuki arXiv:2606.09096 equation (4.5), Arb 256-bit certified). These results do not imply the Riemann Hypothesis. Supporting code and 124 automated tests at https://github.com/telleroutlook/weil-first-prime
 
 ## Keywords (enter each on a separate line in the Zenodo form)
 Weil quadratic form
@@ -55,6 +56,8 @@ URL: https://github.com/telleroutlook/weil-first-prime
 Relation: is supplemented by
 
 ## Additional notes (paste into Notes field)
+v1.6 (2026-08-08): Two new remarks added to §6 (Strict Falsification of Path A). Remark 6.2 gives the 2×2 spectral mechanism: the Weil constant c_L ≈ 1.36527 is the global negative shift that makes det(E^theta) < 0; without c_L the {P_0,P_2} subspace is positive definite. Remark 6.3 corrects an error in an earlier draft: the edge-mass asymptotic ⟨K_L P_0, P_2⟩ ~ c_2/kappa_edge fails by a factor of 40 at L=7/20, and the proposed flip-point formula theta_0 = 1 - c_2/kappa_edge has no algebraic relationship to the spectrum of q̃^theta. Abstract updated to reflect both corrections. No change to any theorem statement or conclusion.
+
 v1.5 (2026-08-08): Certificate-provenance and eigenvalue correction (conclusion unchanged; FP-0.35 still holds). The v1.3 certificate reported the Schur minimum eigenvalues from a computation whose second moment used the S_KK block only; recomputing with the full four-term S0 = S_VV + S_VK + S_KV + S_KK gives the correct, thinner margins: even-sector min eigenvalue 9.5e-4 (was 1.494e-2, a factor of 15.7 too large) and odd-sector min eigenvalue 1.9e-2 (was 5.0e-2). The minimum LDL^T pivots (8.7e-3 even, 5.3e-2 odd) and the sign of the result are unchanged: lambda(7/20) > 0. The certificate was regenerated by genuine four-term recomputation (pilots/cert_fp035_clean.json) rather than a stored-file copy, and the checker was made to independently recompute and to carry mutation-catalog coverage. This finite-scale positivity result at L = 7/20 does not imply the Riemann Hypothesis.
 
 v1.4 (2026-08-07): Citation corrections in Remark 2.1 and Introduction.

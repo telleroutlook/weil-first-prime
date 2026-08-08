@@ -84,6 +84,30 @@ INCIDENT: joint Schur MUST be >= best split (no Young loss). It came out -0.0006
 < split's +0.0009 — instantly proving the S_cross assembly was buggy, preventing
 a false "joint also fails" conclusion.
 
+### A9. Separate λ_lb (certificate lower bound) from λ_min^true (true eigenvalue)
+TRIGGER: any conclusion of "collapse", "failure", "sign flip", or "loss of
+positive-definiteness" based on a certified lower bound dropping sharply.
+RULE: before issuing any "this matrix is failing" verdict, SIMULTANEOUSLY compute
+(a) the certified lower bound λ_lb and (b) the direct float minimum eigenvalue
+λ_min^true. If they disagree by more than 10×, the conclusion may be Certificate
+Relaxation (the certificate became loose), not a real eigenvalue event. A
+"collapse" verdict requires λ_min^true to also drop or go negative.
+INCIDENT (2026-08-08): λ_lb at L=0.42 fell to 9.31×10⁻¹⁰ (a 10⁶× drop from
+L=0.35). This was taken as evidence of "Effect B exponential collapse" and
+"Route 3 high priority". Task 1 revealed λ_min^true at L=0.42 was +3.19×10⁻⁵
+(still positive); ratio λ_min^true/λ_lb ≈ 34,000. The entire collapse was
+Certificate Relaxation — the matrix had not truly lost positive-definiteness.
+True sign change occurs at L≈0.44 (λ_min^true < 0 at L=0.45). A full campaign's
+worth of strategic decisions were made on the wrong quantity.
+CHECK: any "collapse/failure" report must include a 2-column table:
+  λ_lb_certified | λ_min^true | ratio
+before a verdict is issued. Ratio > 100× = Certificate Relaxation suspected;
+ratio > 1000× = strong presumption of false alarm; verdict suspended until
+λ_min^true confirms sign change.
+SYMMETRY NOTE: this same λ_lb ≠ λ_min^true gap causes failures in BOTH
+directions: "Certificate false pass" (FP-0.35 original cert, S_KK-only) and
+"Certificate false collapse" (L=0.42 Effect B). One rule catches both.
+
 ---
 
 ## PART B — Proof / Epistemology Discipline

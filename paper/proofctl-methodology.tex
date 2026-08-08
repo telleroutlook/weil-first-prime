@@ -21,7 +21,7 @@
 \title{When the Pilot Audits the Tool: \\
        Two Verification Blind Spots Exposed and Closed by a \\
        Real Computational-Mathematics Proof}
-\author{}
+\author{Lin Tao}
 \date{\today}
 
 \begin{document}
@@ -277,6 +277,7 @@ codifying as an executable-where-possible ``proof constitution.'' We record the
 parts most relevant to anyone building or trusting such a system.
 
 \begin{principle}[Narrative resistance]
+\label{prin:narrative}
 A computed number that supports a dramatic story --- ``we found a fatal bug,''
 ``the proof fails'' --- demands \emph{more} scrutiny, not less. Excitement is a
 bias multiplier, not evidence.
@@ -318,6 +319,36 @@ copy-certificate and self-attestation attacks, unlike one that reads and
 validates a supplied certificate. Recompute checkers still need mutation coverage
 for omitted-term bugs --- but they cannot be fooled by a doctored certificate.
 \end{principle}
+
+A third principle, less immediately about tools, emerged from the same campaign
+when analysing the range of $\lambda(L)$ across $L \in [7/20, 0.45]$:
+
+\begin{principle}[Certified lower bound $\neq$ true eigenvalue]
+\label{prin:lb-vs-true}
+A certificate's rigorous lower bound $\lambda_{lb}$ on $\lambda_{\min}$ can
+collapse by orders of magnitude while $\lambda_{\min}^{\mathrm{true}}$ remains
+positive --- a phenomenon we call \emph{Certificate Relaxation} (the
+certificate becomes loose, not the matrix ill-posed).
+Before issuing any verdict of ``collapse'', ``failure'', or ``loss of positive
+definiteness'', simultaneously compute (a) the certified lower bound $\lambda_{lb}$
+and (b) the direct float minimum eigenvalue $\lambda_{\min}^{\mathrm{true}}$.
+A ratio $\lambda_{\min}^{\mathrm{true}}/\lambda_{lb} > 100$ strongly suggests
+relaxation; a ratio $> 1000$ suspends the verdict until $\lambda_{\min}^{\mathrm{true}}$
+itself confirms the sign change.
+\end{principle}
+
+\noindent The incident: at $L=0.42$, the certified lower bound fell to
+$\lambda_{lb} = 9.3\times10^{-10}$ (a $10^6\times$ drop from $L=7/20$),
+which was interpreted as evidence of ``exponential collapse'' and drove several
+downstream strategic decisions.  Direct measurement gave
+$\lambda_{\min}^{\mathrm{true}} = +3.19\times10^{-5}$ --- still positive,
+ratio $\approx 34{,}000\times$.  The collapse was entirely Certificate
+Relaxation; the true sign change occurs at $L \approx 0.44$.
+Principle~\ref{prin:lb-vs-true} is structurally symmetric with
+Principle~\ref{prin:narrative}: the same $\lambda_{lb} \neq \lambda_{\min}^{\mathrm{true}}$
+gap causes failures in \emph{both} directions --- a false pass (inflated certified
+eigenvalue, the omitted-term bug) and a false collapse (deflated certified lower
+bound, the relaxation). One rule catches both.
 
 \section{Closeout, and a second instance}
 \label{sec:closeout}
