@@ -37,6 +37,79 @@ E1–E3 are mathematically self-contained; Routes 0–3 are the post-proof progr
 
 Run the full Schur certification at 2–3 additional L values ($L = 0.42, 0.46$) and record the actual Arb interval widths. Plot inflation rate vs L. Decision point: if polynomial → Route 3 can wait; if exponential → Route 3 needs to start sooner.
 
+#### Effect B measurement results (2026-08-08)
+
+Three certify-grade points (`lambda_profile.json`, depth=4 M_K / depth=3 S_KK, four-term S0):
+
+| L | $\lambda_{\mathrm{lb}}$ (even) | $\lambda_{\mathrm{lb}}$ (odd) | Wall time |
+|---|---|---|---|
+| 0.35 | 7.81×10⁻⁴ | 4.92×10⁻² | 200 s |
+| 0.42 | 9.31×10⁻¹⁰ | 0 (cert. failed) | 696 s |
+| 0.46 | 0 (cert. failed) | 0 (cert. failed) | 696 s |
+
+**M_K interval width finding**: All 210 even-sector M_K entries (N8, N10, N12) have
+uniform Arb interval width ≈ 2.32×10⁻³⁷ ≈ 2⁻¹²², independent of order max(k,n)
+(order ranges from 0 to 48 across the N12 checkpoint). This width is the 256-bit
+precision floor, not a Bernstein-remainder-dominated bound — the GL-4/Bernstein
+remainder is below the precision threshold. **Conclusion: Effect B does not inflate
+M_K interval widths within the precision budget; it manifests instead as a collapse
+of the Schur margin (λ_lb → 0) as L increases, not as Arb interval explosion.**
+
+**Effect B verdict**: The margin collapse from L=0.35 (lb=7.8×10⁻⁴) to L=0.42
+(lb~10⁻⁹) is approximately 10⁶× over ΔL=0.07. This is **exponential-scale collapse**
+of the certified lower bound, not polynomial. Wall time also 3.5× longer at L=0.42.
+→ **Route 3 timing: high priority** — the certified margin collapses exponentially
+with L, not polynomially.
+
+#### $B_T$ translation attempt (2026-08-08, arXiv not accessible)
+
+Groskin's formula (from EXTENDED_GOALS summary): $B_T \sim (2N+1)\rho\log(T)/(\pi^2 T)$,
+$\rho = 2\pi/\log c$, $c$ = prime cutoff, $T$ = archimedean truncation.
+
+**Translation status: INCOMPLETE — two correspondences unverified.**
+
+*What IS established from the repo:*
+- First-prime window fixes $c=2$ for all $L \in (0.347, 0.549)$ — only prime $p=2$
+  contributes, so $\log c = \log 2$ and $\rho = 2\pi/\log 2 \approx 9.06$.
+- $N$ corresponds to our Galerkin dimension: $N_{\rm even}=8$, $N_{\rm odd}=6$.
+
+*What is NOT verified (requires Groskin §3–4):*
+1. **The $c$↔$L$ correspondence**: whether Groskin uses a variable prime cutoff
+   $c \sim e^{2L}$ (Weil explicit formula convention) or a fixed $c$. In the
+   first-prime window both conventions agree ($c=2$ fixed), but the formula
+   structure differs. **Status: unverified — arXiv 2607.02828 not accessible.**
+2. **The $T$ identification**: Groskin's $T$ is an archimedean cutoff (imaginary
+   part of Riemann zeros), not a GL quadrature depth. It does not directly
+   correspond to our Bernstein ellipse parameter. **Status: unverified.**
+
+*Analytic $B_T(L)$ under Assumption A ($c=2$, $T=T_{\rm eff}$ from Bernstein ellipse):*
+
+| L | $T_{\rm eff}$ | $B_T$ (even, $N=8$) | $B_T$ (odd, $N=6$) |
+|---|---|---|---|
+| 0.35 | 51.3 | 1.20 | 0.92 |
+| 0.42 | 35.6 | 1.57 | 1.20 |
+| 0.50 | 25.2 | 2.00 | 1.53 |
+
+These values are $O(1)$ — **this translation does not match the observed 10⁶×
+margin collapse**. The $B_T$ formula describes the archimedean tail increment
+of the Weil quadratic form as a function of zero-truncation height $T$, not the
+Schur margin decay with support length $L$. The two quantities are
+**structurally different**: $B_T$ bounds a tail contribution to the Weil sum,
+while the Schur margin measures positive-definiteness of a finite matrix.
+
+**Effect B / $B_T$ translation verdict**: Translation failed to produce a
+matching bound. The identified correspondence between Groskin's $T$ and our
+computational parameters is unverified and likely incorrect — Groskin's
+framework is frequency-space (integer nodes $I_N$) while ours is
+position-space (Legendre on $[-L,L]$). A genuine translation requires
+identifying the dual pairing between the two discretizations, which
+is the 3–6 month theoretical task noted in Route 3.
+
+**Engineering conclusion**: Effect B is **exponential in $\Delta L$**, not
+polynomial. The $B_T$ formula is not a ready analytic substitute for certify-grade
+measurements. Route 3 (spectral gap or Poincaré inequality) remains the
+only identified path to uniform-in-$L$ bounds.
+
 ---
 
 ### Route 2 / Phase 2: Second Prime Window — NEW REPO `weil-second-prime`
