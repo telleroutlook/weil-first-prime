@@ -1,5 +1,5 @@
 # Zenodo submission metadata for paper/proofctl-methodology.tex
-# Status: ready to upload
+# Status: ready to upload (updated 2026-08-08 — Principle 6.5 added)
 # Companion to: 10.5281/zenodo.21807498 (FP-0.35 main paper)
 
 ## Upload type
@@ -28,18 +28,24 @@ kernel blind spots that every prior release had silently passed: (i) a generator
 that merely copied a stored certificate while its attestation claimed
 from-scratch recomputation, and (ii) a checker that recomputed honestly but
 omitted a term of the quantity it claimed to verify, emitting a false pass with a
-16x-inflated margin. Neither is caught by digest binding, schema validation, or
-"all obligations pass": the copy-generator produces byte-identical replays, and
-the omitted-term checker is internally consistent. We describe the two release
-conditions added in response — C10 (no copy-only generator) and C11 (checker
-mutation coverage) — the epistemic discipline (a written "proof constitution")
-the same incident forced, and the closeout in which the corrected pilot was
-driven back through the hardened gate, where a second independent instance of the
-same blind-spot class surfaced and was fixed. The broader methodological lesson:
-the highest-value feedback a real proof can give a verification system is not
-"it verified" but "here is a true statement your gate accepted for the wrong
-reason." This paper is about verification methodology; it makes no claim about
-the Riemann Hypothesis.
+~16x-inflated margin (0.01494 reported vs 0.00095 true). Neither is caught by
+digest binding, schema validation, or "all obligations pass": the copy-generator
+produces byte-identical replays, and the omitted-term checker is internally
+consistent. We describe the two release conditions added in response — C10 (no
+copy-only generator) and C11 (checker mutation coverage) — the epistemic
+discipline (a written "proof constitution") the same incident forced, and the
+closeout in which the corrected pilot was driven back through the hardened gate,
+where a second independent instance of the same blind-spot class surfaced and was
+fixed. The paper also records a third principle that emerged from the same
+campaign: a certificate's rigorous lower bound on an eigenvalue can collapse by
+orders of magnitude while the true eigenvalue remains positive — a phenomenon we
+call Certificate Relaxation — which causes symmetric failures in both directions
+(false pass and false collapse) and requires simultaneously checking both the
+certified bound and the direct float eigenvalue before issuing any verdict. The
+broader methodological lesson: the highest-value feedback a real proof can give a
+verification system is not "it verified" but "here is a true statement your gate
+accepted for the wrong reason." This paper is about verification methodology; it
+makes no claim about the Riemann Hypothesis.
 
 ## Keywords (enter each on a separate line)
 proof orchestration
@@ -50,6 +56,8 @@ reproducibility
 certificate-first verification
 interval arithmetic
 software correctness
+certificate relaxation
+epistemic discipline
 proofctl
 FP-0.35
 
@@ -60,7 +68,7 @@ Creative Commons Attribution 4.0 International (CC BY 4.0)
 URL: https://github.com/telleroutlook/weil-first-prime
 Relation: is supplemented by
 
-DOI: 10.5281/zenodo.21807498
+DOI: 10.5281/zenodo.21847941
 Relation: is supplement to
 Resource type: Publication / Preprint
 
@@ -70,13 +78,24 @@ ACM Computing Classification:
   Theory of computation -> Logic and verification
   Mathematics of computing -> Mathematical software
 
+2020 Mathematics Subject Classification:
+  68N30 (Mathematical aspects of software engineering)
+  03B70 (Logic in computer science)
+  65G20 (Numerical methods for interval arithmetic)
+
 Companion paper (mathematics being orchestrated):
-  doi:10.5281/zenodo.21807498
-  "Structural Lemmas for the First-Prime Window of the Weil Quadratic Form"
+  doi:10.5281/zenodo.21847941
+  "Structural Lemmas for the First-Prime Window of the Weil Quadratic Form" (v1.7)
 
 Software: proofctl (open-source Go proof-orchestration tool), v0.3.16
   (release conditions C10 and C11 introduced by this pilot).
 
-## Target venue (after arXiv)
+## Target venue (after arXiv/Zenodo)
 Journal of Automated Reasoning (Springer) — primary
+  Suitable section: Tools and Systems / Methodology
+  Note: JAR accepts 5-page tool/methodology notes; this paper is 5-6 pages.
+  arXiv category: cs.LO (Logic in Computer Science)
+
 Conferences on Intelligent Computer Mathematics (CICM) — secondary
+  Track: Mathematical Software / Systems and Projects
+  arXiv category: cs.LO or cs.SE
