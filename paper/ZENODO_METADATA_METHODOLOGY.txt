@@ -19,33 +19,7 @@ Affiliations: (leave blank for independent researcher)
 Role: Author
 
 ## Description
-Proof-orchestration systems promise that a machine-checked release gate makes a
-computational proof trustworthy, but a gate only checks the properties it was
-told to check. We report a case in which a genuine research proof — the FP-0.35
-conjecture on positivity of the Weil quadratic form at L = 7/20 — acted as an
-adversarial pilot against its own verification layer, proofctl, and exposed two
-kernel blind spots that every prior release had silently passed: (i) a generator
-that merely copied a stored certificate while its attestation claimed
-from-scratch recomputation, and (ii) a checker that recomputed honestly but
-omitted a term of the quantity it claimed to verify, emitting a false pass with a
-~16x-inflated margin (0.01494 reported vs 0.00095 true). Neither is caught by
-digest binding, schema validation, or "all obligations pass": the copy-generator
-produces byte-identical replays, and the omitted-term checker is internally
-consistent. We describe the two release conditions added in response — C10 (no
-copy-only generator) and C11 (checker mutation coverage) — the epistemic
-discipline (a written "proof constitution") the same incident forced, and the
-closeout in which the corrected pilot was driven back through the hardened gate,
-where a second independent instance of the same blind-spot class surfaced and was
-fixed. The paper also records a third principle that emerged from the same
-campaign: a certificate's rigorous lower bound on an eigenvalue can collapse by
-orders of magnitude while the true eigenvalue remains positive — a phenomenon we
-call Certificate Relaxation — which causes symmetric failures in both directions
-(false pass and false collapse) and requires simultaneously checking both the
-certified bound and the direct float eigenvalue before issuing any verdict. The
-broader methodological lesson: the highest-value feedback a real proof can give a
-verification system is not "it verified" but "here is a true statement your gate
-accepted for the wrong reason." This paper is about verification methodology; it
-makes no claim about the Riemann Hypothesis.
+Proof-orchestration systems promise that a machine-checked release gate makes a computational proof trustworthy, but a gate only checks the properties it was told to check. We report a case in which a genuine research proof — the FP-0.35 conjecture on positivity of the Weil quadratic form at L = 7/20 — acted as an adversarial pilot against its own verification layer, proofctl, and exposed two kernel blind spots that every prior release had silently passed: (i) a generator that merely copied a stored certificate while its attestation claimed from-scratch recomputation, and (ii) a checker that recomputed honestly but omitted a term of the quantity it claimed to verify, emitting a false pass with a ~16x-inflated margin (0.01494 reported vs 0.00095 true). Neither is caught by digest binding, schema validation, or "all obligations pass": the copy-generator produces byte-identical replays, and the omitted-term checker is internally consistent. We describe the two release conditions added in response — C10 (no copy-only generator) and C11 (checker mutation coverage) — the epistemic discipline (a written "proof constitution") the same incident forced, and the closeout in which the corrected pilot was driven back through the hardened gate, where a second independent instance of the same blind-spot class surfaced and was fixed. The paper also records a third principle that emerged from the same campaign: a certificate's rigorous lower bound on an eigenvalue can collapse by orders of magnitude while the true eigenvalue remains positive — a phenomenon we call Certificate Relaxation — which causes symmetric failures in both directions (false pass and false collapse) and requires simultaneously checking both the certified bound and the direct float eigenvalue before issuing any verdict. The broader methodological lesson: the highest-value feedback a real proof can give a verification system is not "it verified" but "here is a true statement your gate accepted for the wrong reason." This paper is about verification methodology; it makes no claim about the Riemann Hypothesis.
 
 ## Keywords (enter each on a separate line)
 proof orchestration
