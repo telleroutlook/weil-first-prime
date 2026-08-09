@@ -1,0 +1,896 @@
+\documentclass[12pt,a4paper]{amsart}
+
+%% ── Packages ─────────────────────────────────────────────────────────────────
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+
+\emergencystretch=3em
+
+\crefname{problem}{Open Problem}{Open Problems}
+\Crefname{problem}{Open Problem}{Open Problems}
+
+%% ── Theorem environments ──────────────────────────────────────────────────────
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{problem}[theorem]{Open Problem}
+
+%% ── Macros ────────────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Tr}{\operatorname{Tr}}
+
+% Canonical system Hamiltonian
+\newcommand{\Ham}{H}
+% de Branges structure function
+\newcommand{\dbE}{E}
+
+%% ── Scope warning macro ───────────────────────────────────────────────────────
+\newcommand{\scopenote}[1]{\par\smallskip\noindent\textbf{Scope note.} #1\par\smallskip}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+
+\title[A Limit-Point Criterion and Obstacles to a dBN Realization]{A Limit-Point Criterion for Canonical Systems\\
+       and Obstacles to a de Bruijn--Newman Realization}
+
+\author{Lin Tao}
+\address{Shanghai}
+\date{\today}
+
+\begin{document}
+
+\begin{abstract}
+We record, with a short proof for reference, the standard trace-divergence
+criterion (\cref{prop:weyl}) for the limit-point classification of the
+right endpoint of a two-dimensional canonical system, under Remling's
+standing assumptions; it is a direct specialisation of Remling's
+Theorem~3.5 and is not a new result.
+We then audit the ``Core Lemma'' of the speculative programme
+\cite{SpecRoadmap}.  Two findings are negative.  First, the naive
+realization via the logarithmic-derivative Herglotz function
+$m_t=-H_t'/H_t$ exists but is too weak to be useful: it produces a
+trace-normalised half-line system that is automatically limit-point,
+making the endpoint conclusion tautological (\cref{sec:trivial}).
+Second, and more importantly, the programme's proposed equivalence
+``$\mathrm{RH}\iff\operatorname{spec}T_\Phi=\{\gamma_n\}$'' is \emph{not
+justified as written}: a self-adjoint operator has real spectrum, so its
+eigenvalues $\{\gamma_n\}$ (the ordinates of the zeta zeros) record
+nothing about the \emph{real parts} of those zeros, and the roadmap
+supplies no theorem recovering that missing information (\cref{sec:open}).
+Since $T_\Phi$ has not been rigorously defined, we do not claim to have
+disproved the implication for that specific relation; we show only that
+the stated justification is insufficient.  A correct sufficient
+replacement is a one-directional criterion using the characteristic
+function $\Xi(z)=\xi(\tfrac12+iz)$; it is at least as hard as RH, imposing
+requirements not known to follow from RH.  The paper yields \emph{no}
+nontrivial or arithmetically meaningful theorem about the de Bruijn--Newman
+flow.
+
+\scopenote{This paper is a reference note plus a logical-gap and
+proof-obligation audit of a speculative programme.  It does \emph{not}
+imply the Riemann Hypothesis or any consequence thereof.  The only proved
+statements are the criterion \cref{prop:weyl} and the trivial realization
+of \cref{sec:trivial}; the programme's Core Lemma is shown to be, with
+only the justification it gives, insufficient for RH, and the corrected
+problem \cref{prob:gen} is marked \textbf{OPEN}.}
+\end{abstract}
+
+\maketitle
+
+\tableofcontents
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction}
+\label{sec:intro}
+
+We work throughout in the Rodgers--Tao convention \cite{RodgersTao2020}.
+Let
+\[
+  \Phi_{\mathrm{RT}}(u) \;=\; \sum_{n\ge 1}
+    \bigl(2\pi^2 n^4 e^{9u} - 3\pi n^2 e^{5u}\bigr)\,e^{-\pi n^2 e^{4u}},
+    \qquad u \in \R,
+\]
+and define the heat-flow deformation, for $t \in \R$, by
+\begin{equation}\label{eq:heatflow}
+  H_t(z) \;=\; \int_0^\infty e^{t u^2}\,\Phi_{\mathrm{RT}}(u)\cos(zu)\,du,
+  \qquad
+  \partial_t H_t(z) \;=\; -\,\partial_z^2 H_t(z),
+\end{equation}
+so that $H_0(z) = \tfrac18\,\xi\!\bigl(\tfrac12 + \tfrac{iz}{2}\bigr)$.
+Note the \emph{backward} heat equation carries a minus sign; it is the
+kernel weight $e^{tu^2}$ (not a Gaussian multiplier in the transform
+variable) that genuinely moves the non-real zeros of $H_t$ toward the
+real axis as $t$ increases.  In particular the naive multiplier
+$e^{-t z^2} H_0(z)$ would leave the zero set of $H_0$ unchanged and does
+\emph{not} realise the de Bruijn--Newman flow.
+The de Bruijn--Newman constant $\Lambda \in [0, 0.2]$ (lower bound
+$\Lambda \ge 0$ by Rodgers--Tao \cite{RodgersTao2020}; upper bound
+$\Lambda \le 0.2$ by Saouter--Gourdon--Demichel \cite{SaouterGourdon2011},
+using zero-free region data from Platt--Trudgian \cite{PlattTrudgian2021})
+is defined by:
+for $t > \Lambda$, $H_t$ has only real zeros
+(Laguerre--P\'olya class; cf.\ Newman \cite{Newman1976}); for
+$t < \Lambda$, $H_t$ has non-real zeros.
+The Riemann Hypothesis is equivalent to $\Lambda = 0$.
+
+\begin{remark}[Relation to the earlier scaling]
+  A previous draft used the Titchmarsh-scaled kernel
+  $\Phi_{\mathrm{doc}}(x) = 2\,\Phi_{\mathrm{RT}}(x/2)$ together with a
+  Gaussian factor $e^{-\lambda t^2}\Xi_0(t)$.  That factor is nowhere
+  zero and hence leaves the zero set of $\Xi_0$ unchanged, so it does not
+  implement the flow.  Under the correct kernel identity one has
+  $\int_0^\infty e^{\lambda x^2}\Phi_{\mathrm{doc}}(x)\cos(tx)\,dx
+   = 4\,H_{4\lambda}(2t)$, whence $\Xi_0(t) = \tfrac12\,\xi(\tfrac12+it)$
+  and the critical parameter rescales to $\Lambda/4$.  To avoid these
+  pitfalls we use only the Rodgers--Tao normalisation above.
+\end{remark}
+
+De Branges' theory \cite{deBranges1968} associates to a $2\times 2$
+positive-semidefinite locally-integrable Hamiltonian $\Ham(x)$ the
+canonical system
+\begin{equation}\label{eq:cansys}
+  J\,y'(x) = z\,\Ham(x)\,y(x), \qquad
+  J = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}.
+\end{equation}
+At each regular truncation $x$ the transfer matrix yields a de~Branges
+structure function $E_x$ and space $\mathcal H(E_x)$, whose reproducing
+kernel is an \emph{internal} kernel of that space.  After a self-adjoint
+realization is fixed, the associated spectral transform maps the operator
+(or relation) part unitarily onto an $L^2(\R,\rho)$ space for a spectral
+measure $\rho$; the Krein--de~Branges correspondence
+\cite{Krein1952,Remling2018} relates $\Ham$, the chain $\{E_x\}$, and
+$\rho$.  We stress that $\rho$ is \emph{not} the reproducing kernel:
+the two are distinct objects.
+
+The key structural question for the programme of \cite{SpecRoadmap} is:
+\emph{does a canonical system attached to the de Bruijn--Newman flow
+satisfy the limit-point condition at $x=+\infty$?}  A limit-point right
+endpoint removes the boundary freedom at that endpoint; it does \emph{not}
+by itself make the associated relation an essentially self-adjoint
+operator, since the regular left endpoint $x=0$ still carries one boundary
+condition (see \cref{prop:weyl} and \cref{cor:alpha}).
+
+\subsection*{What this paper does and does not do}
+
+The D1 step of \cite{SpecRoadmap} gave a \emph{qualitative} argument.
+The present paper isolates what is actually provable, and is best read as
+a research audit rather than a source of new theorems.
+
+\begin{enumerate}[label=(\arabic*)]
+  \item \textbf{Reference criterion (\cref{sec:L3}).}  We restate, with a
+        short proof, the standard trace-divergence limit-point criterion
+        \cref{prop:weyl}.  This is a direct specialisation of
+        \cite[Theorem~3.5]{Remling2018}; it is not new and its proof
+        depends on \cite{Remling2018}.
+  \item \textbf{Trivial realization (\cref{sec:trivial}).}  For
+        $t>\Lambda$, the logarithmic derivative $m_t=-H_t'/H_t$ is a
+        generalised Herglotz function, so Remling's inverse theorem
+        \cite[Theorem~5.1]{Remling2018} produces a \emph{unique
+        trace-normalised} half-line canonical system $\widehat\Ham_t$.
+        Being trace-normalised, it has
+        $\int_0^\infty \Tr\widehat\Ham_t = +\infty$ automatically and is
+        therefore limit-point by \cref{prop:weyl} --- a tautology that
+        carries no arithmetic content.
+  \item \textbf{Audit of the Core Lemma (\cref{sec:open}).}  According to
+        \cite{SpecRoadmap} (its ``Core Lemma~L''), D1's acceptance
+        criterion is a two-part equivalence: $T_\Phi$ limit-point at
+        $+\infty$ \emph{and} a fixed self-adjoint realization having
+        spectrum $\{\gamma_n\}$.  We find its stated justification
+        \emph{insufficient as written}: the second conjunct records only
+        the ordinates $\gamma_n$, which are real regardless of RH, so
+        self-adjointness plus equality of ordinate sets does \emph{not} by
+        itself imply RH; the roadmap gives no theorem recovering the
+        real-part information (\cref{rem:coreL-defective}).  We do
+        \emph{not} disprove the implication for the (still undefined)
+        $T_\Phi$.  A correct sufficient replacement uses the
+        characteristic function $\Xi(z)=\xi(\tfrac12+iz)$: a full
+        zero-divisor identification with $\Xi$ \emph{does} imply RH, as a
+        one-way sufficiency at least as hard as RH
+        (\cref{prob:gen,rem:coreL-is-RH}).  We also note that $T_\Phi$ and
+        its Hamiltonian are not yet rigorously defined in
+        \cite{SpecRoadmap}; constructing them is the first, unstated part
+        of the problem (\cref{rem:undefined}).  No terminal entire
+        function at $x=\infty$ is assumed (\cref{rem:incompat}).
+\end{enumerate}
+
+Consequently the paper contains \emph{no} arithmetically meaningful
+limit-point theorem about the de Bruijn--Newman flow, and nothing that
+bears on RH.
+
+\begin{remark}[Trace under reparametrisation]\label{rem:invariance}
+  Under the admissible reparametrisation $X(x)=\int_0^x \Tr\Ham(s)\,ds$
+  with $\widetilde\Ham(X)=\Ham(x)/\Tr\Ham(x)$ one has
+  $\int \Tr\widetilde\Ham(X)\,dX = \int \Tr\Ham(x)\,dx$.  Thus finiteness
+  or infiniteness of the total trace \emph{cannot} be altered by
+  renormalising; in particular one cannot escape the tautology of item~(2)
+  by ``choosing a different normalisation''.  The only genuine freedom is
+  in specifying a \emph{different Hamiltonian} --- the putative normalised
+  system $\Ham_\Phi$ appearing in the proposed Core Lemma
+  \cref{eq:coreL}, with its own Weyl function --- rather than
+  reparametrising a fixed one.
+\end{remark}
+
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{A trivial log-derivative realization}
+\label{sec:trivial}
+
+We first record that a canonical realization ``attached to $H_t$'' exists
+by an entirely standard construction --- and precisely because it is so
+cheap, it does not advance the programme.
+
+\begin{proposition}[Log-derivative Herglotz function]\label{prop:trivial}
+  Fix $t > \Lambda$.  Then $H_t$ is a real entire function in the
+  Laguerre--P\'olya class, with Hadamard factorisation
+  \begin{equation}\label{eq:hadamard}
+    H_t(z) \;=\; C_t\, z^{2m}\, e^{-a_t z^2}
+      \prod_{n}\Bigl(1 - \frac{z^2}{x_{n,t}^2}\Bigr)^{m_n},
+    \qquad a_t \ge 0,\quad \sum_n \frac{m_n}{x_{n,t}^2} < \infty,
+  \end{equation}
+  where $x_{n,t}>0$ enumerate the \emph{positive} nonzero zeros of $H_t$
+  with integer multiplicities $m_n\in\mathbb Z_{\ge1}$, and
+  $m\in\mathbb Z_{\ge0}$ with $2m$ the order of the zero at the origin.
+  Consequently the logarithmic derivative
+  \begin{equation}\label{eq:mt}
+    m_t(z) \;:=\; -\frac{H_t'(z)}{H_t(z)}
+      \;=\; 2a_t z - \frac{2m}{z}
+        + \sum_n m_n\Bigl(\frac{1}{x_{n,t}-z} + \frac{1}{-x_{n,t}-z}\Bigr),
+  \end{equation}
+  the series converging locally uniformly on
+  $\mathbb C\setminus Z(H_t)$, is a Herglotz function:
+  $\operatorname{Im}m_t(z) > 0$ for $\operatorname{Im}z > 0$.
+\end{proposition}
+
+\begin{proof}
+  The factorisation \cref{eq:hadamard} is the standard form for the
+  Laguerre--P\'olya class (a locally uniform limit of real polynomials
+  with only real roots; see \cite{Newman1976} and, for the specific
+  heat-flow zeros, \cite{KiKimLee2009,RodgersTao2020}).  Differentiating
+  $\log H_t$ term by term (justified by the local uniform convergence
+  from $\sum_n m_n/x_{n,t}^2 < \infty$) gives \cref{eq:mt}, each zero pair
+  $\pm x_{n,t}$ contributing exactly once.  For $\operatorname{Im}z>0$
+  each term $1/(x-z)$ with $x\in\R$ has
+  $\operatorname{Im}\bigl(1/(x-z)\bigr) = \operatorname{Im}z/|x-z|^2 > 0$,
+  the term $-2m/z$ contributes $2m\,\operatorname{Im}z/|z|^2 \ge 0$, and
+  $2a_t z$ contributes $2a_t\operatorname{Im}z \ge 0$.  Since $H_t$ is
+  nonconstant with at least one nonzero real zero, at least one summand
+  contributes strictly, so $\operatorname{Im}m_t(z) > 0$ (not merely
+  $\ge0$).
+\end{proof}
+
+\begin{corollary}[Automatic --- and vacuous --- limit-point]\label{cor:trivial}
+  Applying Remling's inverse spectral theorem
+  \cite[Theorem~5.1]{Remling2018} to $m_t$ of \cref{eq:mt} yields a
+  \emph{unique trace-normalised} half-line canonical system
+  $\widehat\Ham_t$ with $\Tr\widehat\Ham_t \equiv 1$ a.e.  Because $m_t$
+  is a non-constant Herglotz function (indeed $\operatorname{Im}m_t>0$
+  strictly, and the representing measure of $m_t$ is supported on
+  infinitely many points), the associated system is not a single
+  indivisible interval, so the standing assumptions of \cref{prop:weyl}
+  hold.  Since
+  $\Tr\widehat\Ham_t\equiv1$, $\int_0^\infty \Tr\widehat\Ham_t\,dx =
+  +\infty$, and \cref{prop:weyl} places $x=+\infty$ in the limit-point
+  case.
+
+  Separately --- and this is a distinct observation --- setting
+  $A_t = H_t$, $B_t = -H_t'$ gives $B_t/A_t = m_t$, so
+  $E_t = A_t - iB_t = H_t + iH_t'$ is a Hermite--Biehler function.
+  Indeed, since $H_t$ is real entire, $E_t^\# := \overline{H_t(\bar z)} -
+  i\,\overline{H_t'(\bar z)} = H_t(z) - iH_t'(z)$, so
+  $|E_t(z)|^2 - |E_t^\#(z)|^2 = 4|H_t(z)|^2\operatorname{Im}m_t(z) > 0$
+  for $\operatorname{Im}z>0$ by \cref{prop:trivial}.  Zero-freeness of
+  $E_t$ in the upper half-plane follows: if $E_t(z_0)=0$ and
+  $H_t(z_0)\neq0$ then $\operatorname{Im}m_t(z_0) = -1 < 0$,
+  contradicting the Herglotz property; if $H_t(z_0)=0$ then
+  $\operatorname{Im}z_0 \le 0$ since all zeros of $H_t$ are real for
+  $t>\Lambda$.  This does \emph{not} identify $E_t$ as a terminal
+  $E$-function of the reconstructed half-line system $\widehat\Ham_t$; it
+  is only a companion observation about $H_t$.
+\end{corollary}
+
+\begin{remark}[Why this does not help]\label{rem:trivial-weak}
+  The limit-point conclusion of \cref{cor:trivial} is a tautological
+  consequence of trace normalisation, not a fact about the geometry of a
+  ``natural'' Hamiltonian: by \cref{rem:invariance} every
+  trace-normalised half-line system has infinite total trace, so
+  \emph{every} such realization is limit-point regardless of $H_t$.  The
+  construction uses only that $H_t$ has real zeros with the summability
+  \cref{eq:hadamard}; it sees nothing arithmetic and carries no
+  information toward RH.  In particular it does \emph{not} exhibit $H_t$
+  as the terminal $A$-function of a prescribed canonical chain.
+\end{remark}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Audit of the programme's Core Lemma}
+\label{sec:open}
+
+The trivial construction of \cref{sec:trivial} shows that producing
+\emph{some} canonical system with $H_t$ in view is automatic.  The
+programme \cite{SpecRoadmap} instead proposes a specific spectral
+criterion, its ``Core Lemma~L'', which we now audit.  We find its stated
+justification \emph{insufficient as written}, and we record a corrected
+--- necessarily weaker, one-directional --- replacement.
+
+\subsection{The proposed criterion, and why its justification is insufficient}
+
+The roadmap \cite{SpecRoadmap} states its D1 acceptance criterion as a two-part
+equivalence.  In our notation:
+\begin{equation}\label{eq:coreL}
+  \begin{aligned}
+  \text{RH}\;\stackrel{?}{\Longleftrightarrow}\;
+  &\bigl(T_\Phi\text{ is limit-point at }+\infty\bigr)\\
+  &\quad\text{and}\quad
+  \bigl(\text{a fixed self-adjoint realization has }
+        \operatorname{spec}=\{\gamma_n\}\bigr),
+  \end{aligned}
+\end{equation}
+where $T_\Phi$ is a symmetric relation on a half-line canonical system
+built (in \cite{SpecRoadmap}) from the fixed positive kernel $\Phi$
+through the cosine-transform relation F1, and $\{\gamma_n\}$ are the
+imaginary parts of the nontrivial zeros of $\zeta$.  We write
+$\stackrel{?}{\Longleftrightarrow}$, not $\iff$, deliberately.
+
+\begin{remark}[The proposed implication is not justified as
+written]\label{rem:coreL-defective}
+  A self-adjoint relation has \emph{real} spectrum.  If some nontrivial
+  zero were off the critical line, $\rho_0=\beta+i\gamma$ with
+  $\beta\neq\tfrac12$, its ordinate $\gamma$ would still be a real number.
+  A statement about the real spectrum $\{\gamma_n\}$ therefore records the
+  ordinates only and is \emph{blind to the real parts} $\beta$.  Hence
+  ``$\operatorname{spec}=\{\gamma_n\}$'', \emph{by itself}, does not imply
+  $\beta=\tfrac12$ and does not imply RH.
+
+  We are careful about the scope of this observation.  It shows that
+  self-adjointness together with equality of ordinate sets is
+  \emph{insufficient} to force RH, and hence that the roadmap's stated
+  justification is incomplete.  It does \emph{not} disprove the
+  right-to-left implication for the particular relation $T_\Phi$: since
+  $T_\Phi$ has not been rigorously defined (\cref{rem:undefined}), it
+  remains logically possible that a specific construction from the full
+  $\Phi/\xi$ data would encode the real parts indirectly, e.g.\ via a
+  theorem
+  $\operatorname{spec}T_\Phi=\{\gamma_n\}\Rightarrow
+   \operatorname{div}D_{\theta_0}=\operatorname{div}\Xi$.  What is
+  missing is exactly such a theorem: an additional argument recovering the
+  real-part information, such as the divisor identity \cref{eq:divid}.
+  Accordingly \cref{eq:coreL} as written is not a justified restatement of
+  RH, and the Core Lemma needs this gap filled before it can be attacked.
+\end{remark}
+
+\subsection{The corrected statement: a one-way sufficiency}
+
+The object that \emph{does} retain the real parts is the entire function
+\begin{equation}\label{eq:Xi}
+  \Xi(z) \;=\; \xi\!\left(\tfrac12+iz\right).
+\end{equation}
+A nontrivial zero $\rho=\beta+i\gamma$ of $\zeta$ corresponds to the zero
+$z=\gamma+i(\tfrac12-\beta)$ of $\Xi$, which is \emph{real} iff
+$\beta=\tfrac12$.  Here $\operatorname{div}$ denotes the zero divisor,
+i.e.\ the formal sum of zeros counted with their orders.  Thus
+real-rootedness of $\Xi$ is equivalent to RH, and a spectral model implies
+RH only if it pins down the \emph{full zero divisor} of $\Xi$, not merely
+a set of real ordinates.
+
+\begin{problem}[Repair obligations for D1]\label{prob:gen}
+  To turn the programme's Core Lemma into a well-posed, one-directional
+  sufficiency for RH, the following four obligations must be discharged;
+  each has an explicit PASS condition.
+  \begin{enumerate}[label=(\arabic*)]
+    \item \textbf{Construction (non-circular).}  Specify a mathematically
+          checkable map $\Phi\mapsto\Ham_\Phi$, including the exact F1
+          identity and the normalisation, yielding a locally integrable,
+          positive-semidefinite
+          $\Ham_\Phi\colon[0,\infty)\to M_2(\R)$ and the minimal symmetric
+          relation $T_\Phi$ it induces via \cref{eq:cansys}.  \emph{PASS
+          condition.}  The
+          datum F1 and the rule $\Phi\mapsto\Ham_\Phi$ must be fixed
+          \emph{independently} of the zero divisor of $\Xi$, of the
+          ordinates $\{\gamma_n\}$, and of RH: neither the desired
+          spectrum nor any measure manufactured from it may enter as
+          input.  Existence \emph{and uniqueness} of the resulting
+          normalised $\Ham_\Phi$ must be proved --- if one $\Phi$ could
+          yield different $\Ham_\Phi$ under different admissible choices,
+          ``the specific operator $T_\Phi$'' would still be undefined.
+    \item \textbf{Standing assumptions and length.}  Prove that
+          $\Ham_\Phi$ meets the standing assumptions of \cref{prop:weyl}
+          and, \emph{independently}, that
+          $\int_0^\infty\Tr\Ham_\Phi(x)\,dx=+\infty$ (whence limit-point,
+          by \cref{prop:weyl}).
+    \item \textbf{Discreteness and characteristic function
+          (constructed, not named).}  After fixing $\theta_0\in[0,\pi)$,
+          prove that the resulting self-adjoint realization has
+          \emph{purely discrete} spectrum --- with no absolutely
+          continuous or singular continuous part and no finite real
+          accumulation point.  Then construct $D_{\theta_0}$ by a
+          \emph{prescribed operator-theoretic procedure} from $T_\Phi$ and
+          the boundary condition --- a boundary/Wronskian determinant, a
+          regularised Fredholm determinant of the resolvent, or a
+          rigorously convergent half-line limit of truncated transfer
+          determinants --- and prove
+          \begin{equation}\label{eq:charzero}
+            D_{\theta_0}(\lambda)=0
+            \iff \lambda\in\sigma_{\mathrm p}(T_{\Phi,\theta_0}),
+          \end{equation}
+          with the order of each zero equal to the (separately specified)
+          spectral multiplicity, and with the real normalisation
+          $D_{\theta_0}^{\#}=D_{\theta_0}$.  \emph{PASS condition.}
+          $D_{\theta_0}$ may \emph{not} be defined as a canonical product
+          over prescribed points (in particular not as $\Xi$, nor over
+          $\{\gamma_n\}$); it must arise from $T_\Phi$ by the fixed
+          procedure above.
+    \item \textbf{Divisor identity.}  Prove the zero-divisor identity
+          \begin{equation}\label{eq:divid}
+            \operatorname{div} D_{\theta_0}
+            \;=\;
+            \operatorname{div}\Xi .
+          \end{equation}
+  \end{enumerate}
+  Given (1)--(4): since the eigenvalues of a self-adjoint realization are
+  real, \cref{eq:divid} forces all zeros of $\Xi$ to be real, i.e.\ RH.
+  The point of the PASS conditions in (1) and (3) is exactly that only
+  then is \cref{eq:divid} a genuine \emph{theorem} rather than a
+  definition of the objects in terms of the target.
+\end{problem}
+
+\begin{remark}[Direction, and difficulty, of \cref{prob:gen}]\label{rem:coreL-is-RH}
+  Only the implication ``(1)--(4)$\Rightarrow$RH'' is claimed; the
+  converse is not, and RH does not by itself force any particular
+  $T_\Phi$ to have characteristic function $\Xi$.  Thus \cref{prob:gen} is
+  \emph{at least as hard as} RH, and it imposes additional requirements
+  not known to follow from RH: not only that the zeros of $\Xi$ be real
+  but that they coincide, with order, with the eigenvalue divisor of a
+  \emph{specific} operator.
+  Contrary to a claim in an earlier draft of this audit, this does not
+  mean there is no RH-independent acceptance criterion: the identity
+  \cref{eq:divid} is perfectly well-posed to \emph{state} without knowing
+  RH, and its target $\operatorname{div}\Xi$ is explicit.  What is missing
+  is different --- a rigorous definition of $T_\Phi$ and $D_{\theta_0}$,
+  and a proof relating the latter to the already explicit target divisor
+  $\operatorname{div}\Xi$ (\cref{rem:undefined}).  This paper resolves
+  none of it.
+\end{remark}
+
+\begin{remark}[Three distinct spectral conditions, not one]\label{rem:three-conditions}
+  ``$\operatorname{spec}=\{\gamma_n\}$ with multiplicities and correct
+  weights'', as an earlier draft put it, conflates three genuinely
+  different requirements that must be separated:
+  \begin{enumerate}[label=(\alph*)]
+    \item \emph{support}: $\operatorname{supp}\rho=\{\gamma_n\}$, using the
+          cyclic Weyl spectral measure $\rho$ and its closed support (a
+          statement about the spectrum as a set);
+    \item \emph{spectral multiplicity}: the eigenvalue multiset, i.e.\
+          the multiplicity of each point of the spectrum.  Under
+          additional hypotheses ensuring simple eigenvalues (which a
+          separated boundary condition on a scalar half-line system
+          typically, but not automatically, provides), matching
+          zeta-zero orders would further force the zeros of $\Xi$ to be
+          \emph{simple} --- a statement strictly stronger than RH;
+    \item \emph{norming constants}: the weights $\rho(\{\gamma_n\})$ of
+          the atoms of the spectral measure, which are \emph{not}
+          eigenvalue multiplicities but the squared reciprocal norms of
+          the eigenfunctions, after fixing the normalisation of the
+          canonical eigenfunctions.
+  \end{enumerate}
+  None of (a)--(c) is equivalent to another.  The support condition (a)
+  alone is insufficient; the divisor identity \cref{eq:divid} used here
+  does retain the missing real-part information (other spectral data
+  encoding the real parts could serve equally).  No formula for the
+  weights in (c) is available in \cite{SpecRoadmap}; that gap is part of
+  \cref{rem:undefined}.
+\end{remark}
+
+\begin{remark}[$T_\Phi$ and $\Ham_\Phi$ are not yet defined]\label{rem:undefined}
+  The roadmap \cite{SpecRoadmap} refers to $T_\Phi$ ``induced by $\Phi$ through F1''
+  but supplies no Hamiltonian formula, transfer matrix, Weyl function, or
+  de~Branges chain.  Consequently one cannot yet speak rigorously of the
+  minimal/maximal relation of $T_\Phi$, its self-adjoint extensions, or
+  its spectral measure: these presuppose $\Ham_\Phi$.  The genuinely first
+  task --- logically prior to any spectral identification --- is therefore
+  the \emph{construction} of $\Ham_\Phi$ and $T_\Phi$, stated as
+  obligation~(1) of \cref{prob:gen}.  The target $\operatorname{div}\Xi$
+  is, by contrast, already explicit; what is missing is a rigorous
+  definition of $T_\Phi$ and $D_{\theta_0}$ and a proof relating the
+  latter to that target.  Until obligation~(1) is done, \cref{eq:coreL}
+  and the left-hand side of \cref{eq:divid} refer to objects that are not
+  defined, and the phrases
+  ``the Weyl function of $T_\Phi$'' or ``the spectral measure $\rho$'' are
+  placeholders.
+\end{remark}
+
+\begin{remark}[Why the log-derivative realization does not solve this]\label{rem:not-trivial}
+  \Cref{cor:trivial} produces \emph{a} half-line system whose spectral
+  measure is atomic, supported on the zeros of $H_t$.  Even setting aside
+  that it works from $H_t$ ($t>\Lambda$) rather than the putative system
+  constructed from the undeformed kernel $\Phi$, it does not solve
+  \cref{prob:gen}: it matches a \emph{zero set} by construction, whereas
+  \cref{prob:gen} demands the zero-divisor identity \cref{eq:divid} for a
+  \emph{specific}, independently constructed $T_\Phi$ (and, by the PASS
+  condition of \cref{prob:gen}(3), for a $D_{\theta_0}$ produced from
+  $T_\Phi$, not defined over prescribed points).  Matching a prescribed
+  set of points by choosing a Herglotz function is trivial; proving that a
+  \emph{given} operator has a prescribed characteristic divisor is the
+  whole problem.
+\end{remark}
+
+\begin{remark}[Why no terminal entire function is imposed]\label{rem:incompat}
+  The D1 model of \cite{SpecRoadmap} is a singular canonical system on
+  $[0,\infty)$.  The functions $E_L$ associated with finite truncations
+  $[0,L]$ are approximation data for this half-line system; D1 does not
+  assume that $E_L$ converges to a nonzero entire function as
+  $L\to\infty$.  In particular the condition $A_\infty = c\,\Xi$ is
+  neither required nor used: a nonzero entire terminal function is
+  characteristic of a \emph{finite, regular} chain, whereas a genuine
+  half-line limit-point endpoint typically admits no such terminal entire
+  function.  (The characteristic function $D_{\theta_0}$ of
+  \cref{eq:divid}, when it exists, is a different object --- attached to
+  the self-adjoint realization, not a terminal transfer-matrix entry.)
+  Imposing $A_\infty=c\,\Xi$ would convert D1 into a separate finite-chain
+  realization problem, which the programme does not require.
+\end{remark}
+
+\begin{remark}[The limit-point conjunct is conditional, not settled]\label{rem:length}
+  The first conjunct of \cref{eq:coreL} --- limit-point at $+\infty$ ---
+  is often described in \cite{SpecRoadmap} as the ``easy half'', on the
+  ground that the Riemann--von~Mangoldt law
+  $N(T)=\tfrac{T}{2\pi}\log\tfrac{T}{2\pi e}+O(\log T)$ ``forces infinite
+  canonical length''.  We do \emph{not} endorse that inference.  $N(T)$
+  counts zeros in the \emph{spectral} variable, whereas
+  $\int_0^\infty\Tr\Ham_\Phi\,dx$ is a length in the \emph{spatial}
+  variable.  Such a deduction would require \emph{either} a direct
+  estimate of the total trace from an explicit formula for $\Ham_\Phi$
+  (needing no spectral identification at all), \emph{or} a proved
+  spectral-counting correspondence --- weaker than the full divisor
+  identity \cref{eq:divid} --- combined with a suitable
+  Cartwright/de~Branges growth/type theorem converting spectral density
+  into canonical length.  (We do not assert that
+  $N(T)\sim\tfrac{T}{2\pi}\log T$ alone yields trace divergence; a precise
+  such theorem would have to be cited and its hypotheses checked.)
+  Neither is supplied here.  Moreover infinite
+  \emph{discrete} spectrum alone does not force infinite length --- a
+  finite regular canonical system can have infinite discrete spectrum ---
+  so the super-linear $T\log T$ growth would have to be used explicitly to
+  exclude finite exponential type.  Accordingly we treat trace divergence
+  as a \emph{separate hypothesis}, not a settled fact:
+  \begin{quote}
+    No theorem translating the Riemann--von~Mangoldt counting law into
+    $\int_0^\infty\Tr\Ham_\Phi(x)\,dx=\infty$ is proved in this paper.
+  \end{quote}
+  Even granting it, by \cref{rem:invariance} it is a reparametrisation
+  invariant that cannot be manufactured by renormalisation, and it must
+  not be re-derived from \cref{prop:weyl} on pain of circularity.
+\end{remark}
+
+\scopenote{\textbf{OPEN.}  The following obstacles constrain any
+resolution of \cref{prob:gen}; none is resolved here.  They also explain
+why the heat-flow family $H_t$ ($t>\Lambda$) of \cref{sec:trivial} ---
+\cite{SpecRoadmap}'s $\Lambda$-1/$\Lambda$-2 step, where all zeros are
+already real --- gives no RH-independent handle on the putative system
+constructed from the undeformed kernel $\Phi$.}
+
+\medskip\noindent\textbf{Obstacle~1: a real entire function is never
+Hermite--Biehler.}
+For any real entire $F$ one has $F^\# = F$, so the strict de~Branges
+inequality $|E(z)|>|E^\#(z)|$ ($\operatorname{Im}z>0$) fails identically.
+Thus neither $\Xi$ nor $H_t$ can itself be an $E$-function; the spectral
+data of the half-line system must be encoded through a genuine
+Hermite--Biehler $E=A-iB$ (equivalently a Weyl function $m$), not by
+declaring a real entire function a structure function.
+
+\medskip\noindent\textbf{Obstacle~2: the naive $|H_t|^{-2}\,d\tau$ is not
+a spectral measure.}
+For $t>\Lambda$ all zeros of $H_t$ are real, and there are infinitely
+many \cite{KiKimLee2009,RodgersTao2020}.  At each real zero
+$|H_t(\tau)|^{-2}$ has a non-integrable double pole, so
+$d\mu_t = |H_t(\tau)|^{-2}\,d\tau$ is not locally finite; it cannot be the
+representing measure of any Weyl function.
+
+\medskip\noindent\textbf{Obstacle~3: no controlled spectral-system limit
+toward the candidate parameter $t=0$.}
+Even a complete identification for $H_t$ at a fixed $t>\Lambda$ would
+carry no RH information: there the zeros of $H_t$ are already all real
+(\cite{SpecRoadmap} $\Lambda$-2), so real-rootedness is not in question.
+The programme locates RH at the limit down to the candidate parameter
+$t=0$ (the true critical parameter is $\Lambda$, not known to be $0$).
+Here $t$ is the heat-flow parameter of \cref{eq:heatflow}; the roadmap's
+symbol $\lambda$ denotes its flow parameter, which agrees with $t$ up to
+the fixed rescaling recorded after \cref{eq:heatflow}.  We use $t$
+throughout.  The roadmap's constraint $(C')$ argues that the relevant
+minimum should tend to $0$ as $t\downarrow0^+$ with \emph{equality}: a
+uniform positive margin would, \emph{provided} the requisite continuity
+of that minimum in the parameter, its strict equivalence with the
+real-zero property, and a stability/continuation theorem past $0$ are
+established, extend the conclusion below $0$ and hence contradict
+$\Lambda\ge0$.  Those implications are the roadmap's, not results proved
+here.  Note that the function $H_t$ of course has a limit as
+$t\downarrow0$; what is missing is any control of the \emph{canonical
+system or spectral data} along that limit.  No such control is provided
+here.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{The limit-point criterion (reference statement)}
+\label{sec:L3}
+
+\begin{proposition}[Trace-divergence limit-point criterion]\label{prop:weyl}
+  Let $\Ham \colon [0,\infty) \to M_2(\R)$ satisfy the standing
+  assumptions of \cite{Remling2018}: $\Ham \in L^1_{\mathrm{loc}}$,
+  $\Ham \succeq 0$, $\Ham(x)\neq 0$ for a.e.\ $x$, and $[0,\infty)$ is not
+  a single indivisible interval.  Then the right endpoint $x=+\infty$ of
+  the canonical system \cref{eq:cansys} is in the limit-point case if and
+  only if
+  \[
+    \int_0^{\infty} \Tr\Ham(x)\,dx \;=\; +\infty.
+  \]
+  This is a specialisation of \cite[Theorem~3.5]{Remling2018}; it is
+  stated here only for reference.
+\end{proposition}
+
+\begin{remark}[On the standing assumptions]\label{rem:definite}
+  The a.e.\ non-vanishing and no-single-indivisible-interval hypotheses
+  are Remling's standing conventions.  They do \emph{not} by themselves
+  turn the maximal/minimal objects into operators: even with
+  $\Ham(x)\neq0$ a.e., rank-one (indivisible) subintervals force one to
+  work with linear \emph{relations}, which is why we use relation language
+  throughout (cf.\ \cite[Theorem~2.25]{Remling2018}).  A merely
+  positive-semidefinite $\Ham$ vanishing on a positive-measure set is
+  reduced to this setting by the trace reparametrisation of
+  \cref{rem:invariance}; by that same invariance the trace integral, and
+  hence the classification, is unchanged.
+\end{remark}
+
+\begin{proof}
+  By \cite[Theorem~3.5]{Remling2018}, under the standing assumptions the
+  right endpoint is limit-point iff
+  $\Ham \notin L^1((c,\infty);M_2)$ for one --- equivalently every ---
+  $c>0$.  Since $\Ham \succeq 0$, positivity gives $\Ham_{11},\Ham_{22}\ge0$
+  and $|\Ham_{12}| \le \sqrt{\Ham_{11}\Ham_{22}} \le \tfrac12\Tr\Ham$,
+  whence for each $c>0$
+  \[
+    \Ham \in L^1((c,\infty);M_2)
+    \iff
+    \Tr\Ham \in L^1(c,\infty).
+  \]
+  Combining the two equivalences gives the stated trace form.  (The
+  reference uses $J y' = -z\Ham y$; the substitution $z\mapsto -z$ gives
+  the sign convention of \cref{eq:cansys} and does not affect endpoint
+  classification.  The same criterion appears in Winkler
+  \cite{Winkler1995}.)
+
+  For the reader's convenience we indicate the direction that has an
+  elementary proof.  If $\int_c^\infty \Tr\Ham < \infty$ then
+  $\Ham \in L^1(c,\infty)$; writing \cref{eq:cansys} as the integral
+  equation $y(x) = y(c) + z\!\int_c^x J^{-1}\Ham(s)y(s)\,ds$ and applying
+  Gronwall's inequality, every solution at every fixed $z$ is bounded
+  near $+\infty$, so
+  $\int_c^\infty y(x,z)^*\Ham(x)y(x,z)\,dx
+   \le (\sup\|y\|^2)\int_c^\infty \Tr\Ham < \infty$;
+  all solutions are then in $L^2_\Ham$ and $+\infty$ is limit-circle.
+  The reverse implication --- trace divergence $\Rightarrow$ limit-point
+  --- is \emph{not} elementary in this way: exhibiting a single non-$L^2$
+  solution at the special value $z=0$ (the constant vector spanning the
+  larger of $\int_c^\infty\Ham_{jj}$) does not by itself control the
+  solution count at non-real $z$.  That step requires the parameter
+  independence of the deficiency index, which is precisely the nontrivial
+  content of \cite[Theorem~3.5]{Remling2018} via
+  \cite[Lemma~3.7]{Remling2018}; we do not reproduce it, and rely on the
+  cited theorem for the full equivalence.
+\end{proof}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Conditional corollary and boundary structure}
+\label{sec:proof}
+
+\begin{corollary}[The limit-point conjunct, conditionally]\label{cor:conditional}
+  Assume the construction of \cref{rem:undefined} is carried out, giving a
+  half-line Hamiltonian $\Ham_\Phi$ and relation $T_\Phi$ satisfying the
+  standing assumptions of \cref{prop:weyl}, and assume the separate
+  hypothesis $\int_0^\infty \Tr\Ham_\Phi(x)\,dx = +\infty$ of
+  \cref{rem:length}.  Then $x=+\infty$ is in the limit-point case.  This is
+  the first conjunct of \cref{eq:coreL}; it is \emph{conditional} on both
+  the construction and the trace-divergence hypothesis, the latter to be
+  supplied from the construction and \emph{not} from \cref{prop:weyl}
+  (\cref{rem:length}).
+\end{corollary}
+
+\begin{proof}
+  Immediate from \cref{prop:weyl} applied to $\Ham_\Phi$.
+\end{proof}
+
+\begin{remark}[This is not unconditional, and not the trivial case]\label{rem:not-uncond}
+  \Cref{cor:conditional} settles only the first conjunct of
+  \cref{eq:coreL}, and only modulo the construction and the
+  trace-divergence input.  The second conjunct is the corrected
+  identification \cref{prob:gen}: even in its right form (the divisor
+  identity \cref{eq:divid}) it is at least as hard as RH
+  (\cref{rem:coreL-is-RH}), and it is \emph{not} addressed.  For the
+  trace-normalised realization of \cref{cor:trivial} the trace-divergence
+  hypothesis is automatic but yields only the tautology of
+  \cref{rem:trivial-weak}.  So the paper establishes \emph{nothing}
+  arithmetically meaningful: all content sits in the spectral
+  identification, which we do not resolve.
+\end{remark}
+
+\begin{corollary}[Boundary-parameter structure, under
+\cref{cor:conditional}]\label{cor:alpha}
+  Under the hypotheses of \cref{cor:conditional}, the minimal symmetric
+  \emph{relation} $T_\Phi$ associated with $\Ham_\Phi$ has deficiency
+  indices $(1,1)$: the right endpoint $x=+\infty$ is limit-point and
+  contributes no free parameter, while the regular left endpoint $x=0$
+  carries one self-adjoint boundary condition.  For every
+  $\theta_0\in[0,\pi)$ the condition $e_{\theta_0}^{*}J\,y(0)=0$, with
+  $e_{\theta_0} = (\cos\theta_0,\sin\theta_0)^{\top}$, defines a
+  self-adjoint realization, and these exhaust all self-adjoint
+  realizations \cite[Theorem~2.25]{Remling2018}.  In particular
+  limit-point at $+\infty$ does \emph{not} make $T_\Phi$ essentially
+  self-adjoint and does \emph{not} yield a \emph{unique} self-adjoint
+  realization; this corrects the ``$\alpha$ does not appear / unique
+  self-adjoint realization'' phrasing of \cite{SpecRoadmap}'s D1, which
+  overstates the consequence of limit-point.
+
+  We phrase this for relations throughout: because indivisible
+  subintervals may occur even when $\Ham_\Phi(x)\neq0$ a.e.\ (cf.\
+  \cref{rem:definite}), the maximal/minimal objects need not be operators.
+  Upgrading to a densely defined operator requires separately showing the
+  multivalued part of the maximal relation is trivial; this is governed by
+  the operator-part / multivalued-part decomposition of the relation (see
+  the corresponding discussion in \cite{Remling2018}), not by
+  \cite[Theorem~2.25]{Remling2018}, which concerns only the parametrisation
+  of self-adjoint boundary conditions.
+\end{corollary}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\section{Discussion and scope}
+\label{sec:discussion}
+
+\subsection{What this paper establishes}
+
+The only proved statements are (i)~the reference criterion
+\cref{prop:weyl}, a direct specialisation of
+\cite[Theorem~3.5]{Remling2018}, (ii)~the trivial log-derivative
+realization \cref{prop:trivial}--\cref{cor:trivial}, and (iii)~the
+\emph{negative} observation that the programme's Core Lemma
+\cref{eq:coreL} is \emph{not justified as written} as an equivalence with
+RH (\cref{rem:coreL-defective}).  None is a new theorem in analysis:
+(i)~is standard and depends on \cite{Remling2018}; (ii)~is a routine
+consequence of the Laguerre--P\'olya factorisation; (iii)~is an
+elementary but consequential identification of a logical gap.  We
+therefore present the paper as a reference note plus a logical-gap audit,
+not a source of new theorems.
+
+We do \emph{not} establish essential self-adjointness of any operator (or
+relation) attached to the de Bruijn--Newman flow, nor a unique
+self-adjoint realization, nor any arithmetically meaningful limit-point
+property of that flow, for any value of $t$.
+
+\subsection{What remains open}
+
+The corrected identification problem \cref{prob:gen} is open.  By
+\cref{rem:coreL-is-RH} only the one-way sufficiency
+``$\operatorname{div}D_{\theta_0}=\operatorname{div}\Xi\Rightarrow$RH''
+holds, and it is at least as hard as RH --- imposing additional
+requirements not known to follow from RH, since it also asks that the
+divisor match that of a \emph{specific} operator
+(\cref{rem:three-conditions}).  Logically prior to it is the
+unstated \emph{construction} of $\Ham_\Phi$ and $T_\Phi$
+(\cref{rem:undefined}); the target $\operatorname{div}\Xi$ is by contrast
+already explicit.  Until the construction is done, $T_\Phi$,
+$D_{\theta_0}$, the Weyl function, and the spectral measure --- i.e.\ the
+left-hand data of \cref{eq:coreL,eq:divid} --- refer to objects that are
+not yet defined.
+
+The limit-point conjunct of \cref{eq:coreL} is \emph{not} the hard part,
+but neither is it settled: as recorded in \cref{rem:length}, no theorem
+translating the Riemann--von~Mangoldt law into
+$\int_0^\infty\Tr\Ham_\Phi\,dx=\infty$ is proved here, so trace divergence
+remains a hypothesis --- which, if granted, gives limit-point via
+\cref{prop:weyl}, subject to the anti-circularity and invariance cautions
+of \cref{rem:invariance,rem:length}.  We also correct
+\cite{SpecRoadmap}'s D1 write-up on one point of principle: limit-point at
+$+\infty$ does not give a \emph{unique} self-adjoint realization --- the
+regular left endpoint retains the parameter $\theta_0$ (\cref{cor:alpha}).
+
+Finally, even a correct divisor identity \cref{eq:divid} presupposes that
+the realization has discrete spectrum and a characteristic entire
+function; a general half-line self-adjoint canonical system need have
+neither (it may have absolutely continuous or singular continuous
+spectrum), so establishing purely discrete spectrum with no continuous
+part is itself part of the open problem.  None of this is addressed here,
+and the critical limit (\cref{rem:length}, Obstacle~3 of \cref{sec:open})
+lies outside the present scope.
+
+\subsection{Aside: the Conrey--Li obstruction and finite-chain
+realizations}
+
+This aside is \emph{not} part of the D1 half-line problem; it concerns the
+separate finite-chain realization that D1 does not require.  The
+Conrey--Li work \cite{ConreyLi2000} concerns specific positivity
+conditions of de~Branges type for $\xi$/$L$-functions; it is \emph{not}
+merely the observation that the real entire candidate
+$E_T(z)=\xi(1/2-iz)$ fails the Hermite--Biehler test (that failure is
+trivial, since $E_T^\#=E_T$).  A finite-chain de~Branges realization with
+a terminal $A$-function proportional to $H_t$ would require building a
+genuine $E_t=A_t-iB_t$ with nonzero $B_t$; this is a separate problem and
+is \emph{not} needed for D1 (\cref{rem:incompat}).  The precise relation
+of any such $E_t$ to the Conrey--Li positivity conditions --- for which we
+refer the reader to \cite{ConreyLi2000} directly --- is beyond this audit.
+Any earlier claim that $E_\lambda = \Xi_\lambda$ ``avoids'' the
+obstruction was mistaken.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{thebibliography}{99}
+
+\bibitem{deBranges1968}
+L.~de~Branges,
+\emph{Hilbert Spaces of Entire Functions},
+Prentice-Hall, Englewood Cliffs, NJ, 1968.
+
+\bibitem{Krein1952}
+M.~G.~Kre\u{\i}n,
+On the indeterminate case of the Sturm--Liouville boundary problem in the
+interval $(0,\infty)$,
+\emph{Izv.\ Akad.\ Nauk SSSR Ser.\ Mat.} \textbf{16} (1952), 293--324.
+
+\bibitem{Remling2018}
+C.~Remling,
+\emph{Spectral Theory of Canonical Systems},
+De Gruyter Studies in Mathematics~70, Berlin, 2018.
+
+\bibitem{Winkler1995}
+H.~Winkler,
+The inverse spectral problem for canonical systems,
+\emph{Integral Equations Operator Theory} \textbf{22} (1995), 360--374.
+
+\bibitem{ConreyLi2000}
+J.~B.~Conrey and X.-J.~Li,
+A note on some positivity conditions related to zeta and $L$-functions,
+\emph{Int.\ Math.\ Res.\ Not.} \textbf{2000}, no.~18, 929--940.
+
+\bibitem{RodgersTao2020}
+B.~Rodgers and T.~Tao,
+The de Bruijn--Newman constant is non-negative,
+\emph{Forum Math.\ Pi} \textbf{8} (2020), e6.
+
+\bibitem{Newman1976}
+C.~M.~Newman,
+Fourier transforms with only real zeros,
+\emph{Proc.\ Amer.\ Math.\ Soc.} \textbf{61} (1976), 245--251.
+
+\bibitem{KiKimLee2009}
+H.~Ki, Y.-O.~Kim, and J.~Lee,
+On the de Bruijn--Newman constant,
+\emph{Adv.\ Math.} \textbf{222} (2009), 281--306.
+
+\bibitem{SaouterGourdon2011}
+Y.~Saouter, X.~Gourdon, and P.~Demichel,
+An improved lower bound for the de Bruijn--Newman constant,
+\emph{Math.\ Comp.} \textbf{80} (2011), 2281--2287.
+
+\bibitem{PlattTrudgian2021}
+D.~J.~Platt and T.~S.~Trudgian,
+The Riemann hypothesis is true up to $3\cdot10^{12}$,
+\emph{Bull.\ London Math.\ Soc.} \textbf{53} (2021), 792--797.
+
+\bibitem{Titchmarsh1986}
+E.~C.~Titchmarsh,
+\emph{The Theory of the Riemann Zeta-Function},
+2nd ed., revised by D.~R.~Heath-Brown, Oxford, 1986.
+
+\bibitem{SpecRoadmap}
+L.~Tao,
+\emph{Speculative Roadmap: Critical Canonical System / $\Lambda{=}0$
+Analysis}, internal document,
+\texttt{docs/SPECULATIVE\_ROADMAP.md},
+\texttt{weil\allowbreak-first\allowbreak-prime} repository, 2026.
+
+\end{thebibliography}
+
+\end{document}
