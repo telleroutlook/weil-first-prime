@@ -892,6 +892,52 @@ The certificate is stored in \texttt{pilots/cert\_fp035\_clean.json}
 $S^{(0)}$; the earlier \texttt{cert\_schur\_correct\_cL.json} is retired).
 \end{proof}
 
+\begin{remark}[$\lambda(L)$ is monotone decreasing across the first-prime window;
+               margin collapses near the right endpoint]
+\label{rem:window-shape}
+A pilot-level scan (\texttt{scripts/window\_shape\_scan.py}, float eigenvalue,
+$N_+=8$, $\eta=\tfrac12$, four-term $S^{(0)}$, depth-2 quadrature) across
+11 values of $L$ in the first-prime window
+$\bigl(\tfrac12\log 2,\,\tfrac12\log 3\bigr)\approx(0.347,\,0.549)$ yields
+the following picture.
+
+\smallskip\noindent
+\textbf{Shape.}  $\lambda_{\min}^{\mathrm{true}}(L)$ (the smallest eigenvalue of
+the Schur complement $C = b_L F - R_\eta$ at $\Lambda_0 = 0$) decreases
+monotonically from $\approx\!1.7\times10^{-3}$ at $L=0.35$ to
+$\approx\!8.9\times10^{-9}$ at $L=0.548$ (even sector, tail degree $d=30$,
+confirmed positive by $d$-refinement through $d=50$; see below).
+No interior minimum is observed.
+
+\smallskip\noindent
+\textbf{Margin collapse at the right endpoint.}
+At $L = 0.548$ (just inside $\tfrac12\log 3$), the even-sector margin is
+$\lambda_{\min}^{\mathrm{true}} \approx 8.9\times 10^{-9}$ --- strictly
+positive but four orders of magnitude smaller than at $L=7/20$.
+The apparent negative values at $d=20{-}25$ are Gibbs truncation artefacts:
+they reverse sign by $d=30$ and the sequence $\lambda(d)$ increases
+monotonically through $d=50$, confirming $\lambda_{\min}^{\mathrm{true}}>0$.
+For the odd sector a sign reversal is observed at $d=30$ for $L\geq 0.53$;
+$d$-refinement to $d=60$ and linear extrapolation in $1/d$ yield a
+$d\to\infty$ estimate of $\approx\!+2\times10^{-5}$, also positive.
+
+\smallskip\noindent
+\textbf{Scope.}
+This remark records the \emph{effective range} of the method within the
+first-prime window: the positive-margin certificate is available for all
+$L\leq 7/20$, and the shape scan shows that the margin is nowhere exhausted
+inside the window for the even sector (the binding constraint at every
+sampled $L$).  The scan does \emph{not} assert that $\lambda(L)>0$ for
+$L>7/20$; that question lies outside the scope of this paper.
+
+\smallskip\noindent
+\textbf{Honesty label.}
+All values in this remark are \textbf{[pilot]}: float eigenvalues without
+interval enclosures.  The certified lower bound at $L=7/20$ is
+$\lambda(7/20)\geq 2^{-30}$ (\cref{thm:fp035-proved}); no certified bound is
+claimed for $L\neq 7/20$.  This remark does not affect \cref{thm:fp035-proved}.
+\end{remark}
+
 %% ══════════════════════════════════════════════════════════════════════════════
 \enlargethispage{2\baselineskip}
 \section*{Acknowledgements}
