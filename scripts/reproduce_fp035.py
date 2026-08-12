@@ -46,6 +46,12 @@ except ImportError as e:
 
 ctx.prec = 256   # 256-bit Arb precision throughout
 
+
+def _enc(lo, hi) -> arb:
+    """Convert a certified interval [lo, hi] to an Arb ball that contains it."""
+    lo_a, hi_a = arb(str(lo)), arb(str(hi))
+    return arb((lo_a + hi_a) / arb(2), (hi_a - lo_a) / arb(2))
+
 # ── Repository root ─────────────────────────────────────────────────────────
 import os, pathlib
 ROOT = pathlib.Path(__file__).parent.parent
@@ -123,24 +129,23 @@ def build_schur_arb(indices: list[int], d: int,
 
             # V entry (Arb)
             V_iv = V_matrix_entry(ni, nj, 256)
-            V_ij = (arb(str(V_iv[0])) + arb(str(V_iv[1]))) / arb(2)
+            V_ij = _enc(V_iv[0], V_iv[1])
 
             # M_K entry (Arb)
             r = integrate_M_K(ni, nj, L_NUM, L_DEN,
                               depth=depth_mk, use_bernstein=False)
-            K_ij = arb(arb(str(r.enclosure_lower)),
-                       arb(str(r.enclosure_upper)))
+            K_ij = _enc(r.enclosure_lower, r.enclosure_upper)
 
             # S0 = full second moment ||(V+K)p||^2 = S_VV + S_VK + S_KV + S_KK
             # (2026-08-07 fix: previously S0 = S_KK only -> inflated pivot ~16x)
             svv = V2_matrix_entry(ni, nj, 256)
-            svv_a = (arb(str(svv[0])) + arb(str(svv[1]))) / arb(2)
+            svv_a = _enc(svv[0], svv[1])
             svk = integrate_S_VK(ni, nj, L_NUM, L_DEN, depth=depth_mk)
             skv = integrate_S_VK(nj, ni, L_NUM, L_DEN, depth=depth_mk)
-            svk_a = (arb(str(svk.enclosure_lower)) + arb(str(svk.enclosure_upper))) / arb(2)
-            skv_a = (arb(str(skv.enclosure_lower)) + arb(str(skv.enclosure_upper))) / arb(2)
+            svk_a = _enc(svk.enclosure_lower, svk.enclosure_upper)
+            skv_a = _enc(skv.enclosure_lower, skv.enclosure_upper)
             s = integrate_S_KK(ni, nj, L_NUM, L_DEN, depth=depth_skk)
-            skk_a = (arb(str(s.enclosure_lower)) + arb(str(s.enclosure_upper))) / arb(2)
+            skk_a = _enc(s.enclosure_lower, s.enclosure_upper)
             S0_a[i][j] = svv_a + svk_a + skv_a + skk_a
 
             # Prime entry (Arb): M2 and S2 (prime self second moment)
@@ -269,6 +274,8 @@ def main() -> int:
 
     ok = ok_even and ok_odd
     if args.out is not None:
+        import platform as _platform
+        import flint as _flint
         cert = {
             "claim_id": "thm-fp-035",
             "method": "exact_prime_split_v1",
@@ -281,6 +288,11 @@ def main() -> int:
             "both_certified": bool(ok),
             "conclusion": "lambda(7/20) > 0 (finite-scale Weil positivity); does NOT imply RH",
             "generated_by": "scripts/reproduce_fp035.py (real recomputation, four-term S0)",
+            "runtime": {
+                "python": _platform.python_version(),
+                "python_flint": _flint.__version__,
+                "arb_prec_bits": ctx.prec,
+            },
         }
         with open(args.out, "w") as f:
             _json.dump(cert, f, indent=2, sort_keys=True)

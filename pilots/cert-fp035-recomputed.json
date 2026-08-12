@@ -1,0 +1,38 @@
+{
+  "L0": "2^-30",
+  "S0_definition": "S_VV+S_VK+S_KV+S_KK",
+  "both_certified": true,
+  "c_L": {
+    "float": 1.3652706068122242,
+    "value": "1355726/993009"
+  },
+  "claim_id": "thm-fp-035",
+  "conclusion": "lambda(7/20) > 0 (finite-scale Weil positivity); does NOT imply RH",
+  "even_sector": {
+    "N": 8,
+    "b_L": 0.7601753354854464,
+    "d": 16,
+    "label": "even",
+    "min_eig": 0.0009499382091854674,
+    "residual": "0"
+  },
+  "generated_by": "scripts/reproduce_fp035.py (real recomputation, four-term S0)",
+  "kappa_L": {
+    "float": 1.25528305,
+    "value": "25105661/20000000"
+  },
+  "method": "exact_prime_split_v1",
+  "odd_sector": {
+    "N": 6,
+    "b_L": 0.5595800973902083,
+    "d": 13,
+    "label": "odd",
+    "min_eig": 0.018959670048436492,
+    "residual": "0"
+  },
+  "runtime": {
+    "arb_prec_bits": 256,
+    "python": "3.14.6",
+    "python_flint": "0.9.0"
+  }
+}

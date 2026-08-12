@@ -34,6 +34,12 @@ import numpy as np
 from flint import arb, ctx
 ctx.prec = 256
 
+
+def _enc(lo, hi) -> arb:
+    """Convert a certified interval [lo, hi] to an Arb ball that contains it."""
+    lo_a, hi_a = arb(str(lo)), arb(str(hi))
+    return arb((lo_a + hi_a) / arb(2), (hi_a - lo_a) / arb(2))
+
 from src.archimedean.integrator_a import integrate_M_K, integrate_S_KK, integrate_S_VK
 from src.archimedean.log_moments import V_matrix_entry, V2_matrix_entry
 from src.prime_layer.legendre_shift import compute_J, compute_E
@@ -166,21 +172,20 @@ class SchurCache:
         for i, ni in enumerate(indices):
             for j, nj in enumerate(indices):
                 V_iv = V_matrix_entry(ni, nj, 256)
-                V_ij = (arb(str(V_iv[0])) + arb(str(V_iv[1]))) / arb(2)
+                V_ij = _enc(V_iv[0], V_iv[1])
                 r = integrate_M_K(ni, nj, self.L_num, self.L_den,
                                   depth=4, use_bernstein=False)
-                K_ij = arb(arb(str(r.enclosure_lower)),
-                           arb(str(r.enclosure_upper)))
+                K_ij = _enc(r.enclosure_lower, r.enclosure_upper)
                 # S0 = full second moment ||(V+K)p||^2 = S_VV + S_VK + S_KV + S_KK
                 # (four-term; S_KK-only shrinks R0 and inflates the certified Λ_0)
                 svv = V2_matrix_entry(ni, nj, 256)
-                svv_a = (arb(str(svv[0])) + arb(str(svv[1]))) / arb(2)
+                svv_a = _enc(svv[0], svv[1])
                 svk = integrate_S_VK(ni, nj, self.L_num, self.L_den, depth=4)
                 skv = integrate_S_VK(nj, ni, self.L_num, self.L_den, depth=4)
-                svk_a = (arb(str(svk.enclosure_lower)) + arb(str(svk.enclosure_upper))) / arb(2)
-                skv_a = (arb(str(skv.enclosure_lower)) + arb(str(skv.enclosure_upper))) / arb(2)
+                svk_a = _enc(svk.enclosure_lower, svk.enclosure_upper)
+                skv_a = _enc(skv.enclosure_lower, skv.enclosure_upper)
                 s = integrate_S_KK(ni, nj, self.L_num, self.L_den, depth=3)
-                skk_a = (arb(str(s.enclosure_lower)) + arb(str(s.enclosure_upper))) / arb(2)
+                skk_a = _enc(s.enclosure_lower, s.enclosure_upper)
                 S0[i][j] = svv_a + svk_a + skv_a + skk_a
                 J_ij = arb(str(float(compute_J(ni, nj, self.tau))))
                 E_ij = arb(str(float(compute_E(ni, nj, self.tau))))
